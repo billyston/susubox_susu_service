@@ -19,18 +19,17 @@ return Application::configure(basePath: dirname(__DIR__))
         ): void {
             //
         })->withExceptions(
-        function (
+        using: function (
             Exceptions $exceptions
         ): void {
             $exceptions->render(
                 using: function (
-                    Throwable $throwable, Request $request) {
-                    if ($request->expectsJson()) {
-                        return new ApiExceptionRenderer(
-                            exception: $throwable,
-                            request: $request,
-                        )->render();
-                    }
+                    Throwable $throwable, Request $request
+                ) {
+                    if ($request->expectsJson()) return (new ApiExceptionRenderer(
+                        exception: $throwable,
+                        request: $request,
+                    ))->render();
 
                     return null;
                 },
