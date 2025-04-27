@@ -1,57 +1,43 @@
 <?php
 
+declare(strict_types=1);
+
 namespace {{ namespace }};
 
 use {{ rootNamespace }}Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class {{ class }} extends Controller
+final class {{ class }} extends Controller
 {
-    /**
-     * Show the form for creating the resource.
-     */
-    public function create(): never
-    {
+    public function create(
+    ): never {
         abort(404);
     }
 
-    /**
-     * Store the newly created resource in storage.
-     */
-    public function store(Request $request): never
-    {
+    public function store(
+        Request $request
+    ): never {
         abort(404);
     }
 
-    /**
-     * Display the resource.
-     */
-    public function show()
-    {
-        //
+    public function show(
+    ) {
+        //..
     }
 
-    /**
-     * Show the form for editing the resource.
-     */
-    public function edit()
-    {
-        //
+    public function edit(
+    ) {
+        //..
     }
 
-    /**
-     * Update the resource in storage.
-     */
-    public function update(Request $request)
-    {
-        //
+    public function update(
+        Request $request
+    ) {
+        //..
     }
 
-    /**
-     * Remove the resource from storage.
-     */
-    public function destroy(): never
-    {
+    public function destroy(
+    ): never {
         abort(404);
     }
 }
