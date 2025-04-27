@@ -21,3 +21,13 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+**/.env
+**/*.env
+auth.json
+**/.gitignore
+.gitignore
+.DS_Store
+docker-compose.yml
+/docker
+/TODO
