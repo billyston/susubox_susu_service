@@ -2,7 +2,15 @@
 
 declare(strict_types=1);
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Common\PingController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/ping', fn (Request $request) => $request->user())->middleware('auth:sanctum');
+// The ping route
+Route::group([
+    'prefix' => 'ping',
+], function (): void {
+    Route::get(
+        uri: '',
+        action: PingController::class
+    )->name(name: 'ping');
+});
