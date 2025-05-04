@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Common\Actions\Ping;
 
 use App\Common\Helpers\ResponseBuilder;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,14 +15,14 @@ final class PingAction
         //..
     }
 
-    public function execute(
-        Request $request,
-    ): JsonResponse {
+    public function execute(): JsonResponse
+    {
         // Build and return the JsonResponse
-        return ResponseBuilder::success(
+        return ResponseBuilder::ping(
             status: true,
             code: Response::HTTP_OK,
-            message: 'Service is online'
+            message: 'Request successful',
+            description: 'This service is online'
         );
     }
 }

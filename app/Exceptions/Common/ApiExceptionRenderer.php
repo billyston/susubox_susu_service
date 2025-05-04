@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Exceptions;
+namespace App\Exceptions\Common;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
@@ -43,7 +43,7 @@ final readonly class ApiExceptionRenderer
         }
 
         if (app()->isLocal()) {
-            $response['exception'] = get_class($this->exception);
+            $response['exception'] = $this->exception::class;
             $response['trace'] = collect($this->exception->getTrace())->take(3);
         }
 
@@ -94,6 +94,6 @@ final readonly class ApiExceptionRenderer
 
     private function getDetail(Throwable $e): string
     {
-        return $e->getMessage() ?: 'An unexpected error occurred.';
+        return in_array($e->getMessage(), ['', '0'], true) ? 'An unexpected error occurred.' : $e->getMessage();
     }
 }

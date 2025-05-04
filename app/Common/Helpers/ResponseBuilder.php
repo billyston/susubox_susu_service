@@ -8,6 +8,21 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class ResponseBuilder
 {
+    public static function ping(
+        bool $status,
+        int $code,
+        string $message,
+        string $description = null,
+    ): JsonResponse {
+        return response()->json([
+            'version' => '1.0',
+            'status' => $status,
+            'code' => $code,
+            'message' => $message,
+            'description' => $description,
+        ]);
+    }
+
     public static function success(
         bool $status,
         int $code,

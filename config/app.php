@@ -125,4 +125,14 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'rate_limiter' => [
+        'ip_based' => true,
+        'user_based' => false,
+        'api_key_based' => false,
+        'defaults' => [
+            'max_attempts' => 60,
+            'decay_seconds' => 60,
+        ],
+    ]
+
 ];

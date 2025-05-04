@@ -11,7 +11,7 @@ return new class extends Migration
     public function up(
     ): void {
         Schema::create(
-            table: '{{ table }}',
+            table: 'rate_limiters',
             callback: function (
                 Blueprint $table
              ) {
@@ -21,6 +21,14 @@ return new class extends Migration
                 // Table related fields
 
                 // Table main attributes
+                $table->string(column: 'key')->comment(comment: 'The rate limit key (e.g., user ID, IP, API key)');
+                $table->string(column: 'group')->comment(comment: 'Rate limit group / endpoint name');
+                $table->integer(column: 'attempts')->default(value: 0);
+                $table->timestamp(column: 'reset_at')->nullable();
+                $table->timestamp(column: 'expires_at')->nullable();
+
+                $table->index(['key', 'group']);
+                $table->index(columns: 'expires_at');
 
                 // Foreign key fields
 
@@ -32,7 +40,7 @@ return new class extends Migration
     public function down(
     ): void {
         Schema::dropIfExists(
-            table: '{{ table }}'
+            table: 'rate_limiters'
         );
     }
 };

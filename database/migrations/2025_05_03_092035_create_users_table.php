@@ -11,7 +11,7 @@ return new class extends Migration
     public function up(
     ): void {
         Schema::create(
-            table: '{{ table }}',
+            table: 'users',
             callback: function (
                 Blueprint $table
              ) {
@@ -32,7 +32,7 @@ return new class extends Migration
     public function down(
     ): void {
         Schema::dropIfExists(
-            table: '{{ table }}'
+            table: 'users'
         );
     }
 };

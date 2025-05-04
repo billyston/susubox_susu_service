@@ -12,5 +12,7 @@ Route::group([
     Route::get(
         uri: '',
         action: PingController::class
-    )->name(name: 'ping');
+    )
+        ->name(name: 'ping')
+        ->middleware(middleware: ['rate_limiter:60,60,ping']);
 });
