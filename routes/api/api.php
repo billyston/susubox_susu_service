@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['ip_whitelist'])->group(function (): void {
+Route::middleware([
+    'api',
+    'ip_whitelist',
+])->group(function (): void {
     // Common routes (mainly for pinging)
     Route::prefix('')->group(function (): void {
         Route::as('')
