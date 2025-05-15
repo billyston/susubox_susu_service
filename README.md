@@ -1,9 +1,9 @@
-# SusuBox API Kit with Laravel 12
+# SusuBox notification service
 
 [![tests](https://github.com/JustSteveKing/api-kit/actions/workflows/tests.yml/badge.svg)](https://github.com/JustSteveKing/api-kit/actions/workflows/tests.yml)
 [![linter](https://github.com/JustSteveKing/api-kit/actions/workflows/lint.yml/badge.svg)](https://github.com/JustSteveKing/api-kit/actions/workflows/lint.yml)
 
-The SusuBox API boilerplate for building SusuBox's scalable, production-ready APIs with Laravel 12.
+The SusuBox notification service API.
 
 ## Todo
 
