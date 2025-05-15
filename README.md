@@ -8,15 +8,3 @@ The SusuBox notification service API.
 ## Todo
 
 - [x] Authentication (JWT)
-- [x] Authorization
-- [x] Rate Limiting
-- [x] Validation
-- [x] API Resources
-- [x] Error Response Handling
-- [ ] Async Write Operations
-- [ ] Laravel Horizon
-- [ ] Request / Response Logging
-- [ ] CSRF Configuration
-- [ ] OpenAPI Generation
-- [ ] Pest Test setup
-- [ ] Auth & Role Test Helpers
