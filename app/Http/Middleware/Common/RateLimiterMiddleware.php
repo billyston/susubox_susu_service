@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware\Common;
 
-use App\Common\Helpers\ResponseBuilder;
+use App\Common\Helpers\ApiResponseBuilder;
 use App\Common\Services\RateLimiterService;
 use Closure;
 use Illuminate\Http\Request;
@@ -31,8 +31,7 @@ final class RateLimiterMiddleware
         $limiter->forRequest($request);
 
         if (! $limiter->attempt()) {
-            return ResponseBuilder::error(
-                status: false,
+            return ApiResponseBuilder::error(
                 code: Response::HTTP_UNAUTHORIZED,
                 message: 'Unauthorised access',
                 description: 'Too many attempts. Please try again later'

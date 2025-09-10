@@ -6,7 +6,7 @@ namespace App\Common\Helpers;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-final class ResponseBuilder
+final class ApiResponseBuilder
 {
     public static function ping(
         bool $status,
@@ -24,31 +24,29 @@ final class ResponseBuilder
     }
 
     public static function success(
-        bool $status,
         int $code,
-        string $message,
+        string $message = null,
         ?string $description = null,
         mixed $data = null
     ): JsonResponse {
         return response()->json([
             'version' => '1.0',
-            'status' => $status,
+            'status' => true,
             'code' => $code,
-            'message' => $message,
+            'message' => $message !== null && $message !== '' && $message !== '0' ? $message : 'Request successful',
             'description' => $description,
             'data' => $data,
         ]);
     }
 
     public static function error(
-        bool $status,
         int $code,
         string $message,
         ?string $description = null
     ): JsonResponse {
         return response()->json([
             'version' => '1.0',
-            'status' => $status,
+            'status' => false,
             'code' => $code,
             'message' => $message,
             'description' => $description,

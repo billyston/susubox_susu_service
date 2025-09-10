@@ -16,7 +16,6 @@ final class PingController extends Controller
         PingAction $pingAction
     ): JsonResponse {
         // Execute the PingAction and return the JsonResponse
-        return $pingAction->execute(
-        );
+        return $pingAction->execute();
     }
 }

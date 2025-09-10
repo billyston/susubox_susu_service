@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware\Common;
 
-use App\Common\Helpers\ResponseBuilder;
+use App\Common\Helpers\ApiResponseBuilder;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,8 +19,7 @@ final class AllowMiddleware
         $response = $next($request);
 
         if (! in_array($request->method(), $methods)) {
-            return ResponseBuilder::error(
-                status: false,
+            return ApiResponseBuilder::error(
                 code: Response::HTTP_UNAUTHORIZED,
                 message: 'Unauthorised access.',
                 description: 'This method not allowed on this endpoint.'

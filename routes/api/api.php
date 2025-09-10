@@ -15,8 +15,8 @@ Route::middleware([
     });
 
     // V1 routes (for all version 1 routes)
-    Route::prefix('v1')->group(function (): void {
-        Route::as('v1:')
+    Route::prefix('v1/payments')->group(function (): void {
+        Route::as('v1:payments')
             ->group(base_path('routes/api/v1/routes.php'));
     });
 });

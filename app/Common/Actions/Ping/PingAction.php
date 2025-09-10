@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Common\Actions\Ping;
 
-use App\Common\Helpers\ResponseBuilder;
+use App\Common\Helpers\ApiResponseBuilder;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,7 +18,7 @@ final class PingAction
     public function execute(): JsonResponse
     {
         // Build and return the JsonResponse
-        return ResponseBuilder::ping(
+        return ApiResponseBuilder::ping(
             status: true,
             code: Response::HTTP_OK,
             message: 'Request successful',
