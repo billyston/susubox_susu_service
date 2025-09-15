@@ -35,7 +35,9 @@ return new class extends Migration
 
                 $table->string(column: 'network_code');
 
-                $table->string(column: 'status');
+                $table->string(column: 'status')->default(
+                    value: 'active'
+                );
 
                 // Foreign key field
                 $table->foreign(columns: 'customer_id')

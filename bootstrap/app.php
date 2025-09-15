@@ -2,7 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Exceptions\Common\ApiExceptionRenderer;
+use App\Console\Commands\CustomerRedisStreamConsumer;
+use App\Exceptions\Common\ApiExceptionHandler;
 use App\Http\Middleware\Common\CertificateTransparencyPolicy;
 use App\Http\Middleware\Common\ContentTypes;
 use App\Http\Middleware\Common\IPWhiteListMiddleware;
@@ -12,11 +13,12 @@ use App\Http\Middleware\Common\RemoveHeaders;
 use App\Http\Middleware\Common\SetReferrerPolicy;
 use App\Http\Middleware\Common\StrictTransportSecurity;
 use App\Http\Middleware\Common\XFrameOptionsMiddleware;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -28,7 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
             Middleware $middleware
         ): void {
             // Define middleware groups
-            $middleware->group('api', [
+            $middleware->api([
                 RemoveHeaders::class,
                 StrictTransportSecurity::class,
                 SetReferrerPolicy::class,
@@ -40,26 +42,28 @@ return Application::configure(basePath: dirname(__DIR__))
 
             // Define middleware aliases
             $middleware->alias([
-                'remove_headers' => RemoveHeaders::class,
                 'ip_whitelist' => IPWhiteListMiddleware::class,
                 'rate_limiter' => RateLimiterMiddleware::class,
             ]);
-        })->withExceptions(
+        }
+    )->withCommands([
+        CustomerRedisStreamConsumer::class
+    ])->withSchedule(
+        function (
+            Schedule $schedule
+        ): void {
+            //..
+        }
+    )->withExceptions(
         using: function (
             Exceptions $exceptions
         ): void {
             $exceptions->render(
-                using: function (
-                    Throwable $throwable,
-                    Request $request
-                ): ?JsonResponse {
+                using: function (Throwable $throwable, Request $request): ?JsonResponse {
                     if ($request->expectsJson()) {
-                        return (new ApiExceptionRenderer(
-                            exception: $throwable,
-                            request: $request,
-                        ))->render();
+                        return app(ApiExceptionHandler::class)
+                            ->render($request, $throwable);
                     }
-
                     return null;
                 },
             );
