@@ -10,6 +10,9 @@ final class DatabaseSeeder extends Seeder
 {
     public function run(
     ): void {
-        // User::factory(10)->create();
+        $this->call(class: FrequencyTableSeeder::class);
+        $this->call(class: DurationTableSeeder::class);
+        $this->call(class: StartDateTableSeeder::class);
+        $this->call(class: SusuSchemeTableSeeder::class);
     }
 }

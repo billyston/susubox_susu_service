@@ -2,32 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Domain\Customer\Services;
+namespace Domain\Shared\Services;
 
 use App\Exceptions\Common\SystemFailureExec;
-use Domain\Customer\Models\Customer;
-use Domain\Customer\Models\LinkedWallet;
+use Domain\Shared\Models\Frequency;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-final class CustomerLinkedWalletsService
+final class FrequenciesService
 {
     /**
      * @throws SystemFailureExec
      */
     public function execute(
-        Customer $customer
     ): Collection {
         try {
-            return LinkedWallet::where(
-                'status',
-                'active',
-            )->where(
-                'customer_id',
-                $customer->id,
-            )->get();
+            return Frequency::get();
         } catch (
             ModelNotFoundException $modelNotFoundException
         ) {
@@ -36,8 +28,7 @@ final class CustomerLinkedWalletsService
             Throwable $throwable
         ) {
             // Log the full exception with context
-            Log::error('Exception in CustomerLinkedWalletsService', [
-                'customer' => $customer,
+            Log::error('Exception in FrequenciesService', [
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),
