@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\V1\Customer\CustomerLinkedWalletsController;
 use App\Http\Controllers\V1\Customer\CustomerLinkedWalletValidationController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +16,16 @@ Route::group([
         action: CustomerLinkedWalletValidationController::class,
     )->name(
         name: 'customer.linked-wallets.validations'
+    )->whereUuid(
+        parameters: 'customer'
+    );
+
+    // Get all linked wallet request route
+    Route::get(
+        uri: '/{customer}/linked-wallets',
+        action: CustomerLinkedWalletsController::class,
+    )->name(
+        name: 'customer.linked-wallets'
     )->whereUuid(
         parameters: 'customer'
     );

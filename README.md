@@ -10,3 +10,4 @@ The SusuBox susu service API.
 ### Customer
 - [x] Create new customer
 - [x] Linked new customer wallet
+- [x] Get all linked wallets

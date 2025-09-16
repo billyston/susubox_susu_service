@@ -31,7 +31,7 @@ final class CustomerLinkedWalletCreateService
                     // Get the LinkedWallet for the Customer (if it exists)
                     $linked_wallet = LinkedWallet::firstOrNew([
                         'wallet_number' => $data['wallet_number'],
-                        'customer_id'   => $customer->id,
+                        'customer_id' => $customer->id,
                     ]);
 
                     $linked_wallet->fill([
