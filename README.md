@@ -18,7 +18,7 @@ The SusuBox susu service API.
 - [x] Build the durations
 - [x] Get all durations
 - [x] Build the start dates
-- [ ] Get all start dates
+- [x] Get all start dates
 - [x] Build the susu_schemes
-- [ ] Get all susu_schemes
+- [x] Get all susu_schemes
 - [x] Build the commission_and_charges resource
