@@ -14,7 +14,7 @@ The SusuBox susu service API.
 
 ### Resources
 - [x] Build the frequencies
-- [ ] Get all frequencies
+- [x] Get all frequencies
 - [x] Build the durations
 - [ ] Get all durations
 - [x] Build the start dates
