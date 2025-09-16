@@ -6,20 +6,20 @@ namespace Domain\Shared\Actions;
 
 use App\Common\Helpers\ApiResponseBuilder;
 use App\Exceptions\Common\SystemFailureExec;
-use Domain\Shared\Data\FrequencyResource;
-use Domain\Shared\Services\FrequenciesService;
+use Domain\Shared\Data\StartDateResource;
+use Domain\Shared\Services\StartDatesService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-final class FrequenciesAction
+final class StartDatesAction
 {
-    private FrequenciesService $frequenciesService;
+    private StartDatesService $startDatesService;
 
     public function __construct(
-        FrequenciesService $frequenciesService
+        StartDatesService $startDatesService
     ) {
-        $this->frequenciesService = $frequenciesService;
+        $this->startDatesService = $startDatesService;
     }
 
     /**
@@ -28,14 +28,14 @@ final class FrequenciesAction
     public function execute(
         Request $request,
     ): JsonResponse {
-        $linked_wallets = $this->frequenciesService->execute();
+        $linked_wallets = $this->startDatesService->execute();
 
         // Build and return the JsonResponse
         return ApiResponseBuilder::success(
             code: Response::HTTP_OK,
             message: 'Request successful',
             description: '',
-            data: FrequencyResource::collection(
+            data: StartDateResource::collection(
                 resource: $linked_wallets,
             ),
         );
