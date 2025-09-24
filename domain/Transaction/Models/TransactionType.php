@@ -2,27 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Domain\Shared\Models;
+namespace Domain\Transaction\Models;
 
-use Domain\Susu\Models\GoalGetterSusu;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-final class Duration extends Model
+final class TransactionType extends Model
 {
-    public $timestamps = false;
-
     protected $guarded = ['id'];
 
-    protected $casts = [];
+    protected $casts = [
+        'meta' => 'array',
+    ];
 
     protected $fillable = [
         'resource_id',
-        'resource_id',
         'name',
-        'code',
-        'days',
-        'status',
+        'description',
+        'meta',
     ];
 
     public function getRouteKeyName(
@@ -30,11 +27,11 @@ final class Duration extends Model
         return 'resource_id';
     }
 
-    public function goal(
+    public function transactions(
     ): HasMany {
         return $this->hasMany(
-            related: GoalGetterSusu::class,
-            foreignKey: 'duration_id'
+            related: Transaction::class,
+            foreignKey: 'transaction_type_id',
         );
     }
 }

@@ -14,5 +14,6 @@ final class DatabaseSeeder extends Seeder
         $this->call(class: DurationTableSeeder::class);
         $this->call(class: StartDateTableSeeder::class);
         $this->call(class: SusuSchemeTableSeeder::class);
+        $this->call(class: TransactionTypeTableSeeder::class);
     }
 }

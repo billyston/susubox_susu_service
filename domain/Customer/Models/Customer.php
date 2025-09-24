@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Domain\Customer\Models;
 
+use Domain\Susu\Models\Account;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -30,6 +31,14 @@ final class Customer extends Model
     ): HasMany {
         return $this->hasMany(
             related: LinkedWallet::class,
+            foreignKey: 'customer_id'
+        );
+    }
+
+    public function susu(
+    ): HasMany {
+        return $this->hasMany(
+            related: Account::class,
             foreignKey: 'customer_id'
         );
     }
