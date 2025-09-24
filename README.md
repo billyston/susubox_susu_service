@@ -22,3 +22,18 @@ The SusuBox susu service API.
 - [x] Build the susu_schemes
 - [x] Get all susu_schemes
 - [x] Build the commission_and_charges resource
+
+### Account
+- [x] Create and Configure Account model and migration
+
+### Daily Susu
+- [x] Create and configure model and migration
+
+### Biz Susu
+- [x] Create and configure model and migration
+
+### Goal Getter Susu
+- [x] Create and configure model and migration
+
+### Flexy Susu
+- [x] Create and configure model and migration
