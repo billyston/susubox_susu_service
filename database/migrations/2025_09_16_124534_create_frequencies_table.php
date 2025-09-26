@@ -34,6 +34,9 @@ return new class extends Migration
                 $table->string(column: 'description')
                     ->nullable();
 
+                $table->boolean(column: 'is_allowed')
+                    ->default(value: true);
+
                 // Foreign key fields
 
                 // Timestamps (created_at / updated_at) fields

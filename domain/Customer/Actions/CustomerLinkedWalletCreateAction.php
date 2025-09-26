@@ -6,7 +6,7 @@ namespace Domain\Customer\Actions;
 
 use App\Common\Helpers\ApiResponseBuilder;
 use App\Common\Helpers\Helpers;
-use App\Exceptions\Common\SystemFailureExec;
+use App\Exceptions\Common\SystemFailureException;
 use Domain\Customer\Models\Customer;
 use Domain\Customer\Services\CustomerLinkedWalletCreateService;
 use Illuminate\Http\Request;
@@ -24,7 +24,7 @@ final class CustomerLinkedWalletCreateAction
     }
 
     /**
-     * @throws SystemFailureExec
+     * @throws SystemFailureException
      */
     public function execute(
         Customer $customer,

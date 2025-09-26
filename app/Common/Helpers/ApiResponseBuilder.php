@@ -27,7 +27,7 @@ final class ApiResponseBuilder
         int $code,
         string $message = null,
         ?string $description = null,
-        mixed $data = null
+        mixed $data = null,
     ): JsonResponse {
         return response()->json([
             'version' => '1.0',
@@ -36,6 +36,7 @@ final class ApiResponseBuilder
             'message' => $message !== null && $message !== '' && $message !== '0' ? $message : 'Request successful',
             'description' => $description,
             'data' => $data,
+            'included' => method_exists($data, method: 'included') ? $data->included() : [],
         ]);
     }
 

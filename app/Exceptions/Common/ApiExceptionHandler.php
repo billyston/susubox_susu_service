@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Exceptions\Common;
 
+use Domain\Customer\Exceptions\LinkedWalletNotFoundException;
+use Domain\Shared\Exceptions\FrequencyNotFoundException;
+use Domain\Shared\Exceptions\SusuSchemeNotFoundException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -36,14 +39,17 @@ final class ApiExceptionHandler extends ExceptionHandler
         Throwable $e
     ): JsonResponse {
         $exceptions = [
-            ThrottleRequestsException::class => [Response::HTTP_TOO_MANY_REQUESTS, 'Too many requests', 'You have made too many requests'],
-            ModelNotFoundException::class => [Response::HTTP_NOT_FOUND, 'Resource not found', 'The requested resource does not exist'],
-            NotFoundHttpException::class => [Response::HTTP_NOT_FOUND, 'Endpoint not found', 'The requested endpoint does not exist'],
-            ValidationException::class => [Response::HTTP_UNPROCESSABLE_ENTITY, 'Request unprocessable', 'An unexpected error occurred'],
-            MethodNotAllowedHttpException::class => [Response::HTTP_METHOD_NOT_ALLOWED, 'Method not allowed', 'This HTTP method is not supported'],
+            ThrottleRequestsException::class => [Response::HTTP_TOO_MANY_REQUESTS, 'Too many requests.', 'You have made too many requests.'],
+            LinkedWalletNotFoundException::class => [Response::HTTP_NOT_FOUND, 'Resource not found.', 'The wallet was not found.'],
+            SusuSchemeNotFoundException::class => [Response::HTTP_NOT_FOUND, 'Resource not found.', 'The susu scheme was not found.'],
+            FrequencyNotFoundException::class => [Response::HTTP_NOT_FOUND, 'Resource not found.', 'The frequency was not found.'],
+            ModelNotFoundException::class => [Response::HTTP_NOT_FOUND, 'Resource not found.', 'The requested resource does not exist.'],
+            NotFoundHttpException::class => [Response::HTTP_NOT_FOUND, 'Endpoint not found.', 'The requested endpoint does not exist.'],
+            ValidationException::class => [Response::HTTP_UNPROCESSABLE_ENTITY, 'Request unprocessable.', 'An unexpected error occurred.'],
+            MethodNotAllowedHttpException::class => [Response::HTTP_METHOD_NOT_ALLOWED, 'Method not allowed.', 'This HTTP method is not supported.'],
             QueryException::class => [Response::HTTP_BAD_REQUEST, 'Database error.', $e->getMessage()],
-            RelationNotFoundException::class => [Response::HTTP_INTERNAL_SERVER_ERROR, 'Relationship error', 'A required relationship is missing'],
-            AuthenticationException::class => [Response::HTTP_UNAUTHORIZED, 'Request unauthenticated', 'You are not logged in'],
+            RelationNotFoundException::class => [Response::HTTP_INTERNAL_SERVER_ERROR, 'Relationship error.', 'A required relationship is missing.'],
+            AuthenticationException::class => [Response::HTTP_UNAUTHORIZED, 'Request unauthenticated.', 'You are not logged in.'],
             AuthorizationException::class => [Response::HTTP_FORBIDDEN, 'Request unauthorized.', 'You do not have permission for this action.'],
             AccessDeniedHttpException::class => [Response::HTTP_FORBIDDEN, 'Request denied.', 'You are not allowed to access this resource.'],
         ];
@@ -57,8 +63,8 @@ final class ApiExceptionHandler extends ExceptionHandler
         // Fallback for unhandled exceptions
         return $this->formatErrorResponse(
             Response::HTTP_INTERNAL_SERVER_ERROR,
-            'Request unprocessable',
-            'An unexpected error occurred',
+            'Request unprocessable.',
+            'An unexpected error occurred.',
             [$e->getMessage()]
         );
     }
@@ -93,14 +99,28 @@ final class ApiExceptionHandler extends ExceptionHandler
         );
     }
 
-    private function extractErrorDetails(Throwable $e): array
-    {
+    private function extractErrorDetails(
+        Throwable $e
+    ): array {
         if ($e instanceof ValidationException) {
-            // Flatten validation errors into a single array of strings
-            return collect($e->errors())
-                ->flatten()
-                ->values()
-                ->all();
+            return collect($e->errors())->flatten()->values()->all();
+        }
+
+        if ($e instanceof NotFoundHttpException && $e->getPrevious() instanceof ModelNotFoundException) {
+            return [$e->getPrevious()->getMessage()];
+        }
+
+        // Handle your custom exception
+        if ($e instanceof LinkedWalletNotFoundException) {
+            return [$e->getMessage()];
+        }
+
+        if ($e instanceof SusuSchemeNotFoundException) {
+            return [$e->getMessage()];
+        }
+
+        if ($e instanceof FrequencyNotFoundException) {
+            return [$e->getMessage()];
         }
 
         return [$e->getMessage()];

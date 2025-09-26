@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Domain\Customer\Services;
 
-use App\Exceptions\Common\SystemFailureExec;
+use App\Exceptions\Common\SystemFailureException;
 use Domain\Customer\Models\Customer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -13,7 +13,7 @@ use Throwable;
 final class CustomerCreateService
 {
     /**
-     * @throws SystemFailureExec
+     * @throws SystemFailureException
      */
     public static function execute(
         array $data
@@ -45,8 +45,8 @@ final class CustomerCreateService
                 ],
             ]);
 
-            // Throw the SystemFailureExec
-            throw new SystemFailureExec;
+            // Throw the SystemFailureException
+            throw new SystemFailureException;
         }
     }
 }

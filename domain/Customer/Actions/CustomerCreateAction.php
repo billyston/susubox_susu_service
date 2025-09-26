@@ -6,7 +6,7 @@ namespace Domain\Customer\Actions;
 
 use App\Common\Helpers\ApiResponseBuilder;
 use App\Common\Helpers\Helpers;
-use App\Exceptions\Common\SystemFailureExec;
+use App\Exceptions\Common\SystemFailureException;
 use Domain\Customer\Services\CustomerCreateService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,7 +23,7 @@ final class CustomerCreateAction
     }
 
     /**
-     * @throws SystemFailureExec
+     * @throws SystemFailureException
      */
     public function execute(
         Request $request,

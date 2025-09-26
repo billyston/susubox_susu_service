@@ -19,17 +19,22 @@ return new class extends Migration
                 $table->id();
 
                 // Table related fields
+                $table->unsignedBigInteger(column: 'account_id');
+
+                $table->unsignedBigInteger(column: 'linked_wallet_id');
 
                 // Table main attributes
 
                 // Foreign key fields
-                $table->foreignId(column: 'account_id')
-                    ->constrained(table: 'accounts')
-                    ->cascadeOnDelete();
+                $table->foreign(columns: 'account_id')
+                    ->references(columns: 'id')
+                    ->on(table: 'accounts')
+                    ->onDelete(action: 'cascade');
 
-                $table->foreignId(column: 'linked_wallet_id')
-                    ->constrained(table: 'linked_wallets')
-                    ->cascadeOnDelete();
+                $table->foreign(columns: 'linked_wallet_id')
+                    ->references(columns: 'id')
+                    ->on(table: 'linked_wallets')
+                    ->onDelete(action: 'cascade');
 
                 // Timestamps (created_at/updated_at) fields
             });

@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Domain\Susu\Models;
 
+use Domain\Customer\Models\LinkedWallet;
 use Domain\Shared\Casts\MoneyCasts;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 final class DailySusu extends Model
 {
@@ -36,6 +38,14 @@ final class DailySusu extends Model
     ): BelongsTo {
         return $this->belongsTo(
             related: Account::class,
+            foreignKey: 'account_id',
+        );
+    }
+
+    public function wallet(
+    ): HasOne {
+        return $this->hasOne(
+            related: LinkedWallet::class,
             foreignKey: 'account_id',
         );
     }

@@ -5,19 +5,23 @@ declare(strict_types=1);
 namespace Domain\Susu\Models;
 
 use Domain\Customer\Models\Customer;
+use Domain\Customer\Models\LinkedWallet;
 use Domain\Shared\Casts\MoneyCasts;
 use Domain\Shared\Models\AccountWallet;
 use Domain\Shared\Models\Frequency;
+use Domain\Shared\Models\HasUuid;
 use Domain\Shared\Models\SusuScheme;
 use Domain\Transaction\Models\Transaction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 final class Account extends Model
 {
+    use HasUuid;
+
     protected $guarded = ['id'];
 
     protected $casts = [
@@ -72,10 +76,12 @@ final class Account extends Model
     }
 
     public function wallets(
-    ): HasMany {
-        return $this->hasMany(
-            related: AccountWallet::class,
-            foreignKey: 'account_id'
+    ): BelongsToMany {
+        return $this->belongsToMany(
+            related: LinkedWallet::class,
+            table: 'account_wallets',
+            foreignPivotKey: 'account_id',
+            relatedPivotKey: 'linked_wallet_id',
         );
     }
 

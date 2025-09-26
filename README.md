@@ -29,11 +29,39 @@ The SusuBox susu service API.
 ### Daily Susu
 - [x] Create and configure model and migration
 
+####
+- [x] Create daily susu account
+- [ ] Validate create daily susu
+- [ ] Cancel create daily susu
+- [ ] Approve create daily susu
+- [ ] Activate create daily susu
+
 ### Biz Susu
 - [x] Create and configure model and migration
+
+####
+- [ ] Create biz susu account
+- [ ] Validate create biz susu
+- [ ] Cancel create biz susu
+- [ ] Approve create biz susu
+- [ ] Activate create biz susu
 
 ### Goal Getter Susu
 - [x] Create and configure model and migration
 
+####
+- [ ] Create goal getter susu account
+- [ ] Validate create goal getter susu
+- [ ] Cancel create goal getter susu
+- [ ] Approve create goal getter susu
+- [ ] Activate create goal getter susu
+
 ### Flexy Susu
 - [x] Create and configure model and migration
+
+####
+- [ ] Create flexy susu account
+- [ ] Validate create flexy susu
+- [ ] Cancel create flexy susu
+- [ ] Approve create flexy susu
+- [ ] Activate create flexy susu

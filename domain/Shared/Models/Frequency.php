@@ -20,6 +20,7 @@ final class Frequency extends Model
         'alias',
         'code',
         'description',
+        'is_allowed',
     ];
 
     public function getRouteKeyName(

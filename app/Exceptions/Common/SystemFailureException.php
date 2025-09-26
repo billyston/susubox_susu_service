@@ -9,7 +9,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-final class SystemFailureExec extends Exception
+final class SystemFailureException extends Exception
 {
     public function report(
     ): JsonResponse {

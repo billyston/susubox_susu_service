@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Domain\Shared\Actions;
 
 use App\Common\Helpers\ApiResponseBuilder;
-use App\Exceptions\Common\SystemFailureExec;
+use App\Exceptions\Common\SystemFailureException;
 use Domain\Shared\Data\SusuSchemeResource;
-use Domain\Shared\Services\SusuSchemesService;
+use Domain\Shared\Services\Scheme\SusuSchemesService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +23,7 @@ final class SusuSchemesAction
     }
 
     /**
-     * @throws SystemFailureExec
+     * @throws SystemFailureException
      */
     public function execute(
         Request $request,

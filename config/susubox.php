@@ -16,6 +16,12 @@ return [
     |
     */
 
+    /*
+    |--------------------------------------------------------------------------
+    | SusuBox Services
+    |--------------------------------------------------------------------------
+    */
+
     'authentication' => [
         'base_url' => env('SSB_AUTH_URL'),
         'app_id' => env('SSB_AUTH_APP_ID'),
@@ -60,5 +66,22 @@ return [
         'base_url' => env('SSB_PAYMENT_URL'),
         'app_id' => env('SSB_PAYMENT_APP_ID'),
         'app_key' => env('SSB_PAYMENT_APP_KEY'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Susu Schemes
+    |--------------------------------------------------------------------------
+    */
+
+    'susu_schemes' => [
+        'daily_susu_code' => env('DAILY_SUSU_CODE'),
+        'biz_susu_code' => env('BIZ_SUSU_CODE'),
+        'goal_getter_susu_code' => env('GOAL_GETTER_SUSU_CODE'),
+        'flexy_susu_code' => env('FLEXY_SUSU_CODE'),
+        'bills_susu_code' => env('BILLS_SUSU_CODE'),
+        'drive2own_susu_code' => env('DRIVE2OWN_SUSU_CODE'),
+        'nkabom_group_susu_code' => env('NKABOM_SUSU_CODE'),
+        'dwadieboa_group_susu_code' => env('DWADIEBOA_SUSU_CODE'),
     ],
 ];

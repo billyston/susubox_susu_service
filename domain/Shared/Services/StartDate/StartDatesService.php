@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Domain\Shared\Services;
+namespace Domain\Shared\Services\StartDate;
 
-use App\Exceptions\Common\SystemFailureExec;
-use Domain\Shared\Models\Duration;
+use App\Exceptions\Common\SystemFailureException;
+use Domain\Shared\Models\StartDate;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-final class DurationsService
+final class StartDatesService
 {
     /**
-     * @throws SystemFailureExec
+     * @throws SystemFailureException
      */
     public function execute(
     ): Collection {
         try {
-            return Duration::get();
+            return StartDate::get();
         } catch (
             ModelNotFoundException $modelNotFoundException
         ) {
@@ -28,7 +28,7 @@ final class DurationsService
             Throwable $throwable
         ) {
             // Log the full exception with context
-            Log::error('Exception in DurationsService', [
+            Log::error('Exception in StartDatesService', [
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),
@@ -36,8 +36,8 @@ final class DurationsService
                 ],
             ]);
 
-            // Throw the SystemFailureExec
-            throw new SystemFailureExec;
+            // Throw the SystemFailureException
+            throw new SystemFailureException;
         }
     }
 }

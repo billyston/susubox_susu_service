@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\V1\Customer;
 
-use App\Exceptions\Common\SystemFailureExec;
+use App\Exceptions\Common\SystemFailureException;
 use App\Http\Controllers\Controller;
 use Domain\Customer\Actions\CustomerLinkedWalletCreateAction;
 use Domain\Customer\Models\Customer;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 final class CustomerLinkedWalletValidationController extends Controller
 {
     /**
-     * @throws SystemFailureExec
+     * @throws SystemFailureException
      */
     public function __invoke(
         Customer $customer,

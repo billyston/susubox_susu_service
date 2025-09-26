@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Domain\Customer\Services;
 
-use App\Exceptions\Common\SystemFailureExec;
+use App\Exceptions\Common\SystemFailureException;
 use Domain\Customer\Models\Customer;
 use Domain\Customer\Models\LinkedWallet;
 use Illuminate\Database\Eloquent\Collection;
@@ -15,7 +15,7 @@ use Throwable;
 final class CustomerLinkedWalletsService
 {
     /**
-     * @throws SystemFailureExec
+     * @throws SystemFailureException
      */
     public function execute(
         Customer $customer
@@ -45,8 +45,8 @@ final class CustomerLinkedWalletsService
                 ],
             ]);
 
-            // Throw the SystemFailureExec
-            throw new SystemFailureExec;
+            // Throw the SystemFailureException
+            throw new SystemFailureException;
         }
     }
 }
