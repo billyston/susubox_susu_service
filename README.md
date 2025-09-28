@@ -26,7 +26,7 @@ The SusuBox susu service API.
 ## Account
 - [x] Create and Configure Account model and migration
 - [ ] Get all customer susu accounts
-- [ ] Work on a unique account_number
+- [x] Work on a unique account_number
 
 ### Daily Susu
 - [x] Create and configure model and migration
