@@ -127,7 +127,18 @@ final class Account extends Model
     }
 
     public static function generateAccountNumber(
+        string $product_code
     ): string {
-        return 'SUSU' . now()->format('YmdHis') . mt_rand(100000000000, 999999999999);
+        // Get the last auto-increment id
+        $lastId = Account::max('id') ?? 0;
+
+        // Next id
+        $nextId = $lastId + 1;
+
+        // Format into 12 digits (zero-padded)
+        $sequence = sprintf('%012d', $nextId);
+
+        // Return PRODUCTCODE-UNIQUEID
+        return sprintf('%s-%s', $product_code, $sequence);
     }
 }

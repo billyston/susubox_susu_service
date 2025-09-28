@@ -35,7 +35,7 @@ final class Customer extends Model
         );
     }
 
-    public function susu(
+    public function accounts(
     ): HasMany {
         return $this->hasMany(
             related: Account::class,

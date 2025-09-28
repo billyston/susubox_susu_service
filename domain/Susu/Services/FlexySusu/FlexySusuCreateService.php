@@ -40,7 +40,9 @@ final class FlexySusuCreateService
                     'customer_id' => $customer->id,
                     'susu_scheme_id' => $susu_scheme->id,
                     'account_name' => $request_data['account_name'],
-                    'account_number' => Account::generateAccountNumber(),
+                    'account_number' => Account::generateAccountNumber(
+                        product_code: config(key: 'susubox.susu_schemes.flexy_susu_code'),
+                    ),
                     'purpose' => $request_data['purpose'],
                     'amount' => Money::of(amount: 0.00, currency: 'GHS'),
                     'accepted_terms' => $request_data['accepted_terms'],

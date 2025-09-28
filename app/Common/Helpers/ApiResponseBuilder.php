@@ -29,15 +29,25 @@ final class ApiResponseBuilder
         ?string $description = null,
         mixed $data = null,
     ): JsonResponse {
-        return response()->json([
+        $response = [
             'version' => '1.0',
             'status' => true,
             'code' => $code,
-            'message' => $message !== null && $message !== '' && $message !== '0' ? $message : 'Request successful',
+            'message' => $message !== null && $message !== '' && $message !== '0'
+                ? $message
+                : 'Request successful',
             'description' => $description,
             'data' => $data,
-            'included' => method_exists($data, method: 'included') ? $data->included() : [],
-        ]);
+        ];
+
+        if (method_exists($data, 'included')) {
+            $included = $data->included();
+            if (! empty($included)) {
+                $response['included'] = $included;
+            }
+        }
+
+        return response()->json($response);
     }
 
     public static function error(

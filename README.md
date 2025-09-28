@@ -7,12 +7,12 @@ The SusuBox susu service API.
 
 ## Todo
 
-### Customer
+## Customer
 - [x] Create new customer
 - [x] Linked new customer wallet
 - [x] Get all linked wallets
 
-### Resources
+## Resources
 - [x] Build the frequencies
 - [x] Get all frequencies
 - [x] Build the durations
@@ -23,48 +23,82 @@ The SusuBox susu service API.
 - [x] Get all susu_schemes
 - [x] Build the commission_and_charges resource
 
-### Account
+## Account
 - [x] Create and Configure Account model and migration
+- [ ] Get all customer susu accounts
+- [ ] Work on a unique account_number
 
 ### Daily Susu
 - [x] Create and configure model and migration
 
-####
+#### Create
 - [x] Create daily susu account
 - [ ] Validate create daily susu
 - [ ] Cancel create daily susu
 - [ ] Approve create daily susu
 - [ ] Activate create daily susu
 
-####
+#### Get
 - [x] Get single daily susu for customer
 
-### Biz Susu
+#### Update / Cancel
+- [ ] Update daily susu create
+- [ ] Cancel daily susu create
+
+## Biz Susu
 - [x] Create and configure model and migration
 
-####
-- [ ] Create biz susu account
+#### Create
+- [x] Create biz susu account
 - [ ] Validate create biz susu
 - [ ] Cancel create biz susu
 - [ ] Approve create biz susu
 - [ ] Activate create biz susu
 
-### Goal Getter Susu
+#### Update / Cancel
+- [ ] Update biz susu create
+- [ ] Cancel biz susu create
+
+#### Get
+- [x] Get single biz susu for customer
+- [ ] Get all biz susu for customer
+
+###### Update / Cancel
+- [ ] Update daily susu create
+- [ ] Cancel daily susu create
+
+## Goal Getter Susu
 - [x] Create and configure model and migration
 
-####
-- [ ] Create goal getter susu account
+###### Create
+- [x] Create goal getter susu account
 - [ ] Validate create goal getter susu
 - [ ] Cancel create goal getter susu
 - [ ] Approve create goal getter susu
 - [ ] Activate create goal getter susu
 
-### Flexy Susu
+###### Update / Cancel
+- [ ] Update goal getter susu create
+- [ ] Cancel goal getter susu create
+
+###### Get
+- [x] Get single goal getter susu for customer
+- [ ] Get all goal getter susu for customer
+
+## Flexy Susu
 - [x] Create and configure model and migration
 
-####
-- [ ] Create flexy susu account
+###### Create
+- [x] Create flexy susu account
 - [ ] Validate create flexy susu
 - [ ] Cancel create flexy susu
 - [ ] Approve create flexy susu
 - [ ] Activate create flexy susu
+
+###### Get
+- [x] Get single flexy susu for customer
+- [ ] Get all flexy susu for customer
+
+###### Update / Cancel
+- [ ] Update flexy susu create
+- [ ] Cancel flexy susu create

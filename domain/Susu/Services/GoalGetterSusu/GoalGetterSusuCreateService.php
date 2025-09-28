@@ -63,7 +63,9 @@ final class GoalGetterSusuCreateService
                     'susu_scheme_id' => $susu_scheme->id,
                     'frequency_id' => $frequency->id,
                     'account_name' => $request_data['account_name'],
-                    'account_number' => Account::generateAccountNumber(),
+                    'account_number' => Account::generateAccountNumber(
+                        product_code: config(key: 'susubox.susu_schemes.goal_getter_susu_code'),
+                    ),
                     'purpose' => $request_data['purpose'],
                     'amount' => $susu_amount,
                     'start_date' => $start_date,
