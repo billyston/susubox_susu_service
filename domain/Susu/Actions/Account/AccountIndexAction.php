@@ -9,14 +9,19 @@ use App\Exceptions\Common\SystemFailureException;
 use Domain\Customer\Models\Customer;
 use Domain\Shared\Exceptions\UnauthorisedAccessException;
 use Domain\Susu\Data\Account\AccountResource;
+use Domain\Susu\Services\Account\AccountIndexService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class AccountIndexAction
 {
+    private AccountIndexService $accountIndexService;
+
     public function __construct(
+        AccountIndexService $accountIndexService
     ) {
+        $this->accountIndexService = $accountIndexService;
     }
 
     /**
@@ -27,12 +32,17 @@ final class AccountIndexAction
         Customer $customer,
         Request $request,
     ): JsonResponse {
+        // Execute the AccountIndexService and return the collection
+        $customer_accounts = $this->accountIndexService->execute(
+            customer: $customer,
+        );
+
         // Build and return the JsonResponse
         return ApiResponseBuilder::success(
             code: Response::HTTP_OK,
             message: 'Request successful.',
             data: AccountResource::collection(
-                resource: $customer->accounts
+                resource: $customer_accounts
             ),
         );
     }

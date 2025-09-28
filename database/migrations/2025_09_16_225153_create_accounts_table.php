@@ -66,6 +66,7 @@ return new class extends Migration
 
                 $table->enum(column: 'status', allowed: [
                     AccountStatus::PENDING->value,
+                    AccountStatus::APPROVED->value,
                     AccountStatus::ACTIVE->value,
                     AccountStatus::CLOSED->value,
                     AccountStatus::SUSPENDED->value,

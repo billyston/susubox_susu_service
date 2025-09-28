@@ -12,7 +12,7 @@ use Domain\Susu\Actions\GoalGetterSusu\GoalGetterSusuGetAction;
 use Domain\Susu\Models\Account;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-final class GoalGetterSusuGetController extends Controller
+final class GoalGetterSusuShowController extends Controller
 {
     /**
      * @throws SystemFailureException

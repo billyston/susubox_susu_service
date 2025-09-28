@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 
-namespace Domain\Susu\Actions\GoalGetterSusu;
+namespace Domain\Susu\Actions\BizSusu;
 
 use App\Common\Helpers\ApiResponseBuilder;
 use App\Exceptions\Common\SystemFailureException;
 use Domain\Customer\Models\Customer;
 use Domain\Shared\Exceptions\UnauthorisedAccessException;
-use Domain\Susu\Data\GoalGetterSusu\GoalGetterSusuResource;
+use Domain\Susu\Data\BizSusu\BizSusuResource;
 use Domain\Susu\Models\Account;
-use Domain\Susu\Services\GoalGetterSusu\GoalGetterSusuShowService;
+use Domain\Susu\Services\BizSusu\BizSusuShowService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-final class GoalGetterSusuGetAction
+final class BizSusuShowAction
 {
-    private GoalGetterSusuShowService $goalGetterSusuShowService;
+    private BizSusuShowService $bizSusuShowService;
 
     public function __construct(
-        GoalGetterSusuShowService $goalGetterSusuShowService
+        BizSusuShowService $bizSusuShowService
     ) {
-        $this->goalGetterSusuShowService = $goalGetterSusuShowService;
+        $this->bizSusuShowService = $bizSusuShowService;
     }
 
     /**
@@ -32,8 +32,8 @@ final class GoalGetterSusuGetAction
         Customer $customer,
         Account $account,
     ): JsonResponse {
-        // Execute the GoalGetterSusuShowService and return the resource
-        $goal_getter_susu = $this->goalGetterSusuShowService->execute(
+        // Execute the BizSusuShowService and return the resource
+        $biz_susu = $this->bizSusuShowService->execute(
             customer: $customer,
             account: $account
         );
@@ -42,8 +42,8 @@ final class GoalGetterSusuGetAction
         return ApiResponseBuilder::success(
             code: Response::HTTP_OK,
             message: 'Request successful.',
-            data: new GoalGetterSusuResource(
-                resource: $goal_getter_susu
+            data: new BizSusuResource(
+                resource: $biz_susu
             ),
         );
     }

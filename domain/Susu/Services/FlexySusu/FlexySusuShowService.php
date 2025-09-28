@@ -12,7 +12,7 @@ use Domain\Susu\Models\FlexySusu;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-final class FlexySusuGetService
+final class FlexySusuShowService
 {
     /**
      * @throws SystemFailureException

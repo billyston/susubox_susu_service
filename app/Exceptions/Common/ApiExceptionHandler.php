@@ -16,6 +16,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Validation\ValidationException;
+use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -47,9 +48,10 @@ final class ApiExceptionHandler extends ExceptionHandler
             FrequencyNotFoundException::class => [Response::HTTP_NOT_FOUND, 'Resource not found.', 'The frequency was not found.'],
             ModelNotFoundException::class => [Response::HTTP_NOT_FOUND, 'Resource not found.', 'The requested resource does not exist.'],
             NotFoundHttpException::class => [Response::HTTP_NOT_FOUND, 'Endpoint not found.', 'The requested endpoint does not exist.'],
+            InvalidArgumentException::class => [Response::HTTP_UNPROCESSABLE_ENTITY, 'Request unprocessable.', 'An unexpected error occurred.'],
             ValidationException::class => [Response::HTTP_UNPROCESSABLE_ENTITY, 'Request unprocessable.', 'An unexpected error occurred.'],
             MethodNotAllowedHttpException::class => [Response::HTTP_METHOD_NOT_ALLOWED, 'Method not allowed.', 'This HTTP method is not supported.'],
-            QueryException::class => [Response::HTTP_BAD_REQUEST, 'Database error.', $e->getMessage()],
+            QueryException::class => [Response::HTTP_BAD_REQUEST, 'Database error.', 'Database error occurred.'],
             RelationNotFoundException::class => [Response::HTTP_INTERNAL_SERVER_ERROR, 'Relationship error.', 'A required relationship is missing.'],
             AuthenticationException::class => [Response::HTTP_UNAUTHORIZED, 'Request unauthenticated.', 'You are not logged in.'],
             AuthorizationException::class => [Response::HTTP_FORBIDDEN, 'Request unauthorized.', 'You do not have permission for this action.'],

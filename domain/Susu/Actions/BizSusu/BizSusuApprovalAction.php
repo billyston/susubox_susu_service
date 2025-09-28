@@ -6,44 +6,46 @@ namespace Domain\Susu\Actions\BizSusu;
 
 use App\Common\Helpers\ApiResponseBuilder;
 use App\Exceptions\Common\SystemFailureException;
+use App\Http\Requests\V1\Susu\BizSusu\BizSusuApprovalRequest;
 use Domain\Customer\Models\Customer;
-use Domain\Shared\Exceptions\UnauthorisedAccessException;
 use Domain\Susu\Data\BizSusu\BizSusuResource;
+use Domain\Susu\Enums\Account\AccountStatus;
 use Domain\Susu\Models\Account;
-use Domain\Susu\Services\BizSusu\BizSusuGetService;
+use Domain\Susu\Services\Account\AccountStatusUpdateService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-final class BizSusuGetAction
+final class BizSusuApprovalAction
 {
-    private BizSusuGetService $bizSusuGetService;
+    private AccountStatusUpdateService $accountStatusUpdateService;
 
     public function __construct(
-        BizSusuGetService $bizSusuGetService
+        AccountStatusUpdateService $accountStatusUpdateService
     ) {
-        $this->bizSusuGetService = $bizSusuGetService;
+        $this->accountStatusUpdateService = $accountStatusUpdateService;
     }
 
     /**
      * @throws SystemFailureException
-     * @throws UnauthorisedAccessException
      */
     public function execute(
         Customer $customer,
         Account $account,
+        BizSusuApprovalRequest $bizSusuApprovalRequest,
     ): JsonResponse {
-        // Execute the BizSusuGetService and return the resource
-        $biz_susu = $this->bizSusuGetService->execute(
-            customer: $customer,
-            account: $account
+        // Execute the AccountStatusUpdateService and return the account resource
+        $account = $this->accountStatusUpdateService->execute(
+            account: $account,
+            status: AccountStatus::APPROVED->value
         );
 
         // Build and return the JsonResponse
         return ApiResponseBuilder::success(
             code: Response::HTTP_OK,
             message: 'Request successful.',
+            description: 'Your biz susu account has been approved.',
             data: new BizSusuResource(
-                resource: $biz_susu
+                resource: $account->biz
             ),
         );
     }

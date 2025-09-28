@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\V1\Susu\BizSusu\BizSusuApprovalController;
 use App\Http\Controllers\V1\Susu\BizSusu\BizSusuCreateController;
-use App\Http\Controllers\V1\Susu\BizSusu\BizSusuGetController;
+use App\Http\Controllers\V1\Susu\BizSusu\BizSusuShowController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
@@ -16,15 +17,35 @@ Route::group([
         action: BizSusuCreateController::class,
     )->name(
         name: 'biz-susus'
+    )->whereUuid(
+        parameters: [
+            'customer',
+        ]
+    );
+
+    // Biz susu approval route
+    Route::post(
+        uri: '{account}/biz-susus/approval',
+        action: BizSusuApprovalController::class
+    )->name(
+        name: 'biz-susus.approval'
+    )->whereUuid(
+        parameters: [
+            'customer',
+            'account',
+        ]
     );
 
     // Get biz (single) susu route
     Route::get(
         uri: '{account}/biz-susus',
-        action: BizSusuGetController::class,
+        action: BizSusuShowController::class,
     )->name(
-        name: 'biz-susus.get'
+        name: 'biz-susus.show'
     )->whereUuid(
-        parameters: ['account']
+        parameters: [
+            'customer',
+            'account',
+        ]
     );
 });

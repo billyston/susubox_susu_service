@@ -12,7 +12,7 @@ use Domain\Susu\Models\GoalGetterSusu;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-final class GoalGetterSusuGetService
+final class GoalGetterSusuShowService
 {
     /**
      * @throws SystemFailureException
@@ -43,7 +43,7 @@ final class GoalGetterSusuGetService
             Throwable $throwable
         ) {
             // Log the full exception with context
-            Log::error('Exception in GoalGetterSusuGetService', [
+            Log::error('Exception in GoalGetterSusuShowService', [
                 'customer' => $customer,
                 'account' => $account,
                 'exception' => [

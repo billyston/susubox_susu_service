@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 
-namespace Domain\Susu\Actions\GoalGetterSusu;
+namespace Domain\Susu\Actions\FlexySusu;
 
 use App\Common\Helpers\ApiResponseBuilder;
 use App\Exceptions\Common\SystemFailureException;
 use Domain\Customer\Models\Customer;
 use Domain\Shared\Exceptions\UnauthorisedAccessException;
-use Domain\Susu\Data\GoalGetterSusu\GoalGetterSusuResource;
+use Domain\Susu\Data\FlexySusu\FlexySusuResource;
 use Domain\Susu\Models\Account;
-use Domain\Susu\Services\GoalGetterSusu\GoalGetterSusuShowService;
+use Domain\Susu\Services\FlexySusu\FlexySusuShowService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-final class GoalGetterSusuGetAction
+final class FlexySusuShowAction
 {
-    private GoalGetterSusuShowService $goalGetterSusuShowService;
+    private FlexySusuShowService $flexySusuShowService;
 
     public function __construct(
-        GoalGetterSusuShowService $goalGetterSusuShowService
+        FlexySusuShowService $flexySusuShowService
     ) {
-        $this->goalGetterSusuShowService = $goalGetterSusuShowService;
+        $this->flexySusuShowService = $flexySusuShowService;
     }
 
     /**
@@ -32,8 +32,8 @@ final class GoalGetterSusuGetAction
         Customer $customer,
         Account $account,
     ): JsonResponse {
-        // Execute the GoalGetterSusuShowService and return the resource
-        $goal_getter_susu = $this->goalGetterSusuShowService->execute(
+        // Execute the FlexySusuShowService and return the resource
+        $flexy_susu = $this->flexySusuShowService->execute(
             customer: $customer,
             account: $account
         );
@@ -42,8 +42,8 @@ final class GoalGetterSusuGetAction
         return ApiResponseBuilder::success(
             code: Response::HTTP_OK,
             message: 'Request successful.',
-            data: new GoalGetterSusuResource(
-                resource: $goal_getter_susu
+            data: new FlexySusuResource(
+                resource: $flexy_susu
             ),
         );
     }

@@ -6,44 +6,46 @@ namespace Domain\Susu\Actions\FlexySusu;
 
 use App\Common\Helpers\ApiResponseBuilder;
 use App\Exceptions\Common\SystemFailureException;
+use App\Http\Requests\V1\Susu\FlexySusu\FlexySusuApprovalRequest;
 use Domain\Customer\Models\Customer;
-use Domain\Shared\Exceptions\UnauthorisedAccessException;
 use Domain\Susu\Data\FlexySusu\FlexySusuResource;
+use Domain\Susu\Enums\Account\AccountStatus;
 use Domain\Susu\Models\Account;
-use Domain\Susu\Services\FlexySusu\FlexySusuGetService;
+use Domain\Susu\Services\Account\AccountStatusUpdateService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-final class FlexySusuGetAction
+final class FlexySusuApprovalAction
 {
-    private FlexySusuGetService $flexySusuGetService;
+    private AccountStatusUpdateService $accountStatusUpdateService;
 
     public function __construct(
-        FlexySusuGetService $flexySusuGetService
+        AccountStatusUpdateService $accountStatusUpdateService
     ) {
-        $this->flexySusuGetService = $flexySusuGetService;
+        $this->accountStatusUpdateService = $accountStatusUpdateService;
     }
 
     /**
      * @throws SystemFailureException
-     * @throws UnauthorisedAccessException
      */
     public function execute(
         Customer $customer,
         Account $account,
+        FlexySusuApprovalRequest $flexySusuApprovalRequest,
     ): JsonResponse {
-        // Execute the FlexySusuGetService and return the resource
-        $flexy_susu = $this->flexySusuGetService->execute(
-            customer: $customer,
-            account: $account
+        // Execute the AccountStatusUpdateService and return the account resource
+        $account = $this->accountStatusUpdateService->execute(
+            account: $account,
+            status: AccountStatus::APPROVED->value
         );
 
         // Build and return the JsonResponse
         return ApiResponseBuilder::success(
             code: Response::HTTP_OK,
             message: 'Request successful.',
+            description: 'Your flexy susu account has been approved.',
             data: new FlexySusuResource(
-                resource: $flexy_susu
+                resource: $account->flexy
             ),
         );
     }

@@ -10,18 +10,18 @@ use Domain\Customer\Models\Customer;
 use Domain\Shared\Exceptions\UnauthorisedAccessException;
 use Domain\Susu\Data\DailySusu\DailySusuResource;
 use Domain\Susu\Models\Account;
-use Domain\Susu\Services\DailySusu\DailySusuGetService;
+use Domain\Susu\Services\DailySusu\DailySusuShowService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-final class DailySusuGetAction
+final class DailySusuShowAction
 {
-    private DailySusuGetService $dailySusuGetService;
+    private DailySusuShowService $dailySusuShowService;
 
     public function __construct(
-        DailySusuGetService $dailySusuGetService
+        DailySusuShowService $dailySusuShowService
     ) {
-        $this->dailySusuGetService = $dailySusuGetService;
+        $this->dailySusuShowService = $dailySusuShowService;
     }
 
     /**
@@ -32,8 +32,8 @@ final class DailySusuGetAction
         Customer $customer,
         Account $account,
     ): JsonResponse {
-        // Execute the DailySusuGetService and return the resource
-        $daily_susu = $this->dailySusuGetService->execute(
+        // Execute the DailySusuShowService and return the resource
+        $daily_susu = $this->dailySusuShowService->execute(
             customer: $customer,
             account: $account
         );

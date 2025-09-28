@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\V1\Susu\BizSusu;
+namespace App\Http\Controllers\V1\Susu\FlexySusu;
 
 use App\Exceptions\Common\SystemFailureException;
 use App\Http\Controllers\Controller;
 use Domain\Customer\Models\Customer;
 use Domain\Shared\Exceptions\UnauthorisedAccessException;
-use Domain\Susu\Actions\BizSusu\BizSusuGetAction;
+use Domain\Susu\Actions\FlexySusu\FlexySusuShowAction;
 use Domain\Susu\Models\Account;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-final class BizSusuGetController extends Controller
+final class FlexySusuShowController extends Controller
 {
     /**
      * @throws SystemFailureException
@@ -21,10 +21,10 @@ final class BizSusuGetController extends Controller
     public function __invoke(
         Customer $customer,
         Account $account,
-        BizSusuGetAction $bizSusuGetAction
+        FlexySusuShowAction $flexySusuShowAction
     ): JsonResponse {
-        // Execute the BizSusuGetAction and return the JsonResponse
-        return $bizSusuGetAction->execute(
+        // Execute the FlexySusuShowAction and return the JsonResponse
+        return $flexySusuShowAction->execute(
             customer: $customer,
             account: $account,
         );

@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\V1\Susu\FlexySusu\FlexySusuApprovalController;
 use App\Http\Controllers\V1\Susu\FlexySusu\FlexySusuCreateController;
-use App\Http\Controllers\V1\Susu\FlexySusu\FlexySusuGetController;
+use App\Http\Controllers\V1\Susu\FlexySusu\FlexySusuShowController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
@@ -16,15 +17,35 @@ Route::group([
         action: FlexySusuCreateController::class,
     )->name(
         name: 'flexy-susus'
+    )->whereUuid(
+        parameters: [
+            'customer',
+        ]
+    );
+
+    // Flexy susu approval route
+    Route::post(
+        uri: '{account}/flexy-susus/approval',
+        action: FlexySusuApprovalController::class
+    )->name(
+        name: 'flexy-susus.approval'
+    )->whereUuid(
+        parameters: [
+            'customer',
+            'account',
+        ]
     );
 
     // Get flexy (single) susu route
     Route::get(
         uri: '{account}/flexy-susus',
-        action: FlexySusuGetController::class,
+        action: FlexySusuShowController::class,
     )->name(
-        name: 'flexy-susus.get'
+        name: 'flexy-susus.show'
     )->whereUuid(
-        parameters: ['account']
+        parameters: [
+            'customer',
+            'account',
+        ],
     );
 });

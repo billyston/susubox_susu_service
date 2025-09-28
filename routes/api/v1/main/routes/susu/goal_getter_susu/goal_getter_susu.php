@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\V1\Susu\GoalGetterSusu\GoalGetterSusuApprovalController;
 use App\Http\Controllers\V1\Susu\GoalGetterSusu\GoalGetterSusuCreateController;
-use App\Http\Controllers\V1\Susu\GoalGetterSusu\GoalGetterSusuGetController;
+use App\Http\Controllers\V1\Susu\GoalGetterSusu\GoalGetterSusuShowController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
@@ -16,15 +17,35 @@ Route::group([
         action: GoalGetterSusuCreateController::class,
     )->name(
         name: 'goal-getter-susus.'
+    )->whereUuid(
+        parameters: [
+            'customer',
+        ],
+    );
+
+    // Goal getter susu approval route
+    Route::post(
+        uri: '{account}/goal-getter-susus/approval',
+        action: GoalGetterSusuApprovalController::class
+    )->name(
+        name: 'goal-getter-susus.approval'
+    )->whereUuid(
+        parameters: [
+            'customer',
+            'account',
+        ]
     );
 
     // Get goal getter (single) susu route
     Route::get(
         uri: '{account}/goal-getter-susus',
-        action: GoalGetterSusuGetController::class,
+        action: GoalGetterSusuShowController::class,
     )->name(
-        name: 'goal-getter-susus.get'
+        name: 'goal-getter-susus.show'
     )->whereUuid(
-        parameters: ['account']
+        parameters: [
+            'customer',
+            'account',
+        ]
     );
 });
