@@ -75,16 +75,16 @@ return [
     */
 
     'exclude' => [
-        'src/Domain/Customer/DTO/Registration/DailySusuDTO.php',
-        'app/Rules/V1/Susu/GoalGetterSusu/Withdrawal/GoalGetterSusuWithdrawalApprovalRules.php',
-        'app/Rules/V1/Susu/DailySusu/Payment/DailySusuPaymentApprovalRules.php',
-        'app/Rules/V1/Susu/DailySusu/Settlement/DailySusuSettlementApprovalRules.php',
-        'app/Rules/V1/Susu/BizSusu/Withdrawal/BizSusuWithdrawalApprovalRules.php',
-        'app/Rules/V1/Susu/FlexySusu/Payment/FlexySusuPaymentApprovalRules.php',
-        'app/Rules/V1/Susu/GoalGetterSusu/Payment/GoalGetterSusuPaymentApprovalRules.php',
-        'app/Rules/V1/Susu/BizSusu/Payment/BizSusuPaymentApprovalRules.php',
-        'app/Rules/V1/Susu/GoalGetterSusu/Withdrawal/GoalGetterSusuFullWithdrawalRules.php',
         'phpinsights.php',
+        'domain/Shared/Exceptions/FrequencyNotFoundException.php',
+        'domain/Shared/Exceptions/SusuSchemeNotFoundException.php',
+        'domain/Shared/Exceptions/UnauthorisedAccessException.php',
+        'domain/Customer/Exceptions/LinkedWalletNotFoundException.php',
+        'app/Exceptions/Common/SystemFailureException.php',
+
+        'app/Common/Services/RateLimiterService.php',
+        'app/Exceptions/Common/ApiExceptionHandler.php',
+        'app/Console/Commands/CustomerRedisStreamConsumer.php',
     ],
 
     'add' => [

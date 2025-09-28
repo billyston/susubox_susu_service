@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Domain\Susu\Services\DailySusu;
+namespace Domain\Susu\Services\GoalGetterSusu;
 
+use App\Common\Helpers\Helpers;
 use App\Exceptions\Common\SystemFailureException;
 use Brick\Money\Money;
 use Domain\Customer\Models\Customer;
@@ -12,12 +13,13 @@ use Domain\Shared\Models\AccountWallet;
 use Domain\Shared\Models\Frequency;
 use Domain\Shared\Models\SusuScheme;
 use Domain\Susu\Models\Account;
-use Domain\Susu\Models\DailySusu;
+use Domain\Susu\Models\GoalGetterSusu;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-final class DailySusuCreateService
+final class GoalGetterSusuCreateService
 {
     /**
      * @throws SystemFailureException
@@ -28,7 +30,7 @@ final class DailySusuCreateService
         Frequency $frequency,
         LinkedWallet $linked_wallet,
         array $request_data
-    ): DailySusu {
+    ): GoalGetterSusu {
         try {
             // Execute the database transaction
             return DB::transaction(function () use (
@@ -38,6 +40,23 @@ final class DailySusuCreateService
                 $linked_wallet,
                 $request_data
             ) {
+                // Get the start_date of the account
+                $start_date = Helpers::calculateDate(
+                    date: $request_data['start_date']
+                );
+
+                // Get the total days in the savings duration
+                $duration = Helpers::getDaysInDuration(
+                    date: $request_data['duration']
+                );
+
+                // Calculate the susu_amount
+                $susu_amount = Money::of(amount: self::getDebitAmount(
+                    $request_data['target_amount'],
+                    $request_data['frequency'],
+                    $request_data['duration'],
+                ), currency: 'GHS');
+
                 // Create and return the account resource
                 $account = Account::create([
                     'customer_id' => $customer->id,
@@ -46,7 +65,12 @@ final class DailySusuCreateService
                     'account_name' => $request_data['account_name'],
                     'account_number' => Account::generateAccountNumber(),
                     'purpose' => $request_data['purpose'],
-                    'amount' => Money::of($request_data['susu_amount'], currency: 'GHS'),
+                    'amount' => $susu_amount,
+                    'start_date' => $start_date,
+                    'end_date' => Helpers::getDateWithOffset(
+                        Carbon::parse($start_date),
+                        days: $duration->days
+                    ),
                     'accepted_terms' => $request_data['accepted_terms'],
                 ]);
 
@@ -56,18 +80,19 @@ final class DailySusuCreateService
                     'linked_wallet_id' => $linked_wallet->id,
                 ]);
 
-                // Create and return the DailySusu resource
-                return DailySusu::create([
+                // Create and return the GoalGetterSusu resource
+                return GoalGetterSusu::create([
                     'account_id' => $account->id,
-                    'initial_deposit' => $account->amount->multipliedBy($request_data['initial_deposit']),
-                    'rollover_enabled' => $request_data['rollover_enabled'],
+                    'target_amount' => Money::of($request_data['target_amount'], currency: 'GHS'),
+                    'initial_deposit' => Money::of($request_data['initial_deposit'], currency: 'GHS'),
+                    'duration_id' => $duration->id,
                 ]);
             });
         } catch (
             Throwable $throwable
         ) {
             // Log the full exception with context
-            Log::error('Exception in DailySusuCreateService', [
+            Log::error('Exception in GoalGetterSusuCreateService', [
                 'customer' => $customer,
                 'susu_scheme' => $susu_scheme,
                 'frequency' => $frequency,
@@ -83,5 +108,17 @@ final class DailySusuCreateService
             // Throw the SystemFailureException
             throw new SystemFailureException;
         }
+    }
+
+    private static function getDebitAmount(
+        $amount,
+        $frequency,
+        $duration
+    ): float {
+        return Helpers::calculateDebit(
+            amount: (float) $amount,
+            frequency: $frequency,
+            duration: $duration
+        );
     }
 }

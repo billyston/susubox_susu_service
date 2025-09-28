@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Domain\Susu\Data\DailySusu;
+namespace Domain\Susu\Data\GoalGetterSusu;
 
 use Domain\Customer\Data\CustomerLinkedWalletResource;
 use Domain\Shared\Data\FrequencyResource;
@@ -11,7 +11,7 @@ use Domain\Susu\Data\Account\AccountResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-final class DailySusuResource extends JsonResource
+final class GoalGetterSusuResource extends JsonResource
 {
     public function toArray(
         Request $request
@@ -23,12 +23,12 @@ final class DailySusuResource extends JsonResource
 
             // Resource exposed attributes
             'attributes' => [
+                'target_amount' => number_format(num: $this->resource->target_amount->getAmount()->toFloat(), decimals: 2),
                 'initial_deposit' => number_format(num: $this->resource->initial_deposit->getAmount()->toFloat(), decimals: 2),
                 'rollover_enabled' => $this->resource->rollover_enabled,
                 'is_collateralized' => $this->resource->is_collateralized,
-                'auto_settlement' => $this->resource->auto_settlement,
-                'settlement_status' => $this->resource->settlement_status,
                 'recurring_debit_status' => $this->resource->recurring_debit_status,
+                'withdrawal_status' => $this->resource->withdrawal_status,
             ],
         ];
     }

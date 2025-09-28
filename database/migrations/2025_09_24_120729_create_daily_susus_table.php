@@ -30,9 +30,6 @@ return new class extends Migration
                 $table->string(column: 'currency')
                     ->default(value: 'GHS');
 
-                $table->dateTime(column: 'savings_duration')
-                    ->default(value: Carbon::now());
-
                 $table->boolean(column: 'rollover_enabled')
                     ->default(value: false);
 

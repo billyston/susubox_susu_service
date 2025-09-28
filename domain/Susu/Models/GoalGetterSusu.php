@@ -34,7 +34,7 @@ final class GoalGetterSusu extends Model
         'extra_data',
     ];
 
-    public function susu(
+    public function account(
     ): BelongsTo {
         return $this->belongsTo(
             related: Account::class,

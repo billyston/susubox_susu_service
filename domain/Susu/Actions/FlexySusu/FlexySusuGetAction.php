@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 
-namespace Domain\Susu\Actions\DailySusu;
+namespace Domain\Susu\Actions\FlexySusu;
 
 use App\Common\Helpers\ApiResponseBuilder;
 use App\Exceptions\Common\SystemFailureException;
 use Domain\Customer\Models\Customer;
 use Domain\Shared\Exceptions\UnauthorisedAccessException;
-use Domain\Susu\Data\DailySusu\DailySusuResource;
+use Domain\Susu\Data\FlexySusu\FlexySusuResource;
 use Domain\Susu\Models\Account;
-use Domain\Susu\Services\DailySusu\DailySusuGetService;
+use Domain\Susu\Services\FlexySusu\FlexySusuGetService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-final class DailySusuGetAction
+final class FlexySusuGetAction
 {
-    private DailySusuGetService $dailySusuGetService;
+    private FlexySusuGetService $flexySusuGetService;
 
     public function __construct(
-        DailySusuGetService $dailySusuGetService
+        FlexySusuGetService $flexySusuGetService
     ) {
-        $this->dailySusuGetService = $dailySusuGetService;
+        $this->flexySusuGetService = $flexySusuGetService;
     }
 
     /**
@@ -32,8 +32,8 @@ final class DailySusuGetAction
         Customer $customer,
         Account $account,
     ): JsonResponse {
-        // Execute the DailySusuGetService and return the resource
-        $daily_susu = $this->dailySusuGetService->execute(
+        // Execute the FlexySusuGetService and return the resource
+        $flexy_susu = $this->flexySusuGetService->execute(
             customer: $customer,
             account: $account
         );
@@ -42,8 +42,8 @@ final class DailySusuGetAction
         return ApiResponseBuilder::success(
             code: Response::HTTP_OK,
             message: 'Request successful.',
-            data: new DailySusuResource(
-                resource: $daily_susu
+            data: new FlexySusuResource(
+                resource: $flexy_susu
             ),
         );
     }

@@ -17,10 +17,10 @@ final class CustomerCreateService
      */
     public static function execute(
         array $data
-    ): void {
+    ): Customer {
         try {
             // Execute the database transaction
-            DB::transaction(
+            return DB::transaction(
                 function () use (
                     $data
                 ) {

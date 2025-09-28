@@ -7,6 +7,7 @@ namespace App\Exceptions\Common;
 use Domain\Customer\Exceptions\LinkedWalletNotFoundException;
 use Domain\Shared\Exceptions\FrequencyNotFoundException;
 use Domain\Shared\Exceptions\SusuSchemeNotFoundException;
+use Domain\Shared\Exceptions\UnauthorisedAccessException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -40,6 +41,7 @@ final class ApiExceptionHandler extends ExceptionHandler
     ): JsonResponse {
         $exceptions = [
             ThrottleRequestsException::class => [Response::HTTP_TOO_MANY_REQUESTS, 'Too many requests.', 'You have made too many requests.'],
+            UnauthorisedAccessException::class => [Response::HTTP_FORBIDDEN, 'Request forbidden.', 'You are forbidden to perform this action.'],
             LinkedWalletNotFoundException::class => [Response::HTTP_NOT_FOUND, 'Resource not found.', 'The wallet was not found.'],
             SusuSchemeNotFoundException::class => [Response::HTTP_NOT_FOUND, 'Resource not found.', 'The susu scheme was not found.'],
             FrequencyNotFoundException::class => [Response::HTTP_NOT_FOUND, 'Resource not found.', 'The frequency was not found.'],
@@ -120,6 +122,10 @@ final class ApiExceptionHandler extends ExceptionHandler
         }
 
         if ($e instanceof FrequencyNotFoundException) {
+            return [$e->getMessage()];
+        }
+
+        if ($e instanceof UnauthorisedAccessException) {
             return [$e->getMessage()];
         }
 

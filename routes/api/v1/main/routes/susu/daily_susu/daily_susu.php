@@ -7,23 +7,23 @@ use App\Http\Controllers\V1\Susu\DailySusu\DailySusuGetController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
-    'prefix' => 'customers/{customer}/accounts/daily-susus',
-    'as' => 'customers.customer.accounts.daily-susus.',
+    'prefix' => 'customers/{customer}/accounts/',
+    'as' => 'customers.customer.accounts.',
 ], function (): void {
     // Create daily susu request route
     Route::post(
-        uri: '',
+        uri: 'daily-susus',
         action: DailySusuCreateController::class,
     )->name(
-        name: ''
+        name: 'daily-susus'
     );
 
-    // Get daily susu route
+    // Get daily (single) susu route
     Route::get(
-        uri: '{account}',
+        uri: '{account}/daily-susus',
         action: DailySusuGetController::class
     )->name(
-        name: 'show'
+        name: 'daily-susus.get'
     )->whereUuid(
         parameters: ['account']
     );

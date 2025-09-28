@@ -6,7 +6,6 @@ namespace App\Common\Helpers;
 
 use Carbon\Carbon;
 use Domain\Shared\Models\Duration;
-use Illuminate\Support\Facades\DB;
 
 final class Helpers
 {
@@ -26,15 +25,6 @@ final class Helpers
             $request_data,
             key: 'attributes'
         );
-    }
-
-    public static function generateAccountNumber(
-    ): string {
-        do {
-            $number = (string) mt_rand(100000000000, 999999999999);
-        } while (! empty(DB::table(table: 'susus')->where(column: 'account_number', operator: $number)->first(['account_number'])));
-
-        return $number;
     }
 
     public static function calculateDebit(

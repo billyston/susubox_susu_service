@@ -41,6 +41,7 @@ final class Account extends Model
         'currency',
         'start_date',
         'end_date',
+        'account_activity_period',
         'accepted_terms',
         'extra_data',
         'status',
@@ -112,7 +113,7 @@ final class Account extends Model
     public function flexy(
     ): HasOne {
         return $this->hasOne(
-            related: GoalGetterSusu::class,
+            related: FlexySusu::class,
             foreignKey: 'account_id'
         );
     }

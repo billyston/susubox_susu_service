@@ -7,7 +7,10 @@ namespace App\Http\Controllers\V1\Susu\GoalGetterSusu;
 use App\Exceptions\Common\SystemFailureException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\Susu\GoalGetterSusu\GoalGetterSusuCreateRequest;
+use Domain\Customer\Exceptions\LinkedWalletNotFoundException;
 use Domain\Customer\Models\Customer;
+use Domain\Shared\Exceptions\FrequencyNotFoundException;
+use Domain\Shared\Exceptions\SusuSchemeNotFoundException;
 use Domain\Susu\Actions\GoalGetterSusu\GoalGetterSusuCreateAction;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -15,6 +18,9 @@ final class GoalGetterSusuCreateController extends Controller
 {
     /**
      * @throws SystemFailureException
+     * @throws LinkedWalletNotFoundException
+     * @throws FrequencyNotFoundException
+     * @throws SusuSchemeNotFoundException
      */
     public function __invoke(
         Customer $customer,

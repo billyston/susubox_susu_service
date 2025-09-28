@@ -55,6 +55,9 @@ return new class extends Migration
                 $table->date(column: 'end_date')
                     ->default(value: Helpers::getEndCollectionDate());
 
+                $table->dateTime(column: 'account_activity_period')
+                    ->default(value: Carbon::now());
+
                 $table->boolean(column: 'accepted_terms')
                     ->default(value: false);
 

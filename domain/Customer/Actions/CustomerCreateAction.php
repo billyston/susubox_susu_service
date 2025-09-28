@@ -7,6 +7,7 @@ namespace Domain\Customer\Actions;
 use App\Common\Helpers\ApiResponseBuilder;
 use App\Common\Helpers\Helpers;
 use App\Exceptions\Common\SystemFailureException;
+use Domain\Customer\Data\CustomerResource;
 use Domain\Customer\Services\CustomerCreateService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -34,7 +35,7 @@ final class CustomerCreateAction
         );
 
         // Execute the CustomerCreateService
-        $this->customerCreateService->execute(
+        $customer = $this->customerCreateService->execute(
             data: $data,
         );
 
@@ -43,6 +44,9 @@ final class CustomerCreateAction
             code: Response::HTTP_NO_CONTENT,
             message: 'Request successful.',
             description: 'Customer created successfully.',
+            data: new CustomerResource(
+                resource: $customer
+            ),
         );
     }
 }

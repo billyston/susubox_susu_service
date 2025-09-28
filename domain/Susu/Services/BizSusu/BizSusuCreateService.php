@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Domain\Susu\Services\DailySusu;
+namespace Domain\Susu\Services\BizSusu;
 
 use App\Exceptions\Common\SystemFailureException;
 use Brick\Money\Money;
@@ -12,12 +12,12 @@ use Domain\Shared\Models\AccountWallet;
 use Domain\Shared\Models\Frequency;
 use Domain\Shared\Models\SusuScheme;
 use Domain\Susu\Models\Account;
-use Domain\Susu\Models\DailySusu;
+use Domain\Susu\Models\BizSusu;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-final class DailySusuCreateService
+final class BizSusuCreateService
 {
     /**
      * @throws SystemFailureException
@@ -28,7 +28,7 @@ final class DailySusuCreateService
         Frequency $frequency,
         LinkedWallet $linked_wallet,
         array $request_data
-    ): DailySusu {
+    ): BizSusu {
         try {
             // Execute the database transaction
             return DB::transaction(function () use (
@@ -56,10 +56,10 @@ final class DailySusuCreateService
                     'linked_wallet_id' => $linked_wallet->id,
                 ]);
 
-                // Create and return the DailySusu resource
-                return DailySusu::create([
+                // Create and return the BizSusu resource
+                return BizSusu::create([
                     'account_id' => $account->id,
-                    'initial_deposit' => $account->amount->multipliedBy($request_data['initial_deposit']),
+                    'initial_deposit' => Money::of($request_data['initial_deposit'], currency: 'GHS'),
                     'rollover_enabled' => $request_data['rollover_enabled'],
                 ]);
             });
@@ -67,7 +67,7 @@ final class DailySusuCreateService
             Throwable $throwable
         ) {
             // Log the full exception with context
-            Log::error('Exception in DailySusuCreateService', [
+            Log::error('Exception in BizSusuCreateService', [
                 'customer' => $customer,
                 'susu_scheme' => $susu_scheme,
                 'frequency' => $frequency,

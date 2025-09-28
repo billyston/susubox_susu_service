@@ -9,7 +9,6 @@ use Domain\Customer\Models\Customer;
 use Domain\Customer\Models\LinkedWallet;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Throwable;
 
 final class CustomerLinkedWalletCreateService
@@ -20,10 +19,10 @@ final class CustomerLinkedWalletCreateService
     public static function execute(
         Customer $customer,
         array $data
-    ): void {
+    ): LinkedWallet {
         try {
             // Execute the database transaction
-            DB::transaction(
+            return DB::transaction(
                 function () use (
                     $customer,
                     $data
@@ -34,15 +33,16 @@ final class CustomerLinkedWalletCreateService
                         'customer_id' => $customer->id,
                     ]);
 
-                    $linked_wallet->fill([
-                        'resource_id' => $linked_wallet->exists ? $linked_wallet->resource_id : (string) Str::uuid(),
+                    return LinkedWallet::updateOrCreate([
+                        'wallet_number' => $data['wallet_number'],
+                        'customer_id' => $customer->id,
+                    ], [
+                        'resource_id' => $data['resource_id'],
                         'customer_id' => $customer->id,
                         'wallet_name' => $data['wallet_name'] ?? $linked_wallet->wallet_name,
                         'wallet_number' => $data['wallet_number'] ?? $linked_wallet->wallet_number,
                         'network_code' => $data['network_code'] ?? $linked_wallet->network_code,
-                    ]);
-
-                    $linked_wallet->save();
+                    ])->refresh();
                 }
             );
         } catch (

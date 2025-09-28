@@ -88,9 +88,9 @@ final class DailySusuCreateAction
         return ApiResponseBuilder::success(
             code: Response::HTTP_OK,
             message: 'Request successful.',
-            description: 'Your new susu has been created pending approval.',
+            description: 'Your daily susu account is created pending approval.',
             data: new DailySusuResource(
-                resource: $daily_susu
+                resource: $daily_susu->refresh()
             ),
         );
     }

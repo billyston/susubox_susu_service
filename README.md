@@ -36,6 +36,9 @@ The SusuBox susu service API.
 - [ ] Approve create daily susu
 - [ ] Activate create daily susu
 
+####
+- [x] Get single daily susu for customer
+
 ### Biz Susu
 - [x] Create and configure model and migration
 

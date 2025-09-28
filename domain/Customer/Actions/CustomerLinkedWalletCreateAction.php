@@ -7,6 +7,7 @@ namespace Domain\Customer\Actions;
 use App\Common\Helpers\ApiResponseBuilder;
 use App\Common\Helpers\Helpers;
 use App\Exceptions\Common\SystemFailureException;
+use Domain\Customer\Data\CustomerLinkedWalletResource;
 use Domain\Customer\Models\Customer;
 use Domain\Customer\Services\CustomerLinkedWalletCreateService;
 use Illuminate\Http\Request;
@@ -36,7 +37,7 @@ final class CustomerLinkedWalletCreateAction
         );
 
         // Execute the CustomerLinkedWalletCreateService
-        $this->customerLinkedWalletCreateService->execute(
+        $linked_wallet = $this->customerLinkedWalletCreateService->execute(
             customer: $customer,
             data: $data,
         );
@@ -46,6 +47,9 @@ final class CustomerLinkedWalletCreateAction
             code: Response::HTTP_NO_CONTENT,
             message: 'Request successful.',
             description: 'Customer linked wallet created successfully.',
+            data: new CustomerLinkedWalletResource(
+                resource: $linked_wallet
+            ),
         );
     }
 }

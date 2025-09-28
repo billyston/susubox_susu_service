@@ -7,7 +7,10 @@ namespace App\Http\Controllers\V1\Susu\BizSusu;
 use App\Exceptions\Common\SystemFailureException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\Susu\BizSusu\BizSusuCreateRequest;
+use Domain\Customer\Exceptions\LinkedWalletNotFoundException;
 use Domain\Customer\Models\Customer;
+use Domain\Shared\Exceptions\FrequencyNotFoundException;
+use Domain\Shared\Exceptions\SusuSchemeNotFoundException;
 use Domain\Susu\Actions\BizSusu\BizSusuCreateAction;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -15,6 +18,9 @@ final class BizSusuCreateController extends Controller
 {
     /**
      * @throws SystemFailureException
+     * @throws LinkedWalletNotFoundException
+     * @throws FrequencyNotFoundException
+     * @throws SusuSchemeNotFoundException
      */
     public function __invoke(
         Customer $customer,
@@ -24,7 +30,7 @@ final class BizSusuCreateController extends Controller
         // Execute the BizSusuCreateAction and return the JsonResponse
         return $bizSusuCreateAction->execute(
             customer: $customer,
-            BizSusuCreateRequest: $bizSusuCreateRequest
+            bizSusuCreateRequest: $bizSusuCreateRequest
         );
     }
 }

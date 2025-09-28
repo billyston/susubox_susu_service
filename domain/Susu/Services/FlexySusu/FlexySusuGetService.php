@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Domain\Susu\Services\DailySusu;
+namespace Domain\Susu\Services\FlexySusu;
 
 use App\Exceptions\Common\SystemFailureException;
 use Domain\Customer\Models\Customer;
 use Domain\Shared\Exceptions\UnauthorisedAccessException;
 use Domain\Susu\Models\Account;
-use Domain\Susu\Models\DailySusu;
+use Domain\Susu\Models\FlexySusu;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-final class DailySusuGetService
+final class FlexySusuGetService
 {
     /**
      * @throws SystemFailureException
@@ -21,7 +21,7 @@ final class DailySusuGetService
     public static function execute(
         Customer $customer,
         Account $account,
-    ): DailySusu {
+    ): FlexySusu {
         try {
             // Ensure account belongs to this customer
             if ($account->customer_id !== $customer->id) {
@@ -29,12 +29,12 @@ final class DailySusuGetService
             }
 
             // Ensure the account is for a Daily Susu scheme
-            if ($account->scheme->code !== config(key: 'susubox.susu_schemes.daily_susu_code')) {
+            if ($account->scheme->code !== config(key: 'susubox.susu_schemes.flexy_susu_code')) {
                 throw new UnauthorisedAccessException;
             }
 
-            // Return the DailySusu resource
-            return $account->daily;
+            // Return the FlexySusu resource
+            return $account->flexy;
         } catch (
             UnauthorisedAccessException $unauthorisedAccessException
         ) {
@@ -43,7 +43,7 @@ final class DailySusuGetService
             Throwable $throwable
         ) {
             // Log the full exception with context
-            Log::error('Exception in DailySusuGetService', [
+            Log::error('Exception in FlexySusuGetService', [
                 'customer' => $customer,
                 'account' => $account,
                 'exception' => [
