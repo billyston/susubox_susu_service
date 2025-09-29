@@ -70,7 +70,7 @@ final class AccountCancelService
             ]);
 
             throw new SystemFailureException(
-                'A system failure occurred while cancelling the account.'
+                message: 'A system failure occurred while cancelling the account.'
             );
         }
     }

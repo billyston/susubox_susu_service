@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\V1\Susu\FlexySusu\FlexySusuApprovalController;
 use App\Http\Controllers\V1\Susu\FlexySusu\FlexySusuCancelController;
 use App\Http\Controllers\V1\Susu\FlexySusu\FlexySusuCreateController;
+use App\Http\Controllers\V1\Susu\FlexySusu\FlexySusuIndexController;
 use App\Http\Controllers\V1\Susu\FlexySusu\FlexySusuShowController;
 use Illuminate\Support\Facades\Route;
 
@@ -48,6 +49,18 @@ Route::group([
             'customer',
             'account',
         ]
+    );
+
+    // Get flexy (all) susu route
+    Route::get(
+        uri: 'flexy-susus',
+        action: FlexySusuIndexController::class,
+    )->name(
+        name: 'flexy-susus.index'
+    )->whereUuid(
+        parameters: [
+            'customer',
+        ],
     );
 
     // Get flexy (single) susu route

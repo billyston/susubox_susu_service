@@ -27,47 +27,60 @@ The SusuBox susu service API.
 - [x] Create and Configure Account model and migration
 - [x] Get all customer susu accounts
 - [x] Work on a unique account_number
+- [ ] Get account balance
 
-### Daily Susu
+
+
+## Daily Susu
 - [x] Create and configure model and migration
 
-#### Create
+###### Create
 - [x] Create daily susu account
 - [ ] Validate create daily susu
 - [ ] Cancel create daily susu
 - [x] Approve create daily susu
 - [ ] Activate create daily susu
 
-#### Update / Cancel
+###### Update / Cancel
 - [ ] Update daily susu create
 - [ ] Validate update daily susu create
 - [x] Cancel daily susu create
 - [ ] Validate cancel daily susu create
 
-#### Get
+###### Get
 - [x] Get single daily susu for customer
-- [ ] Get all daily susu for customer
+- [x] Get all daily susu for customer
+
+###### Stats
+- [ ] Get all statistics for daily susu
+
+
 
 
 ## Biz Susu
 - [x] Create and configure model and migration
 
-#### Create
+###### Create
 - [x] Create biz susu account
 - [ ] Validate create biz susu
 - [ ] Cancel create biz susu
 - [x] Approve create biz susu
 - [ ] Activate create biz susu
 
-#### Update / Cancel
+###### Update / Cancel
 - [ ] Update biz susu create
 - [ ] Validate update biz susu create
 - [x] Cancel biz susu create
 - [ ] Validate cancel biz susu create
 
-#### Get
+###### Get
 - [x] Get single biz susu for customer
-- [ ] Get all biz susu for customer
+- [x] Get all biz susu for customer
+
+###### Stats
+- [ ] Get all statistics for biz susu
+
+
 
 
 ## Goal Getter Susu
@@ -88,7 +101,12 @@ The SusuBox susu service API.
 
 ###### Get
 - [x] Get single goal getter susu for customer
-- [ ] Get all goal getter susu for customer
+- [x] Get all goal getter susu for customer
+
+###### Stats
+- [ ] Get all statistics for goal getter susu
+
+
 
 
 ## Flexy Susu
@@ -109,4 +127,7 @@ The SusuBox susu service API.
 
 ###### Get
 - [x] Get single flexy susu for customer
-- [ ] Get all flexy susu for customer
+- [x] Get all flexy susu for customer
+
+###### Stats
+- [ ] Get all statistics for flexy susu

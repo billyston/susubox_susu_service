@@ -7,26 +7,25 @@ namespace App\Http\Controllers\V1\Susu\GoalGetterSusu;
 use App\Exceptions\Common\SystemFailureException;
 use App\Http\Controllers\Controller;
 use Domain\Customer\Models\Customer;
+use Domain\Shared\Exceptions\SusuSchemeNotFoundException;
 use Domain\Shared\Exceptions\UnauthorisedAccessException;
-use Domain\Susu\Actions\GoalGetterSusu\GoalGetterSusuShowAction;
-use Domain\Susu\Models\Account;
+use Domain\Susu\Actions\GoalGetterSusu\GoalGetterSusuIndexAction;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-final class GoalGetterSusuShowController extends Controller
+final class GoalGetterSusuIndexController extends Controller
 {
     /**
      * @throws SystemFailureException
      * @throws UnauthorisedAccessException
+     * @throws SusuSchemeNotFoundException
      */
     public function __invoke(
         Customer $customer,
-        Account $account,
-        GoalGetterSusuShowAction $goalGetterSusuShowAction
+        GoalGetterSusuIndexAction $goalGetterSusuIndexAction
     ): JsonResponse {
-        // Execute the GoalGetterSusuShowAction and return the JsonResponse
-        return $goalGetterSusuShowAction->execute(
+        // Execute the GoalGetterSusuIndexAction and return the JsonResponse
+        return $goalGetterSusuIndexAction->execute(
             customer: $customer,
-            account: $account,
         );
     }
 }

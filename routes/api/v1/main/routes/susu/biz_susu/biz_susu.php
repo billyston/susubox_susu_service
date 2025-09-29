@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\V1\Susu\BizSusu\BizSusuApprovalController;
 use App\Http\Controllers\V1\Susu\BizSusu\BizSusuCancelController;
 use App\Http\Controllers\V1\Susu\BizSusu\BizSusuCreateController;
+use App\Http\Controllers\V1\Susu\BizSusu\BizSusuIndexController;
 use App\Http\Controllers\V1\Susu\BizSusu\BizSusuShowController;
 use Illuminate\Support\Facades\Route;
 
@@ -47,6 +48,18 @@ Route::group([
         parameters: [
             'customer',
             'account',
+        ]
+    );
+
+    // Get biz (all) susu route
+    Route::get(
+        uri: 'biz-susus',
+        action: BizSusuIndexController::class
+    )->name(
+        name: 'biz-susus.index'
+    )->whereUuid(
+        parameters: [
+            'customer',
         ]
     );
 

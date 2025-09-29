@@ -14,7 +14,7 @@ use Domain\Susu\Services\GoalGetterSusu\GoalGetterSusuShowService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-final class GoalGetterSusuGetAction
+final class GoalGetterSusuShowAction
 {
     private GoalGetterSusuShowService $goalGetterSusuShowService;
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\V1\Susu\DailySusu\DailySusuApprovalController;
 use App\Http\Controllers\V1\Susu\DailySusu\DailySusuCancelController;
 use App\Http\Controllers\V1\Susu\DailySusu\DailySusuCreateController;
+use App\Http\Controllers\V1\Susu\DailySusu\DailySusuIndexController;
 use App\Http\Controllers\V1\Susu\DailySusu\DailySusuShowController;
 use Illuminate\Support\Facades\Route;
 
@@ -47,6 +48,18 @@ Route::group([
         parameters: [
             'customer',
             'account',
+        ]
+    );
+
+    // Get daily (all) susu route
+    Route::get(
+        uri: 'daily-susus',
+        action: DailySusuIndexController::class
+    )->name(
+        name: 'daily-susus.index'
+    )->whereUuid(
+        parameters: [
+            'customer',
         ]
     );
 

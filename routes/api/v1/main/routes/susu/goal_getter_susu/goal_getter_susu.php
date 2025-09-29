@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\V1\Susu\GoalGetterSusu\GoalGetterSusuApprovalController;
 use App\Http\Controllers\V1\Susu\GoalGetterSusu\GoalGetterSusuCancelController;
 use App\Http\Controllers\V1\Susu\GoalGetterSusu\GoalGetterSusuCreateController;
+use App\Http\Controllers\V1\Susu\GoalGetterSusu\GoalGetterSusuIndexController;
 use App\Http\Controllers\V1\Susu\GoalGetterSusu\GoalGetterSusuShowController;
 use Illuminate\Support\Facades\Route;
 
@@ -47,6 +48,18 @@ Route::group([
         parameters: [
             'customer',
             'account',
+        ]
+    );
+
+    // Get goal getter (all) susu route
+    Route::get(
+        uri: 'goal-getter-susus',
+        action: GoalGetterSusuIndexController::class
+    )->name(
+        name: 'goal-getter-susus.index'
+    )->whereUuid(
+        parameters: [
+            'customer',
         ]
     );
 
