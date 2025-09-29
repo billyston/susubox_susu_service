@@ -125,6 +125,8 @@ final class Account extends Model
         return $this->hasManyThrough(
             related: Transaction::class,
             through: AccountWallet::class,
+            firstKey: 'account_id',
+            secondKey: 'account_id',
         );
     }
 

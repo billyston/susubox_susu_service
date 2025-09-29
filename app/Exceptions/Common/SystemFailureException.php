@@ -11,6 +11,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class SystemFailureException extends Exception
 {
+    public function __construct(
+        string $message = 'Service is unavailable, please retry again later.'
+    ) {
+        parent::__construct($message, 401);
+    }
+
     public function report(
     ): JsonResponse {
         return ApiResponseBuilder::error(

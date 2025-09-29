@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\V1\Susu\FlexySusu\FlexySusuApprovalController;
+use App\Http\Controllers\V1\Susu\FlexySusu\FlexySusuCancelController;
 use App\Http\Controllers\V1\Susu\FlexySusu\FlexySusuCreateController;
 use App\Http\Controllers\V1\Susu\FlexySusu\FlexySusuShowController;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,19 @@ Route::group([
     )->whereUuid(
         parameters: [
             'customer',
+        ]
+    );
+
+    // Flexy susu cancel route
+    Route::post(
+        uri: '{account}/flexy-susus/cancel',
+        action: FlexySusuCancelController::class
+    )->name(
+        name: 'flexy-susus.cancel'
+    )->whereUuid(
+        parameters: [
+            'customer',
+            'account',
         ]
     );
 

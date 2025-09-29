@@ -80,6 +80,7 @@ return [
         'domain/Shared/Exceptions/SusuSchemeNotFoundException.php',
         'domain/Shared/Exceptions/UnauthorisedAccessException.php',
         'domain/Customer/Exceptions/LinkedWalletNotFoundException.php',
+        'domain/Susu/Exceptions/Account/CancellationNotAllowedException.php',
         'app/Exceptions/Common/SystemFailureException.php',
 
         'app/Common/Services/RateLimiterService.php',

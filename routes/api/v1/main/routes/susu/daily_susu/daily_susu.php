@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\V1\Susu\DailySusu\DailySusuApprovalController;
+use App\Http\Controllers\V1\Susu\DailySusu\DailySusuCancelController;
 use App\Http\Controllers\V1\Susu\DailySusu\DailySusuCreateController;
 use App\Http\Controllers\V1\Susu\DailySusu\DailySusuShowController;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,19 @@ Route::group([
     )->whereUuid(
         parameters: [
             'customer',
+        ]
+    );
+
+    // Daily susu cancel route
+    Route::post(
+        uri: '{account}/daily-susus/cancel',
+        action: DailySusuCancelController::class
+    )->name(
+        name: 'daily-susus.cancel'
+    )->whereUuid(
+        parameters: [
+            'customer',
+            'account',
         ]
     );
 

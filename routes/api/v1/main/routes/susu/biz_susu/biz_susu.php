@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\V1\Susu\BizSusu\BizSusuApprovalController;
+use App\Http\Controllers\V1\Susu\BizSusu\BizSusuCancelController;
 use App\Http\Controllers\V1\Susu\BizSusu\BizSusuCreateController;
 use App\Http\Controllers\V1\Susu\BizSusu\BizSusuShowController;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,19 @@ Route::group([
     )->whereUuid(
         parameters: [
             'customer',
+        ]
+    );
+
+    // Biz susu cancel route
+    Route::post(
+        uri: '{account}/biz-susus/cancel',
+        action: BizSusuCancelController::class
+    )->name(
+        name: 'biz-susus.cancel'
+    )->whereUuid(
+        parameters: [
+            'customer',
+            'account',
         ]
     );
 

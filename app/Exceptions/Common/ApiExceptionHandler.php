@@ -8,6 +8,7 @@ use Domain\Customer\Exceptions\LinkedWalletNotFoundException;
 use Domain\Shared\Exceptions\FrequencyNotFoundException;
 use Domain\Shared\Exceptions\SusuSchemeNotFoundException;
 use Domain\Shared\Exceptions\UnauthorisedAccessException;
+use Domain\Susu\Exceptions\Account\CancellationNotAllowedException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -44,6 +45,7 @@ final class ApiExceptionHandler extends ExceptionHandler
             ThrottleRequestsException::class => [Response::HTTP_TOO_MANY_REQUESTS, 'Too many requests.', 'You have made too many requests.'],
             UnauthorisedAccessException::class => [Response::HTTP_FORBIDDEN, 'Request forbidden.', 'You are forbidden to perform this action.'],
             LinkedWalletNotFoundException::class => [Response::HTTP_NOT_FOUND, 'Resource not found.', 'The wallet was not found.'],
+            CancellationNotAllowedException::class => [Response::HTTP_NOT_FOUND, 'Request unprocessable.', 'You are not allowed to perform this action.'],
             SusuSchemeNotFoundException::class => [Response::HTTP_NOT_FOUND, 'Resource not found.', 'The susu scheme was not found.'],
             FrequencyNotFoundException::class => [Response::HTTP_NOT_FOUND, 'Resource not found.', 'The frequency was not found.'],
             ModelNotFoundException::class => [Response::HTTP_NOT_FOUND, 'Resource not found.', 'The requested resource does not exist.'],
@@ -128,6 +130,10 @@ final class ApiExceptionHandler extends ExceptionHandler
         }
 
         if ($e instanceof UnauthorisedAccessException) {
+            return [$e->getMessage()];
+        }
+
+        if ($e instanceof CancellationNotAllowedException) {
             return [$e->getMessage()];
         }
 

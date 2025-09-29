@@ -41,7 +41,7 @@ The SusuBox susu service API.
 #### Update / Cancel
 - [ ] Update daily susu create
 - [ ] Validate update daily susu create
-- [ ] Cancel daily susu create
+- [x] Cancel daily susu create
 - [ ] Validate cancel daily susu create
 
 #### Get
@@ -62,7 +62,7 @@ The SusuBox susu service API.
 #### Update / Cancel
 - [ ] Update biz susu create
 - [ ] Validate update biz susu create
-- [ ] Cancel biz susu create
+- [x] Cancel biz susu create
 - [ ] Validate cancel biz susu create
 
 #### Get
@@ -83,7 +83,7 @@ The SusuBox susu service API.
 ###### Update / Cancel
 - [ ] Update goal getter susu create
 - [ ] Validate update goal getter susu create
-- [ ] Cancel goal getter susu create
+- [x] Cancel goal getter susu create
 - [ ] Validate cancel goal getter susu create
 
 ###### Get
@@ -104,7 +104,7 @@ The SusuBox susu service API.
 ###### Update / Cancel
 - [ ] Update flexy susu create
 - [ ] Validate update flexy susu create
-- [ ] Cancel flexy susu create
+- [x] Cancel flexy susu create
 - [ ] Validate cancel flexy susu create
 
 ###### Get

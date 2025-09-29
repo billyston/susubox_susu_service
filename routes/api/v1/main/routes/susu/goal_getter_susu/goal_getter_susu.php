@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\V1\Susu\GoalGetterSusu\GoalGetterSusuApprovalController;
+use App\Http\Controllers\V1\Susu\GoalGetterSusu\GoalGetterSusuCancelController;
 use App\Http\Controllers\V1\Susu\GoalGetterSusu\GoalGetterSusuCreateController;
 use App\Http\Controllers\V1\Susu\GoalGetterSusu\GoalGetterSusuShowController;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,19 @@ Route::group([
         parameters: [
             'customer',
         ],
+    );
+
+    // Goal getter susu cancel route
+    Route::post(
+        uri: '{account}/goal-getter-susus/cancel',
+        action: GoalGetterSusuCancelController::class
+    )->name(
+        name: 'goal-getter-susus.cancel'
+    )->whereUuid(
+        parameters: [
+            'customer',
+            'account',
+        ]
     );
 
     // Goal getter susu approval route

@@ -33,20 +33,24 @@ final class ApiResponseBuilder
             'version' => '1.0',
             'status' => true,
             'code' => $code,
-            'message' => $message !== null && $message !== '' && $message !== '0'
-                ? $message
-                : 'Request successful',
+            'message' => $message !== null && $message !== '' && $message !== '0' ? $message : 'Request successful',
             'description' => $description,
-            'data' => $data,
         ];
 
-        if (method_exists($data, 'included')) {
-            $included = $data->included();
-            if (! empty($included)) {
-                $response['included'] = $included;
+        if (! empty($data)) {
+            // Exclude the data key is empty
+            $response['data'] = $data;
+
+            // Exclude the included key if data key does not exist
+            if (method_exists($data, 'included')) {
+                $included = $data->included();
+                if (! empty($included)) {
+                    $response['included'] = $included;
+                }
             }
         }
 
+        // Return the response
         return response()->json($response);
     }
 

@@ -44,7 +44,7 @@ final class Transaction extends Model
         return 'resource_id';
     }
 
-    public function account(
+    public function type(
     ): HasOne {
         return $this->hasOne(
             related: TransactionType::class,
@@ -52,7 +52,7 @@ final class Transaction extends Model
         );
     }
 
-    public function susu(
+    public function account(
     ): BelongsTo {
         return $this->belongsTo(
             related: Account::class,
