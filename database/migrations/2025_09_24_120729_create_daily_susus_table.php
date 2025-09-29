@@ -25,8 +25,6 @@ return new class extends Migration
                 $table->unsignedBigInteger(column: 'account_id');
 
                 // Table main attributes
-                $table->integer(column: 'initial_deposit');
-
                 $table->string(column: 'currency')
                     ->default(value: 'GHS');
 

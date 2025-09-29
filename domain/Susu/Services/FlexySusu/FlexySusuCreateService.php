@@ -44,7 +44,8 @@ final class FlexySusuCreateService
                         product_code: config(key: 'susubox.susu_schemes.flexy_susu_code'),
                     ),
                     'purpose' => $request_data['purpose'],
-                    'amount' => Money::of(amount: 0.00, currency: 'GHS'),
+                    'susu_amount' => Money::of(amount: 0.00, currency: 'GHS'),
+                    'initial_deposit' => Money::of($request_data['initial_deposit'], currency: 'GHS'),
                     'accepted_terms' => $request_data['accepted_terms'],
                 ]);
 
@@ -57,7 +58,6 @@ final class FlexySusuCreateService
                 // Create and return the BizSusu resource
                 return FlexySusu::create([
                     'account_id' => $account->id,
-                    'initial_deposit' => Money::of($request_data['initial_deposit'], currency: 'GHS'),
                 ]);
             });
         } catch (

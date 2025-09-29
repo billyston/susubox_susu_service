@@ -67,7 +67,8 @@ final class GoalGetterSusuCreateService
                         product_code: config(key: 'susubox.susu_schemes.goal_getter_susu_code'),
                     ),
                     'purpose' => $request_data['purpose'],
-                    'amount' => $susu_amount,
+                    'susu_amount' => $susu_amount,
+                    'initial_deposit' => Money::of($request_data['initial_deposit'], currency: 'GHS'),
                     'start_date' => $start_date,
                     'end_date' => Helpers::getDateWithOffset(
                         Carbon::parse($start_date),
@@ -86,7 +87,6 @@ final class GoalGetterSusuCreateService
                 return GoalGetterSusu::create([
                     'account_id' => $account->id,
                     'target_amount' => Money::of($request_data['target_amount'], currency: 'GHS'),
-                    'initial_deposit' => Money::of($request_data['initial_deposit'], currency: 'GHS'),
                     'duration_id' => $duration->id,
                 ]);
             });

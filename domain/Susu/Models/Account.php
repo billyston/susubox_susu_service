@@ -26,7 +26,8 @@ final class Account extends Model
 
     protected $casts = [
         'extra_data' => 'array',
-        'amount' => MoneyCasts::class,
+        'initial_deposit' => MoneyCasts::class,
+        'susu_amount' => MoneyCasts::class,
     ];
 
     protected $fillable = [
@@ -37,7 +38,8 @@ final class Account extends Model
         'account_name',
         'account_number',
         'purpose',
-        'amount',
+        'initial_deposit',
+        'susu_amount',
         'currency',
         'start_date',
         'end_date',

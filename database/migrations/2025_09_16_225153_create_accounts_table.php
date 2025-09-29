@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Common\Helpers\Helpers;
+use Brick\Money\Money;
 use Domain\Susu\Enums\Account\AccountStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -44,7 +45,9 @@ return new class extends Migration
                 $table->string(column: 'purpose')
                     ->nullable();
 
-                $table->integer(column: 'amount');
+                $table->integer(column: 'susu_amount');
+
+                $table->integer(column: 'initial_deposit');
 
                 $table->string(column: 'currency')
                     ->default(value: 'GHS');

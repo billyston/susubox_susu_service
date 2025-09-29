@@ -18,14 +18,12 @@ final class GoalGetterSusu extends Model
     protected $casts = [
         'extra_data' => 'array',
         'target_amount' => MoneyCasts::class,
-        'initial_deposit' => MoneyCasts::class,
     ];
 
     protected $fillable = [
         'account_id',
         'duration_id',
         'target_amount',
-        'initial_deposit',
         'currency',
         'rollover_enabled',
         'is_collateralized',

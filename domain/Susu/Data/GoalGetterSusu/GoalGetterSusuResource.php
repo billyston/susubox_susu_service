@@ -24,7 +24,6 @@ final class GoalGetterSusuResource extends JsonResource
             // Resource exposed attributes
             'attributes' => [
                 'target_amount' => number_format(num: $this->resource->target_amount->getAmount()->toFloat(), decimals: 2),
-                'initial_deposit' => number_format(num: $this->resource->initial_deposit->getAmount()->toFloat(), decimals: 2),
                 'rollover_enabled' => $this->resource->rollover_enabled,
                 'is_collateralized' => $this->resource->is_collateralized,
                 'recurring_debit_status' => $this->resource->recurring_debit_status,

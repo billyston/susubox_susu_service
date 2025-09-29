@@ -28,8 +28,6 @@ return new class extends Migration
                 // Table main attributes
                 $table->integer(column: 'target_amount');
 
-                $table->integer(column: 'initial_deposit');
-
                 $table->string(column: 'currency')
                     ->default(value: 'GHS');
 

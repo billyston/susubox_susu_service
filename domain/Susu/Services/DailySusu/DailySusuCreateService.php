@@ -38,6 +38,9 @@ final class DailySusuCreateService
                 $linked_wallet,
                 $request_data
             ) {
+                // Get the susu_amount
+                $susu_amount = Money::of($request_data['susu_amount'], currency: 'GHS');
+
                 // Create and return the account resource
                 $account = Account::create([
                     'customer_id' => $customer->id,
@@ -48,7 +51,8 @@ final class DailySusuCreateService
                         product_code: config(key: 'susubox.susu_schemes.daily_susu_code'),
                     ),
                     'purpose' => $request_data['purpose'],
-                    'amount' => Money::of($request_data['susu_amount'], currency: 'GHS'),
+                    'susu_amount' => $susu_amount,
+                    'initial_deposit' => $susu_amount->multipliedBy($request_data['initial_deposit']),
                     'accepted_terms' => $request_data['accepted_terms'],
                 ]);
 
@@ -61,7 +65,6 @@ final class DailySusuCreateService
                 // Create and return the DailySusu resource
                 return DailySusu::create([
                     'account_id' => $account->id,
-                    'initial_deposit' => $account->amount->multipliedBy($request_data['initial_deposit']),
                     'rollover_enabled' => $request_data['rollover_enabled'],
                 ]);
             });

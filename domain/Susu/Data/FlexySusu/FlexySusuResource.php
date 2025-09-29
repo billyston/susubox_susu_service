@@ -23,7 +23,6 @@ final class FlexySusuResource extends JsonResource
 
             // Resource exposed attributes
             'attributes' => [
-                'initial_deposit' => number_format(num: $this->resource->initial_deposit->getAmount()->toFloat(), decimals: 2),
                 'is_collateralized' => $this->resource->is_collateralized,
                 'withdrawal_status' => $this->resource->withdrawal_status,
             ],

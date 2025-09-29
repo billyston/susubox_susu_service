@@ -23,7 +23,6 @@ final class DailySusuResource extends JsonResource
 
             // Resource exposed attributes
             'attributes' => [
-                'initial_deposit' => number_format(num: $this->resource->initial_deposit->getAmount()->toFloat(), decimals: 2),
                 'rollover_enabled' => $this->resource->rollover_enabled,
                 'is_collateralized' => $this->resource->is_collateralized,
                 'auto_settlement' => $this->resource->auto_settlement,

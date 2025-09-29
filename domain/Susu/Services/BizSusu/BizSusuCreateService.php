@@ -48,7 +48,8 @@ final class BizSusuCreateService
                         product_code: config(key: 'susubox.susu_schemes.biz_susu_code'),
                     ),
                     'purpose' => $request_data['purpose'],
-                    'amount' => Money::of($request_data['susu_amount'], currency: 'GHS'),
+                    'susu_amount' => Money::of($request_data['susu_amount'], currency: 'GHS'),
+                    'initial_deposit' => Money::of($request_data['initial_deposit'], currency: 'GHS'),
                     'accepted_terms' => $request_data['accepted_terms'],
                 ]);
 
@@ -61,7 +62,6 @@ final class BizSusuCreateService
                 // Create and return the BizSusu resource
                 return BizSusu::create([
                     'account_id' => $account->id,
-                    'initial_deposit' => Money::of($request_data['initial_deposit'], currency: 'GHS'),
                     'rollover_enabled' => $request_data['rollover_enabled'],
                 ]);
             });
