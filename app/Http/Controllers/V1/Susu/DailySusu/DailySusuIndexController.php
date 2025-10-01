@@ -7,6 +7,7 @@ namespace App\Http\Controllers\V1\Susu\DailySusu;
 use App\Exceptions\Common\SystemFailureException;
 use App\Http\Controllers\Controller;
 use Domain\Customer\Models\Customer;
+use Domain\Shared\Exceptions\SusuSchemeNotFoundException;
 use Domain\Shared\Exceptions\UnauthorisedAccessException;
 use Domain\Susu\Actions\DailySusu\DailySusuIndexAction;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,6 +17,7 @@ final class DailySusuIndexController extends Controller
     /**
      * @throws SystemFailureException
      * @throws UnauthorisedAccessException
+     * @throws SusuSchemeNotFoundException
      */
     public function __invoke(
         Customer $customer,

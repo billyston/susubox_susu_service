@@ -10,7 +10,7 @@ use App\Http\Requests\V1\Susu\BizSusu\BizSusuCancelRequest;
 use Domain\Customer\Models\Customer;
 use Domain\Susu\Actions\BizSusu\BizSusuCancelAction;
 use Domain\Susu\Exceptions\Account\CancellationNotAllowedException;
-use Domain\Susu\Models\Account;
+use Domain\Susu\Models\BizSusu;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class BizSusuCancelController extends Controller
@@ -21,14 +21,14 @@ final class BizSusuCancelController extends Controller
      */
     public function __invoke(
         Customer $customer,
-        Account $account,
+        BizSusu $biz_susu,
         BizSusuCancelRequest $bizSusuCancelRequest,
         BizSusuCancelAction $bizSusuCancelAction
     ): JsonResponse {
         // Execute the BizSusuCancelAction and return the JsonResponse
         return $bizSusuCancelAction->execute(
             customer: $customer,
-            account: $account,
+            biz_susu: $biz_susu,
             bizSusuCancelRequest: $bizSusuCancelRequest
         );
     }

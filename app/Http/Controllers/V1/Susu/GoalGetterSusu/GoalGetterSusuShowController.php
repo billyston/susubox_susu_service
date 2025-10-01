@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 use Domain\Customer\Models\Customer;
 use Domain\Shared\Exceptions\UnauthorisedAccessException;
 use Domain\Susu\Actions\GoalGetterSusu\GoalGetterSusuShowAction;
-use Domain\Susu\Models\Account;
+use Domain\Susu\Models\GoalGetterSusu;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class GoalGetterSusuShowController extends Controller
@@ -20,13 +20,13 @@ final class GoalGetterSusuShowController extends Controller
      */
     public function __invoke(
         Customer $customer,
-        Account $account,
+        GoalGetterSusu $goal_getter_susu,
         GoalGetterSusuShowAction $goalGetterSusuShowAction
     ): JsonResponse {
         // Execute the GoalGetterSusuShowAction and return the JsonResponse
         return $goalGetterSusuShowAction->execute(
             customer: $customer,
-            account: $account,
+            goal_getter_susu: $goal_getter_susu,
         );
     }
 }

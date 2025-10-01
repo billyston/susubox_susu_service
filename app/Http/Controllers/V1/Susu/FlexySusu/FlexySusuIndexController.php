@@ -10,7 +10,6 @@ use Domain\Customer\Models\Customer;
 use Domain\Shared\Exceptions\SusuSchemeNotFoundException;
 use Domain\Shared\Exceptions\UnauthorisedAccessException;
 use Domain\Susu\Actions\FlexySusu\FlexySusuIndexAction;
-use Domain\Susu\Models\Account;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class FlexySusuIndexController extends Controller
@@ -22,7 +21,6 @@ final class FlexySusuIndexController extends Controller
      */
     public function __invoke(
         Customer $customer,
-        Account $account,
         FlexySusuIndexAction $flexySusuIndexAction
     ): JsonResponse {
         // Execute the FlexySusuIndexAction and return the JsonResponse

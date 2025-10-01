@@ -10,15 +10,15 @@ use App\Http\Controllers\V1\Susu\DailySusu\DailySusuShowController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
-    'prefix' => 'customers/{customer}/accounts/',
-    'as' => 'customers.customer.accounts.',
+    'prefix' => 'customers/{customer}/daily-susus/',
+    'as' => 'customers.customer.daily-susus.',
 ], function (): void {
     // Create daily susu request route
     Route::post(
-        uri: 'daily-susus',
+        uri: '',
         action: DailySusuCreateController::class,
     )->name(
-        name: 'daily-susus'
+        name: 'create'
     )->whereUuid(
         parameters: [
             'customer',
@@ -27,36 +27,36 @@ Route::group([
 
     // Daily susu cancel route
     Route::post(
-        uri: '{account}/daily-susus/cancel',
+        uri: '{daily_susu}/cancel',
         action: DailySusuCancelController::class
     )->name(
-        name: 'daily-susus.cancel'
+        name: 'daily_susu.cancel'
     )->whereUuid(
         parameters: [
             'customer',
-            'account',
+            'daily_susu',
         ]
     );
 
     // Daily susu approval route
     Route::post(
-        uri: '{account}/daily-susus/approval',
+        uri: '{daily_susu}/approval',
         action: DailySusuApprovalController::class
     )->name(
-        name: 'daily-susus.approval'
+        name: 'daily_susu.approval'
     )->whereUuid(
         parameters: [
             'customer',
-            'account',
+            'daily_susu',
         ]
     );
 
     // Get daily (all) susu route
     Route::get(
-        uri: 'daily-susus',
+        uri: '',
         action: DailySusuIndexController::class
     )->name(
-        name: 'daily-susus.index'
+        name: 'index'
     )->whereUuid(
         parameters: [
             'customer',
@@ -65,14 +65,14 @@ Route::group([
 
     // Get daily (single) susu route
     Route::get(
-        uri: '{account}/daily-susus',
+        uri: '{daily_susu}',
         action: DailySusuShowController::class
     )->name(
-        name: 'daily-susus.show'
+        name: 'daily_susu.show'
     )->whereUuid(
         parameters: [
             'customer',
-            'account',
+            'daily_susu',
         ]
     );
 });

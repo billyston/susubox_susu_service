@@ -10,53 +10,53 @@ use App\Http\Controllers\V1\Susu\BizSusu\BizSusuShowController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
-    'prefix' => 'customers/{customer}/accounts/',
-    'as' => 'customers.customer.accounts.',
+    'prefix' => 'customers/{customer}/biz-susus/',
+    'as' => 'customers.customer.biz-susus.',
 ], function (): void {
     // Create biz susu request route
     Route::post(
-        uri: 'biz-susus',
+        uri: '',
         action: BizSusuCreateController::class,
     )->name(
-        name: 'biz-susus'
+        name: 'create'
     )->whereUuid(
         parameters: [
             'customer',
-        ]
+        ],
     );
 
     // Biz susu cancel route
     Route::post(
-        uri: '{account}/biz-susus/cancel',
+        uri: '{biz_susu}/cancel',
         action: BizSusuCancelController::class
     )->name(
-        name: 'biz-susus.cancel'
+        name: 'biz_susu.cancel'
     )->whereUuid(
         parameters: [
             'customer',
-            'account',
+            'biz_susu',
         ]
     );
 
     // Biz susu approval route
     Route::post(
-        uri: '{account}/biz-susus/approval',
+        uri: '{biz_susu}/approval',
         action: BizSusuApprovalController::class
     )->name(
-        name: 'biz-susus.approval'
+        name: 'biz_susu.approval'
     )->whereUuid(
         parameters: [
             'customer',
-            'account',
+            'biz_susu',
         ]
     );
 
     // Get biz (all) susu route
     Route::get(
-        uri: 'biz-susus',
+        uri: '',
         action: BizSusuIndexController::class
     )->name(
-        name: 'biz-susus.index'
+        name: 'index'
     )->whereUuid(
         parameters: [
             'customer',
@@ -65,14 +65,14 @@ Route::group([
 
     // Get biz (single) susu route
     Route::get(
-        uri: '{account}/biz-susus',
+        uri: '{biz_susu}',
         action: BizSusuShowController::class,
     )->name(
-        name: 'biz-susus.show'
+        name: 'biz_susu.show'
     )->whereUuid(
         parameters: [
             'customer',
-            'account',
+            'biz_susu',
         ]
     );
 });

@@ -10,15 +10,15 @@ use App\Http\Controllers\V1\Susu\GoalGetterSusu\GoalGetterSusuShowController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
-    'prefix' => 'customers/{customer}/accounts/',
-    'as' => 'customers.customer.accounts.',
+    'prefix' => 'customers/{customer}/goal-getter-susus/',
+    'as' => 'customers.customer.goal-getter-susus.',
 ], function (): void {
     // Create goal getter susu request route
     Route::post(
-        uri: 'goal-getter-susus',
+        uri: '',
         action: GoalGetterSusuCreateController::class,
     )->name(
-        name: 'goal-getter-susus.'
+        name: 'create'
     )->whereUuid(
         parameters: [
             'customer',
@@ -27,36 +27,36 @@ Route::group([
 
     // Goal getter susu cancel route
     Route::post(
-        uri: '{account}/goal-getter-susus/cancel',
+        uri: '{goal_getter_susu}/cancel',
         action: GoalGetterSusuCancelController::class
     )->name(
-        name: 'goal-getter-susus.cancel'
+        name: 'goal_getter_susu.cancel'
     )->whereUuid(
         parameters: [
             'customer',
-            'account',
+            'goal_getter_susu',
         ]
     );
 
     // Goal getter susu approval route
     Route::post(
-        uri: '{account}/goal-getter-susus/approval',
+        uri: '{goal_getter_susu}/approval',
         action: GoalGetterSusuApprovalController::class
     )->name(
-        name: 'goal-getter-susus.approval'
+        name: 'goal_getter_susu.approval'
     )->whereUuid(
         parameters: [
             'customer',
-            'account',
+            'goal_getter_susu',
         ]
     );
 
     // Get goal getter (all) susu route
     Route::get(
-        uri: 'goal-getter-susus',
+        uri: '',
         action: GoalGetterSusuIndexController::class
     )->name(
-        name: 'goal-getter-susus.index'
+        name: 'index'
     )->whereUuid(
         parameters: [
             'customer',
@@ -65,14 +65,14 @@ Route::group([
 
     // Get goal getter (single) susu route
     Route::get(
-        uri: '{account}/goal-getter-susus',
+        uri: '{goal_getter_susu}',
         action: GoalGetterSusuShowController::class,
     )->name(
-        name: 'goal-getter-susus.show'
+        name: 'goal_getter_susu.show'
     )->whereUuid(
         parameters: [
             'customer',
-            'account',
+            'goal_getter_susu',
         ]
     );
 });

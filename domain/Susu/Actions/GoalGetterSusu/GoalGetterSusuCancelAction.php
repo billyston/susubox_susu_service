@@ -9,7 +9,7 @@ use App\Exceptions\Common\SystemFailureException;
 use App\Http\Requests\V1\Susu\GoalGetterSusu\GoalGetterSusuCancelRequest;
 use Domain\Customer\Models\Customer;
 use Domain\Susu\Exceptions\Account\CancellationNotAllowedException;
-use Domain\Susu\Models\Account;
+use Domain\Susu\Models\GoalGetterSusu;
 use Domain\Susu\Services\Account\AccountCancelService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,12 +30,12 @@ final class GoalGetterSusuCancelAction
      */
     public function execute(
         Customer $customer,
-        Account $account,
+        GoalGetterSusu $goal_getter_susu,
         GoalGetterSusuCancelRequest $goalGetterSusuCancelRequest,
     ): JsonResponse {
         // Execute the AccountCancelService
         $this->accountCancelService->execute(
-            account: $account,
+            account: $goal_getter_susu->account,
         );
 
         // Build and return the JsonResponse

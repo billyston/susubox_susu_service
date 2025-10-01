@@ -10,7 +10,7 @@ use App\Http\Requests\V1\Susu\GoalGetterSusu\GoalGetterSusuApprovalRequest;
 use Domain\Customer\Models\Customer;
 use Domain\Susu\Data\GoalGetterSusu\GoalGetterSusuResource;
 use Domain\Susu\Enums\Account\AccountStatus;
-use Domain\Susu\Models\Account;
+use Domain\Susu\Models\GoalGetterSusu;
 use Domain\Susu\Services\Account\AccountStatusUpdateService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,12 +30,12 @@ final class GoalGetterSusuApprovalAction
      */
     public function execute(
         Customer $customer,
-        Account $account,
+        GoalGetterSusu $goal_getter_susu,
         GoalGetterSusuApprovalRequest $goalGetterSusuApprovalRequest,
     ): JsonResponse {
         // Execute the AccountStatusUpdateService and return the account resource
         $account = $this->accountStatusUpdateService->execute(
-            account: $account,
+            account: $goal_getter_susu->account,
             status: AccountStatus::APPROVED->value
         );
 

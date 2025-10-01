@@ -9,7 +9,7 @@ use App\Exceptions\Common\SystemFailureException;
 use Domain\Customer\Models\Customer;
 use Domain\Shared\Exceptions\UnauthorisedAccessException;
 use Domain\Susu\Data\GoalGetterSusu\GoalGetterSusuResource;
-use Domain\Susu\Models\Account;
+use Domain\Susu\Models\GoalGetterSusu;
 use Domain\Susu\Services\GoalGetterSusu\GoalGetterSusuShowService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,12 +30,12 @@ final class GoalGetterSusuShowAction
      */
     public function execute(
         Customer $customer,
-        Account $account,
+        GoalGetterSusu $goal_getter_susu,
     ): JsonResponse {
         // Execute the GoalGetterSusuShowService and return the resource
         $goal_getter_susu = $this->goalGetterSusuShowService->execute(
             customer: $customer,
-            account: $account
+            account: $goal_getter_susu->account
         );
 
         // Build and return the JsonResponse

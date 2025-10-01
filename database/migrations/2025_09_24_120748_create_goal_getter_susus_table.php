@@ -19,6 +19,9 @@ return new class extends Migration
              ) {
                 // Table ids
                 $table->id();
+                $table->uuid(column: 'resource_id')
+                    ->unique()
+                    ->index();
 
                 // Table related fields
                 $table->unsignedBigInteger(column: 'account_id');

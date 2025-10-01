@@ -20,6 +20,7 @@ final class BizSusuResource extends JsonResource
         return [
             // Resource type and id
             'type' => 'BizSusu',
+            'resource_id' => $this->resource->resource_id,
 
             // Resource exposed attributes
             'attributes' => [
@@ -28,19 +29,14 @@ final class BizSusuResource extends JsonResource
                 'withdrawal_status' => $this->resource->withdrawal_status,
                 'recurring_debit_status' => $this->resource->recurring_debit_status,
             ],
-        ];
-    }
 
-    public function included(
-    ): array {
-        return [
             // Included resource
-            'account' => new AccountResource($this->resource->account),
-            'frequency' => new FrequencyResource($this->resource->account->frequency),
-            'scheme' => new SusuSchemeResource($this->resource->account->scheme),
-            'linked_wallet' => CustomerLinkedWalletResource::collection($this->resource->account->wallets),
-//            'account_lock' => $this->when(! empty($this->resource->lock), new SusuAccountLockData($this->resource)),
-//            'account_pause' => $this->when(! empty($this->resource->pause), new SusuAccountPauseData($this->resource)),
+            'included' => [
+                'account' => new AccountResource($this->resource->account),
+                'linked_wallet' => CustomerLinkedWalletResource::collection($this->resource->account->wallets),
+                'frequency' => new FrequencyResource($this->resource->account->frequency),
+                'scheme' => new SusuSchemeResource($this->resource->account->scheme),
+            ],
         ];
     }
 }

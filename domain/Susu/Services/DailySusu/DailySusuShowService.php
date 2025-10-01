@@ -7,7 +7,6 @@ namespace Domain\Susu\Services\DailySusu;
 use App\Exceptions\Common\SystemFailureException;
 use Domain\Customer\Models\Customer;
 use Domain\Shared\Exceptions\UnauthorisedAccessException;
-use Domain\Susu\Models\Account;
 use Domain\Susu\Models\DailySusu;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -20,21 +19,21 @@ final class DailySusuShowService
      */
     public static function execute(
         Customer $customer,
-        Account $account,
+        DailySusu $daily_susu,
     ): DailySusu {
         try {
             // Ensure account belongs to this customer
-            if ($account->customer_id !== $customer->id) {
+            if ($daily_susu->account->customer_id !== $customer->id) {
                 throw new UnauthorisedAccessException;
             }
 
             // Ensure the account is for a Daily Susu scheme
-            if ($account->scheme->code !== config(key: 'susubox.susu_schemes.daily_susu_code')) {
+            if ($daily_susu->account->scheme->code !== config(key: 'susubox.susu_schemes.daily_susu_code')) {
                 throw new UnauthorisedAccessException;
             }
 
             // Return the DailySusu resource
-            return $account->daily;
+            return $daily_susu;
         } catch (
             UnauthorisedAccessException $unauthorisedAccessException
         ) {
@@ -45,7 +44,7 @@ final class DailySusuShowService
             // Log the full exception with context
             Log::error('Exception in DailySusuShowService', [
                 'customer' => $customer,
-                'account' => $account,
+                'daily_susu' => $daily_susu,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),
@@ -54,7 +53,9 @@ final class DailySusuShowService
             ]);
 
             // Throw the SystemFailureException
-            throw new SystemFailureException;
+            throw new SystemFailureException(
+                message: 'There was an error while fetching the daily susu account.',
+            );
         }
     }
 }

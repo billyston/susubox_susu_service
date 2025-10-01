@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 use Domain\Customer\Models\Customer;
 use Domain\Shared\Exceptions\UnauthorisedAccessException;
 use Domain\Susu\Actions\BizSusu\BizSusuShowAction;
-use Domain\Susu\Models\Account;
+use Domain\Susu\Models\BizSusu;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class BizSusuShowController extends Controller
@@ -20,13 +20,13 @@ final class BizSusuShowController extends Controller
      */
     public function __invoke(
         Customer $customer,
-        Account $account,
+        BizSusu $biz_susu,
         BizSusuShowAction $bizSusuShowAction
     ): JsonResponse {
         // Execute the BizSusuShowAction and return the JsonResponse
         return $bizSusuShowAction->execute(
             customer: $customer,
-            account: $account,
+            biz_susu: $biz_susu,
         );
     }
 }

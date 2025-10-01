@@ -10,7 +10,7 @@ use App\Http\Requests\V1\Susu\BizSusu\BizSusuApprovalRequest;
 use Domain\Customer\Models\Customer;
 use Domain\Susu\Data\BizSusu\BizSusuResource;
 use Domain\Susu\Enums\Account\AccountStatus;
-use Domain\Susu\Models\Account;
+use Domain\Susu\Models\BizSusu;
 use Domain\Susu\Services\Account\AccountStatusUpdateService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,12 +30,12 @@ final class BizSusuApprovalAction
      */
     public function execute(
         Customer $customer,
-        Account $account,
+        BizSusu $biz_susu,
         BizSusuApprovalRequest $bizSusuApprovalRequest,
     ): JsonResponse {
         // Execute the AccountStatusUpdateService and return the account resource
         $account = $this->accountStatusUpdateService->execute(
-            account: $account,
+            account: $biz_susu->account,
             status: AccountStatus::APPROVED->value
         );
 

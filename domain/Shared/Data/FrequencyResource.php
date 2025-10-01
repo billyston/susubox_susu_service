@@ -15,10 +15,10 @@ final class FrequencyResource extends JsonResource
         return [
             // Resource type and id
             'type' => 'Frequency',
+            'resource_id' => $this->resource->resource_id,
 
             // Resource exposed attributes
             'attributes' => [
-                'resource_id' => $this->resource->resource_id,
                 'name' => $this->resource->name,
                 'alias' => $this->resource->alias,
                 'code' => $this->resource->code,

@@ -10,7 +10,7 @@ use App\Http\Requests\V1\Susu\GoalGetterSusu\GoalGetterSusuCancelRequest;
 use Domain\Customer\Models\Customer;
 use Domain\Susu\Actions\GoalGetterSusu\GoalGetterSusuCancelAction;
 use Domain\Susu\Exceptions\Account\CancellationNotAllowedException;
-use Domain\Susu\Models\Account;
+use Domain\Susu\Models\GoalGetterSusu;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class GoalGetterSusuCancelController extends Controller
@@ -21,14 +21,14 @@ final class GoalGetterSusuCancelController extends Controller
      */
     public function __invoke(
         Customer $customer,
-        Account $account,
+        GoalGetterSusu $goal_getter_susu,
         GoalGetterSusuCancelRequest $goalGetterSusuCancelRequest,
         GoalGetterSusuCancelAction $goalGetterSusuCancelAction
     ): JsonResponse {
         // Execute the GoalGetterSusuCancelAction and return the JsonResponse
         return $goalGetterSusuCancelAction->execute(
             customer: $customer,
-            account: $account,
+            goal_getter_susu: $goal_getter_susu,
             goalGetterSusuCancelRequest: $goalGetterSusuCancelRequest
         );
     }

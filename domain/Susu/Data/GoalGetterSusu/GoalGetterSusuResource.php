@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Domain\Susu\Data\GoalGetterSusu;
 
 use Domain\Customer\Data\CustomerLinkedWalletResource;
+use Domain\Shared\Data\DurationResource;
 use Domain\Shared\Data\FrequencyResource;
 use Domain\Shared\Data\SusuSchemeResource;
 use Domain\Susu\Data\Account\AccountResource;
@@ -19,7 +20,8 @@ final class GoalGetterSusuResource extends JsonResource
         // Return the resource array
         return [
             // Resource type and id
-            'type' => 'DailySusu',
+            'type' => 'GoalGetterSusu',
+            'resource_id' => $this->resource->resource_id,
 
             // Resource exposed attributes
             'attributes' => [
@@ -29,19 +31,17 @@ final class GoalGetterSusuResource extends JsonResource
                 'recurring_debit_status' => $this->resource->recurring_debit_status,
                 'withdrawal_status' => $this->resource->withdrawal_status,
             ],
-        ];
-    }
 
-    public function included(
-    ): array {
-        return [
             // Included resource
-            'account' => new AccountResource($this->resource->account),
-            'frequency' => new FrequencyResource($this->resource->account->frequency),
-            'scheme' => new SusuSchemeResource($this->resource->account->scheme),
-            'linked_wallet' => CustomerLinkedWalletResource::collection($this->resource->account->wallets),
-//            'account_lock' => $this->when(! empty($this->resource->lock), new SusuAccountLockData($this->resource)),
-//            'account_pause' => $this->when(! empty($this->resource->pause), new SusuAccountPauseData($this->resource)),
+            'included' => [
+                'account' => new AccountResource($this->resource->account),
+                'linked_wallet' => CustomerLinkedWalletResource::collection($this->resource->account->wallets),
+                'frequency' => new FrequencyResource($this->resource->account->frequency),
+                'scheme' => new SusuSchemeResource($this->resource->account->scheme),
+                'duration' => new DurationResource($this->resource->account->goal->duration),
+//                'account_lock' => $this->when(! empty($this->resource->lock), new SusuAccountLockData($this->resource)),
+//                'account_pause' => $this->when(! empty($this->resource->pause), new SusuAccountPauseData($this->resource)),
+            ],
         ];
     }
 }

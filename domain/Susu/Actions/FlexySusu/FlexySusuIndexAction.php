@@ -10,21 +10,21 @@ use Domain\Customer\Models\Customer;
 use Domain\Shared\Exceptions\SusuSchemeNotFoundException;
 use Domain\Shared\Exceptions\UnauthorisedAccessException;
 use Domain\Shared\Services\Scheme\SusuSchemeService;
-use Domain\Susu\Data\FlexySusu\FlexySusuResource;
-use Domain\Susu\Services\Account\AccountBySchemeIndexService;
+use Domain\Susu\Data\FlexySusu\FlexySusuCollectionResource;
+use Domain\Susu\Services\FlexySusu\FlexySusuIndexService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class FlexySusuIndexAction
 {
-    private AccountBySchemeIndexService $accountBySchemeIndexService;
+    private FlexySusuIndexService $flexySusuIndexService;
     private SusuSchemeService $susuSchemeService;
 
     public function __construct(
-        AccountBySchemeIndexService $accountBySchemeIndexService,
+        FlexySusuIndexService $flexySusuIndexService,
         SusuSchemeService $susuSchemeService
     ) {
-        $this->accountBySchemeIndexService = $accountBySchemeIndexService;
+        $this->flexySusuIndexService = $flexySusuIndexService;
         $this->susuSchemeService = $susuSchemeService;
     }
 
@@ -41,8 +41,8 @@ final class FlexySusuIndexAction
             scheme_code: config(key: 'susubox.susu_schemes.flexy_susu_code')
         );
 
-        // Execute the AccountBySchemeIndexService and return the resource
-        $flexy_susus = $this->accountBySchemeIndexService->execute(
+        // Execute the FlexySusuIndexService and return the resource
+        $flexy_susus = $this->flexySusuIndexService->execute(
             customer: $customer,
             susu_scheme: $susu_scheme
         );
@@ -51,7 +51,7 @@ final class FlexySusuIndexAction
         return ApiResponseBuilder::success(
             code: Response::HTTP_OK,
             message: 'Request successful.',
-            data: FlexySusuResource::collection(
+            data: FlexySusuCollectionResource::collection(
                 resource: $flexy_susus
             ),
         );

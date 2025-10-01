@@ -10,21 +10,21 @@ use Domain\Customer\Models\Customer;
 use Domain\Shared\Exceptions\SusuSchemeNotFoundException;
 use Domain\Shared\Exceptions\UnauthorisedAccessException;
 use Domain\Shared\Services\Scheme\SusuSchemeService;
-use Domain\Susu\Data\GoalGetterSusu\GoalGetterSusuResource;
-use Domain\Susu\Services\Account\AccountBySchemeIndexService;
+use Domain\Susu\Data\GoalGetterSusu\GoalGetterSusuCollectionResource;
+use Domain\Susu\Services\GoalGetterSusu\GoalGetterSusuIndexService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class GoalGetterSusuIndexAction
 {
-    private AccountBySchemeIndexService $accountBySchemeIndexService;
+    private GoalGetterSusuIndexService $goalGetterSusuIndexService;
     private SusuSchemeService $susuSchemeService;
 
     public function __construct(
-        AccountBySchemeIndexService $accountBySchemeIndexService,
+        GoalGetterSusuIndexService $goalGetterSusuIndexService,
         SusuSchemeService $susuSchemeService
     ) {
-        $this->accountBySchemeIndexService = $accountBySchemeIndexService;
+        $this->goalGetterSusuIndexService = $goalGetterSusuIndexService;
         $this->susuSchemeService = $susuSchemeService;
     }
 
@@ -41,8 +41,8 @@ final class GoalGetterSusuIndexAction
             scheme_code: config(key: 'susubox.susu_schemes.goal_getter_susu_code')
         );
 
-        // Execute the AccountBySchemeIndexService and return the resource
-        $goal_getter_susus = $this->accountBySchemeIndexService->execute(
+        // Execute the GoalGetterSusuIndexService and return the resource
+        $goal_getter_susus = $this->goalGetterSusuIndexService->execute(
             customer: $customer,
             susu_scheme: $susu_scheme
         );
@@ -51,7 +51,7 @@ final class GoalGetterSusuIndexAction
         return ApiResponseBuilder::success(
             code: Response::HTTP_OK,
             message: 'Request successful.',
-            data: GoalGetterSusuResource::collection(
+            data: GoalGetterSusuCollectionResource::collection(
                 resource: $goal_getter_susus
             ),
         );

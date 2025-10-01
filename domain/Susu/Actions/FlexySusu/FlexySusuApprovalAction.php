@@ -10,7 +10,7 @@ use App\Http\Requests\V1\Susu\FlexySusu\FlexySusuApprovalRequest;
 use Domain\Customer\Models\Customer;
 use Domain\Susu\Data\FlexySusu\FlexySusuResource;
 use Domain\Susu\Enums\Account\AccountStatus;
-use Domain\Susu\Models\Account;
+use Domain\Susu\Models\FlexySusu;
 use Domain\Susu\Services\Account\AccountStatusUpdateService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,12 +30,12 @@ final class FlexySusuApprovalAction
      */
     public function execute(
         Customer $customer,
-        Account $account,
+        FlexySusu $flexy_susu,
         FlexySusuApprovalRequest $flexySusuApprovalRequest,
     ): JsonResponse {
         // Execute the AccountStatusUpdateService and return the account resource
         $account = $this->accountStatusUpdateService->execute(
-            account: $account,
+            account: $flexy_susu->account,
             status: AccountStatus::APPROVED->value
         );
 

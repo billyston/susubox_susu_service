@@ -9,7 +9,7 @@ use App\Exceptions\Common\SystemFailureException;
 use Domain\Customer\Models\Customer;
 use Domain\Shared\Exceptions\UnauthorisedAccessException;
 use Domain\Susu\Data\BizSusu\BizSusuResource;
-use Domain\Susu\Models\Account;
+use Domain\Susu\Models\BizSusu;
 use Domain\Susu\Services\BizSusu\BizSusuShowService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,12 +30,12 @@ final class BizSusuShowAction
      */
     public function execute(
         Customer $customer,
-        Account $account,
+        BizSusu $biz_susu,
     ): JsonResponse {
         // Execute the BizSusuShowService and return the resource
         $biz_susu = $this->bizSusuShowService->execute(
             customer: $customer,
-            account: $account
+            biz_susu: $biz_susu
         );
 
         // Build and return the JsonResponse

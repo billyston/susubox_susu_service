@@ -8,7 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-final class AccountResource extends JsonResource
+final class AccountCollectionResource extends JsonResource
 {
     public function toArray(
         Request $request

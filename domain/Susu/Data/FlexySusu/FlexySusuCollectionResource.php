@@ -10,7 +10,7 @@ use Domain\Susu\Data\Account\AccountResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-final class FlexySusuResource extends JsonResource
+final class FlexySusuCollectionResource extends JsonResource
 {
     public function toArray(
         Request $request
@@ -27,8 +27,8 @@ final class FlexySusuResource extends JsonResource
                 'withdrawal_status' => $this->resource->withdrawal_status,
             ],
 
-            // Included resource
-            'included' => [
+            // Relationships
+            'relationships' => [
                 'account' => new AccountResource($this->resource->account),
                 'scheme' => new SusuSchemeResource($this->resource->account->scheme),
                 'linked_wallet' => CustomerLinkedWalletResource::collection($this->resource->account->wallets),

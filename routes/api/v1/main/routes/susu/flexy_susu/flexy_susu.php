@@ -10,15 +10,15 @@ use App\Http\Controllers\V1\Susu\FlexySusu\FlexySusuShowController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
-    'prefix' => 'customers/{customer}/accounts/',
-    'as' => 'customers.customer.accounts.',
+    'prefix' => 'customers/{customer}/flexy-susus/',
+    'as' => 'customers.customer.flexy-susus.',
 ], function (): void {
     // Create flexy susu request route
     Route::post(
-        uri: 'flexy-susus',
+        uri: '',
         action: FlexySusuCreateController::class,
     )->name(
-        name: 'flexy-susus'
+        name: 'create'
     )->whereUuid(
         parameters: [
             'customer',
@@ -27,36 +27,36 @@ Route::group([
 
     // Flexy susu cancel route
     Route::post(
-        uri: '{account}/flexy-susus/cancel',
+        uri: '{flexy_susu}/cancel',
         action: FlexySusuCancelController::class
     )->name(
-        name: 'flexy-susus.cancel'
+        name: 'flexy_susu.cancel'
     )->whereUuid(
         parameters: [
             'customer',
-            'account',
+            'flexy_susu',
         ]
     );
 
     // Flexy susu approval route
     Route::post(
-        uri: '{account}/flexy-susus/approval',
+        uri: '{flexy_susu}/approval',
         action: FlexySusuApprovalController::class
     )->name(
-        name: 'flexy-susus.approval'
+        name: 'flexy_susu.approval'
     )->whereUuid(
         parameters: [
             'customer',
-            'account',
+            'flexy_susu',
         ]
     );
 
     // Get flexy (all) susu route
     Route::get(
-        uri: 'flexy-susus',
+        uri: '',
         action: FlexySusuIndexController::class,
     )->name(
-        name: 'flexy-susus.index'
+        name: 'index'
     )->whereUuid(
         parameters: [
             'customer',
@@ -65,14 +65,14 @@ Route::group([
 
     // Get flexy (single) susu route
     Route::get(
-        uri: '{account}/flexy-susus',
+        uri: '{flexy_susu}',
         action: FlexySusuShowController::class,
     )->name(
-        name: 'flexy-susus.show'
+        name: 'flexy_susu.show'
     )->whereUuid(
         parameters: [
             'customer',
-            'account',
+            'flexy_susu',
         ],
     );
 });

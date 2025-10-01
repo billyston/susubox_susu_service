@@ -9,7 +9,7 @@ use App\Exceptions\Common\SystemFailureException;
 use Domain\Customer\Models\Customer;
 use Domain\Shared\Exceptions\UnauthorisedAccessException;
 use Domain\Susu\Data\DailySusu\DailySusuResource;
-use Domain\Susu\Models\Account;
+use Domain\Susu\Models\DailySusu;
 use Domain\Susu\Services\DailySusu\DailySusuShowService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,12 +30,12 @@ final class DailySusuShowAction
      */
     public function execute(
         Customer $customer,
-        Account $account,
+        DailySusu $daily_susu,
     ): JsonResponse {
         // Execute the DailySusuShowService and return the resource
-        $daily_susu = $this->dailySusuShowService->execute(
+        $account = $this->dailySusuShowService->execute(
             customer: $customer,
-            account: $account
+            daily_susu: $daily_susu
         );
 
         // Build and return the JsonResponse
@@ -43,7 +43,7 @@ final class DailySusuShowAction
             code: Response::HTTP_OK,
             message: 'Request successful.',
             data: new DailySusuResource(
-                resource: $daily_susu
+                resource: $account
             ),
         );
     }

@@ -15,10 +15,10 @@ final class CustomerLinkedWalletResource extends JsonResource
         return [
             // Resource type and id
             'type' => 'LinkedWallet',
+            'resource_id' => $this->resource->resource_id,
 
             // Resource exposed attributes
             'attributes' => [
-                'resource_id' => $this->resource->resource_id,
                 'wallet_name' => $this->resource->wallet_name,
                 'wallet_number' => $this->resource->wallet_number,
                 'status' => $this->resource->status,

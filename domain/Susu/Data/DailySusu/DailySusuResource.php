@@ -20,28 +20,25 @@ final class DailySusuResource extends JsonResource
         return [
             // Resource type and id
             'type' => 'DailySusu',
+            'resource_id' => $this->resource->resource_id,
 
             // Resource exposed attributes
             'attributes' => [
                 'rollover_enabled' => $this->resource->rollover_enabled,
                 'is_collateralized' => $this->resource->is_collateralized,
                 'auto_settlement' => $this->resource->auto_settlement,
-                'settlement_status' => $this->resource->settlement_status,
                 'recurring_debit_status' => $this->resource->recurring_debit_status,
             ],
-        ];
-    }
 
-    public function included(
-    ): array {
-        return [
             // Included resource
-            'account' => new AccountResource($this->resource->account),
-            'frequency' => new FrequencyResource($this->resource->account->frequency),
-            'scheme' => new SusuSchemeResource($this->resource->account->scheme),
-            'linked_wallet' => CustomerLinkedWalletResource::collection($this->resource->account->wallets),
-//            'account_lock' => $this->when(! empty($this->resource->lock), new SusuAccountLockData($this->resource)),
-//            'account_pause' => $this->when(! empty($this->resource->pause), new SusuAccountPauseData($this->resource)),
+            'included' => [
+                'account' => new AccountResource($this->resource->account),
+                'linked_wallet' => CustomerLinkedWalletResource::collection($this->resource->account->wallets),
+                'frequency' => new FrequencyResource($this->resource->account->frequency),
+                'scheme' => new SusuSchemeResource($this->resource->account->scheme),
+//                'account_lock' => $this->when(! empty($this->resource->lock), new SusuAccountLockData($this->resource)),
+//                'account_pause' => $this->when(! empty($this->resource->pause), new SusuAccountPauseData($this->resource)),
+            ],
         ];
     }
 }

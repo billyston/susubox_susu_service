@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use Carbon\Carbon;
 use Domain\Shared\Enums\RecurringDebitStatus;
 use Domain\Susu\Enums\DailySusu\DailySusuSettlementStatus;
 use Illuminate\Database\Migrations\Migration;
@@ -20,6 +19,9 @@ return new class extends Migration
              ) {
                 // Table ids
                 $table->id();
+                $table->uuid(column: 'resource_id')
+                    ->unique()
+                    ->index();
 
                 // Table related fields
                 $table->unsignedBigInteger(column: 'account_id');

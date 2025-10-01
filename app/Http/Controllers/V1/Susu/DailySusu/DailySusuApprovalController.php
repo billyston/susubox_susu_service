@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\Susu\DailySusu\DailySusuApprovalRequest;
 use Domain\Customer\Models\Customer;
 use Domain\Susu\Actions\DailySusu\DailySusuApprovalAction;
-use Domain\Susu\Models\Account;
+use Domain\Susu\Models\DailySusu;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class DailySusuApprovalController extends Controller
@@ -19,14 +19,14 @@ final class DailySusuApprovalController extends Controller
      */
     public function __invoke(
         Customer $customer,
-        Account $account,
+        DailySusu $daily_susu,
         DailySusuApprovalRequest $dailySusuApprovalRequest,
         DailySusuApprovalAction $dailySusuApprovalAction
     ): JsonResponse {
         // Execute the DailySusuApprovalAction and return the JsonResponse
         return $dailySusuApprovalAction->execute(
             customer: $customer,
-            account: $account,
+            daily_susu: $daily_susu,
             dailySusuApprovalRequest: $dailySusuApprovalRequest
         );
     }

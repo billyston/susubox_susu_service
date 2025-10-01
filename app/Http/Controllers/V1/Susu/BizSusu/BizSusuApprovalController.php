@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\Susu\BizSusu\BizSusuApprovalRequest;
 use Domain\Customer\Models\Customer;
 use Domain\Susu\Actions\BizSusu\BizSusuApprovalAction;
-use Domain\Susu\Models\Account;
+use Domain\Susu\Models\BizSusu;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class BizSusuApprovalController extends Controller
@@ -19,14 +19,14 @@ final class BizSusuApprovalController extends Controller
      */
     public function __invoke(
         Customer $customer,
-        Account $account,
+        BizSusu $biz_susu,
         BizSusuApprovalRequest $bizSusuApprovalRequest,
         BizSusuApprovalAction $bizSusuApprovalAction
     ): JsonResponse {
         // Execute the BizSusuApprovalAction and return the JsonResponse
         return $bizSusuApprovalAction->execute(
             customer: $customer,
-            account: $account,
+            biz_susu: $biz_susu,
             bizSusuApprovalRequest: $bizSusuApprovalRequest
         );
     }

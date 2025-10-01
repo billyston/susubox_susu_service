@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 use Domain\Customer\Models\Customer;
 use Domain\Shared\Exceptions\UnauthorisedAccessException;
 use Domain\Susu\Actions\FlexySusu\FlexySusuShowAction;
-use Domain\Susu\Models\Account;
+use Domain\Susu\Models\FlexySusu;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class FlexySusuShowController extends Controller
@@ -20,13 +20,13 @@ final class FlexySusuShowController extends Controller
      */
     public function __invoke(
         Customer $customer,
-        Account $account,
+        FlexySusu $flexy_susu,
         FlexySusuShowAction $flexySusuShowAction
     ): JsonResponse {
         // Execute the FlexySusuShowAction and return the JsonResponse
         return $flexySusuShowAction->execute(
             customer: $customer,
-            account: $account,
+            flexy_susu: $flexy_susu,
         );
     }
 }

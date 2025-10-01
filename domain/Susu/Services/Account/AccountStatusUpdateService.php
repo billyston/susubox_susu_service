@@ -63,7 +63,9 @@ final class AccountStatusUpdateService
             ]);
 
             // Throw the SystemFailureException
-            throw new SystemFailureException;
+            throw new SystemFailureException(
+                message: 'A system failure occurred while updating the account status.',
+            );
         }
     }
 }

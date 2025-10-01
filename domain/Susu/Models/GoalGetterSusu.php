@@ -6,11 +6,14 @@ namespace Domain\Susu\Models;
 
 use Domain\Shared\Casts\MoneyCasts;
 use Domain\Shared\Models\Duration;
+use Domain\Shared\Models\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 final class GoalGetterSusu extends Model
 {
+    use HasUuid;
+
     public $timestamps = false;
 
     protected $guarded = ['id'];
@@ -21,6 +24,7 @@ final class GoalGetterSusu extends Model
     ];
 
     protected $fillable = [
+        'resource_id',
         'account_id',
         'duration_id',
         'target_amount',
@@ -31,6 +35,11 @@ final class GoalGetterSusu extends Model
         'withdrawal_status',
         'extra_data',
     ];
+
+    public function getRouteKeyName(
+    ): string {
+        return 'resource_id';
+    }
 
     public function account(
     ): BelongsTo {

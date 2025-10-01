@@ -10,7 +10,7 @@ use App\Http\Requests\V1\Susu\FlexySusu\FlexySusuCancelRequest;
 use Domain\Customer\Models\Customer;
 use Domain\Susu\Actions\FlexySusu\FlexySusuCancelAction;
 use Domain\Susu\Exceptions\Account\CancellationNotAllowedException;
-use Domain\Susu\Models\Account;
+use Domain\Susu\Models\FlexySusu;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class FlexySusuCancelController extends Controller
@@ -21,14 +21,14 @@ final class FlexySusuCancelController extends Controller
      */
     public function __invoke(
         Customer $customer,
-        Account $account,
+        FlexySusu $flexy_susu,
         FlexySusuCancelRequest $flexySusuCancelRequest,
         FlexySusuCancelAction $flexySusuCancelAction
     ): JsonResponse {
         // Execute the FlexySusuCancelAction and return the JsonResponse
         return $flexySusuCancelAction->execute(
             customer: $customer,
-            account: $account,
+            flexy_susu: $flexy_susu,
             flexySusuCancelRequest: $flexySusuCancelRequest
         );
     }
