@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\V1\Resources\FrequenciesController;
+use App\Interface\Http\Controllers\V1\Shared\FrequenciesController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([

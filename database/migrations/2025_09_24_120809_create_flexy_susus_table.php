@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Domain\Shared\Enums\RecurringDebitStatus;
-use Domain\Shared\Enums\WithdrawalStatus;
+use App\Domain\Shared\Enums\RecurringDebitStatus;
+use App\Domain\Shared\Enums\WithdrawalStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

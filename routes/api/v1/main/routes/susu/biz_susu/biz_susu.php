@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\V1\Susu\BizSusu\BizSusuApprovalController;
-use App\Http\Controllers\V1\Susu\BizSusu\BizSusuCancelController;
-use App\Http\Controllers\V1\Susu\BizSusu\BizSusuCreateController;
-use App\Http\Controllers\V1\Susu\BizSusu\BizSusuIndexController;
-use App\Http\Controllers\V1\Susu\BizSusu\BizSusuShowController;
+use App\Interface\Http\Controllers\V1\Susu\BizSusu\BizSusuApprovalController;
+use App\Interface\Http\Controllers\V1\Susu\BizSusu\BizSusuCancelController;
+use App\Interface\Http\Controllers\V1\Susu\BizSusu\BizSusuCreateController;
+use App\Interface\Http\Controllers\V1\Susu\BizSusu\BizSusuIndexController;
+use App\Interface\Http\Controllers\V1\Susu\BizSusu\BizSusuShowController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([

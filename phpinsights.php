@@ -76,16 +76,17 @@ return [
 
     'exclude' => [
         'phpinsights.php',
-        'domain/Shared/Exceptions/FrequencyNotFoundException.php',
-        'domain/Shared/Exceptions/SusuSchemeNotFoundException.php',
-        'domain/Shared/Exceptions/UnauthorisedAccessException.php',
-        'domain/Customer/Exceptions/LinkedWalletNotFoundException.php',
-        'domain/Susu/Exceptions/Account/CancellationNotAllowedException.php',
-        'app/Exceptions/Common/SystemFailureException.php',
+        'app/Application/Shared/Services/RateLimiterService.php',
+        'app/Domain/Account/Services/AccountCancelService.php',
+        'app/Domain/Shared/Exceptions/ApiExceptionHandler.php',
+        'app/Application/Shared/Helpers/ApiResponseBuilder.php',
 
-        'app/Common/Services/RateLimiterService.php',
-        'app/Exceptions/Common/ApiExceptionHandler.php',
-        'app/Console/Commands/CustomerRedisStreamConsumer.php',
+        'app/Domain/Shared/Exceptions/SusuSchemeNotFoundException.php',
+        'app/Domain/Shared/Exceptions/SystemFailureException.php',
+        'app/Domain/Shared/Exceptions/UnauthorisedAccessException.php',
+        'app/Domain/Customer/Exceptions/LinkedWalletNotFoundException.php',
+        'app/Domain/Shared/Exceptions/CancellationNotAllowedException.php',
+        'app/Domain/Shared/Exceptions/FrequencyNotFoundException.php',
     ],
 
     'add' => [

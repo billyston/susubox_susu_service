@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\V1\Resources\DurationsController;
+use App\Interface\Http\Controllers\V1\Shared\DurationsController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\V1\Resources\SusuSchemesController;
+use App\Interface\Http\Controllers\V1\Shared\SusuSchemesController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([

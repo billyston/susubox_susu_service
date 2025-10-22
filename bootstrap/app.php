@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-use App\Console\Commands\CustomerRedisStreamConsumer;
-use App\Exceptions\Common\ApiExceptionHandler;
-use App\Http\Middleware\Common\CertificateTransparencyPolicy;
-use App\Http\Middleware\Common\ContentTypes;
-use App\Http\Middleware\Common\IPWhiteListMiddleware;
-use App\Http\Middleware\Common\PermissionsPolicy;
-use App\Http\Middleware\Common\RateLimiterMiddleware;
-use App\Http\Middleware\Common\RemoveHeaders;
-use App\Http\Middleware\Common\SetReferrerPolicy;
-use App\Http\Middleware\Common\StrictTransportSecurity;
-use App\Http\Middleware\Common\XFrameOptionsMiddleware;
+use App\Application\Customer\Commands\CustomerRedisStreamConsumer;
+use App\Domain\Shared\Exceptions\ApiExceptionHandler;
+use App\Interface\Http\Middleware\CertificateTransparencyPolicy;
+use App\Interface\Http\Middleware\ContentTypes;
+use App\Interface\Http\Middleware\IPWhiteListMiddleware;
+use App\Interface\Http\Middleware\PermissionsPolicy;
+use App\Interface\Http\Middleware\RateLimiterMiddleware;
+use App\Interface\Http\Middleware\RemoveHeaders;
+use App\Interface\Http\Middleware\SetReferrerPolicy;
+use App\Interface\Http\Middleware\StrictTransportSecurity;
+use App\Interface\Http\Middleware\XFrameOptionsMiddleware;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Common\PingController;
+use App\Interface\Http\Controllers\V1\Shared\PingController;
 use Illuminate\Support\Facades\Route;
 
 // The ping route

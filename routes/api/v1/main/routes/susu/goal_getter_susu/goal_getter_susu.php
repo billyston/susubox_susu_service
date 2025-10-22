@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\V1\Susu\GoalGetterSusu\GoalGetterSusuApprovalController;
-use App\Http\Controllers\V1\Susu\GoalGetterSusu\GoalGetterSusuCancelController;
-use App\Http\Controllers\V1\Susu\GoalGetterSusu\GoalGetterSusuCreateController;
-use App\Http\Controllers\V1\Susu\GoalGetterSusu\GoalGetterSusuIndexController;
-use App\Http\Controllers\V1\Susu\GoalGetterSusu\GoalGetterSusuShowController;
+use App\Interface\Http\Controllers\V1\Susu\GoalGetterSusu\GoalGetterSusuApprovalController;
+use App\Interface\Http\Controllers\V1\Susu\GoalGetterSusu\GoalGetterSusuCancelController;
+use App\Interface\Http\Controllers\V1\Susu\GoalGetterSusu\GoalGetterSusuCreateController;
+use App\Interface\Http\Controllers\V1\Susu\GoalGetterSusu\GoalGetterSusuIndexController;
+use App\Interface\Http\Controllers\V1\Susu\GoalGetterSusu\GoalGetterSusuShowController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([

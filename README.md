@@ -28,7 +28,7 @@ The SusuBox susu service API.
 - [x] Get all customer susu accounts
 - [x] Work on a unique account_number
 - [ ] Get account balance
-
+- [x] Update account status (active) after successful initial debit
 
 
 ## Daily Susu
@@ -37,7 +37,7 @@ The SusuBox susu service API.
 ###### Create
 - [x] Create daily susu account
 - [ ] Validate create daily susu
-- [ ] Cancel create daily susu
+- [x] Cancel create daily susu
 - [x] Approve create daily susu
 - [ ] Activate create daily susu
 
@@ -46,6 +46,7 @@ The SusuBox susu service API.
 - [ ] Validate update daily susu create
 - [x] Cancel daily susu create
 - [ ] Validate cancel daily susu create
+- [ ] Update recurring_debit_status
 
 ###### Get
 - [x] Get single daily susu for customer
@@ -55,15 +56,13 @@ The SusuBox susu service API.
 - [ ] Get all statistics for daily susu
 
 
-
-
 ## Biz Susu
 - [x] Create and configure model and migration
 
 ###### Create
 - [x] Create biz susu account
 - [ ] Validate create biz susu
-- [ ] Cancel create biz susu
+- [x] Cancel create biz susu
 - [x] Approve create biz susu
 - [ ] Activate create biz susu
 
@@ -72,6 +71,7 @@ The SusuBox susu service API.
 - [ ] Validate update biz susu create
 - [x] Cancel biz susu create
 - [ ] Validate cancel biz susu create
+- [ ] Update recurring_debit_status
 
 ###### Get
 - [x] Get single biz susu for customer
@@ -81,15 +81,13 @@ The SusuBox susu service API.
 - [ ] Get all statistics for biz susu
 
 
-
-
 ## Goal Getter Susu
 - [x] Create and configure model and migration
 
 ###### Create
 - [x] Create goal getter susu account
 - [ ] Validate create goal getter susu
-- [ ] Cancel create goal getter susu
+- [x] Cancel create goal getter susu
 - [x] Approve create goal getter susu
 - [ ] Activate create goal getter susu
 
@@ -98,6 +96,7 @@ The SusuBox susu service API.
 - [ ] Validate update goal getter susu create
 - [x] Cancel goal getter susu create
 - [ ] Validate cancel goal getter susu create
+- [ ] Update recurring_debit_status
 
 ###### Get
 - [x] Get single goal getter susu for customer
@@ -107,15 +106,13 @@ The SusuBox susu service API.
 - [ ] Get all statistics for goal getter susu
 
 
-
-
 ## Flexy Susu
 - [x] Create and configure model and migration
 
 ###### Create
 - [x] Create flexy susu account
 - [ ] Validate create flexy susu
-- [ ] Cancel create flexy susu
+- [x] Cancel create flexy susu
 - [x] Approve create flexy susu
 - [ ] Activate create flexy susu
 
@@ -131,3 +128,12 @@ The SusuBox susu service API.
 
 ###### Stats
 - [ ] Get all statistics for flexy susu
+
+
+## Transactions
+- [x] Create account transaction
+- [ ] TransactionStatus from Payment Service should match Susu Service 
+
+
+## Others
+- [ ] Move all jobs that publishes job into the services/shared folder 

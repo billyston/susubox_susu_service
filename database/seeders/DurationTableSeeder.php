@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Domain\Shared\Enums\DurationStatus;
 use Database\Seeders\Traits\TruncateTable;
-use Domain\Shared\Enums\DurationStatus;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 

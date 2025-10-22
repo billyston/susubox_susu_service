@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\V1\Customer\CustomerLinkedWalletsController;
-use App\Http\Controllers\V1\Customer\CustomerLinkedWalletValidationController;
+use App\Interface\Http\Controllers\V1\Customer\CustomerLinkedWalletsController;
+use App\Interface\Http\Controllers\V1\Customer\CustomerLinkedWalletValidationController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([

@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Domain\Shared\Enums\RecurringDebitStatus;
-use Domain\Shared\Enums\WithdrawalStatus;
+use App\Domain\Shared\Enums\RecurringDebitStatus;
+use App\Domain\Shared\Enums\WithdrawalStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -25,6 +25,8 @@ return new class extends Migration
 
                 // Table related fields
                 $table->unsignedBigInteger(column: 'account_id');
+
+                $table->unsignedBigInteger(column: 'frequency_id');
 
                 // Table main attributes
                 $table->string(column: 'currency')
@@ -54,6 +56,11 @@ return new class extends Migration
                 $table->foreign(columns: 'account_id')
                     ->references(columns: 'id')
                     ->on(table: 'accounts')
+                    ->onDelete(action: 'cascade');
+
+                $table->foreign(columns: 'frequency_id')
+                    ->references(columns: 'id')
+                    ->on(table: 'frequencies')
                     ->onDelete(action: 'cascade');
 
                 // Timestamps (created_at / updated_at) fields

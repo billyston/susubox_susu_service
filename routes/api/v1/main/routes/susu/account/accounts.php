@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\V1\Susu\Account\AccountIndexController;
+use App\Interface\Http\Controllers\V1\Account\AccountIndexController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
