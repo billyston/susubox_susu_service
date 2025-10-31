@@ -22,7 +22,7 @@ final class SusuSchemeService
     ): SusuScheme {
         try {
             // Execute the DB transaction and return the Transaction
-            return SusuScheme::where([
+            return SusuScheme::query()->where([
                 ['code', '=', $scheme_code],
                 ['status', '=', 'active'],
             ])->firstOrFail();
@@ -46,7 +46,9 @@ final class SusuSchemeService
             ]);
 
             // Throw the SystemFailureException
-            throw new SystemFailureException;
+            throw new SystemFailureException(
+                message: 'A system failure occurred while trying to fetch the susu scheme.'
+            );
         }
     }
 }

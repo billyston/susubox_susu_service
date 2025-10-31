@@ -16,8 +16,8 @@ final class GoalGetterSusuData
             // Account main data
             'data' => AccountData::toArray($goalGetterSusu->account),
 
-            // Included data
-            'included' => [
+            // Related data
+            'relationships' => [
                 'service' => [
                     'type' => 'service',
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Susu\Services\FlexySusu;
 
+use App\Application\Susu\DTOs\FlexySusu\FlexySusuCreateDTO;
 use App\Domain\Account\Models\Account;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Models\LinkedWallet;
@@ -11,7 +12,6 @@ use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Models\AccountWallet;
 use App\Domain\Shared\Models\SusuScheme;
 use App\Domain\Susu\Models\FlexySusu;
-use Brick\Money\Money;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -25,7 +25,7 @@ final class FlexySusuCreateService
         Customer $customer,
         SusuScheme $susu_scheme,
         LinkedWallet $linked_wallet,
-        array $request_data
+        FlexySusuCreateDTO $dto
     ): FlexySusu {
         try {
             // Execute the database transaction
@@ -33,30 +33,28 @@ final class FlexySusuCreateService
                 $customer,
                 $susu_scheme,
                 $linked_wallet,
-                $request_data
+                $dto
             ) {
                 // Create and return the account resource
-                $account = Account::create([
+                $account = Account::query()->create([
                     'customer_id' => $customer->id,
                     'susu_scheme_id' => $susu_scheme->id,
-                    'account_name' => $request_data['account_name'],
-                    'account_number' => Account::generateAccountNumber(
-                        product_code: config(key: 'susubox.susu_schemes.flexy_susu_code'),
-                    ),
-                    'purpose' => $request_data['purpose'],
-                    'susu_amount' => Money::of(amount: 0.00, currency: 'GHS'),
-                    'initial_deposit' => Money::of($request_data['initial_deposit'], currency: 'GHS'),
-                    'accepted_terms' => $request_data['accepted_terms'],
+                    'account_name' => $dto->account_name,
+                    'account_number' => Account::generateAccountNumber(product_code: config(key: 'susubox.susu_schemes.flexy_susu_code')),
+                    'purpose' => $dto->purpose,
+                    'susu_amount' => $dto->susu_amount,
+                    'initial_deposit' => $dto->initial_deposit,
+                    'accepted_terms' => $dto->accepted_terms,
                 ]);
 
                 // Linked the account_wallet
-                AccountWallet::create([
+                AccountWallet::query()->create([
                     'account_id' => $account->id,
                     'linked_wallet_id' => $linked_wallet->id,
                 ]);
 
                 // Create and return the BizSusu resource
-                return FlexySusu::create([
+                return FlexySusu::query()->create([
                     'account_id' => $account->id,
                 ]);
             });
@@ -68,7 +66,7 @@ final class FlexySusuCreateService
                 'customer' => $customer,
                 'susu_scheme' => $susu_scheme,
                 'linked_wallet' => $linked_wallet,
-                'request_data' => $request_data,
+                'dto' => $dto,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),

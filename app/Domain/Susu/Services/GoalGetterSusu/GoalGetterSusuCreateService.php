@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Susu\Services\GoalGetterSusu;
 
 use App\Application\Shared\Helpers\Helpers;
+use App\Application\Susu\DTOs\GoalGetterSusu\GoalGetterSusuCreateDTO;
 use App\Domain\Account\Models\Account;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Models\LinkedWallet;
@@ -13,7 +14,6 @@ use App\Domain\Shared\Models\AccountWallet;
 use App\Domain\Shared\Models\Frequency;
 use App\Domain\Shared\Models\SusuScheme;
 use App\Domain\Susu\Models\GoalGetterSusu;
-use Brick\Money\Money;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -29,7 +29,7 @@ final class GoalGetterSusuCreateService
         SusuScheme $susu_scheme,
         Frequency $frequency,
         LinkedWallet $linked_wallet,
-        array $request_data
+        GoalGetterSusuCreateDTO $dto
     ): GoalGetterSusu {
         try {
             // Execute the database transaction
@@ -38,56 +38,34 @@ final class GoalGetterSusuCreateService
                 $susu_scheme,
                 $frequency,
                 $linked_wallet,
-                $request_data
+                $dto
             ) {
-                // Get the start_date of the account
-                $start_date = Helpers::calculateDate(
-                    date: $request_data['start_date']
-                );
-
-                // Get the total days in the savings duration
-                $duration = Helpers::getDaysInDuration(
-                    date: $request_data['duration']
-                );
-
-                // Calculate the susu_amount
-                $susu_amount = Money::of(amount: self::getDebitAmount(
-                    $request_data['target_amount'],
-                    $request_data['frequency'],
-                    $request_data['duration'],
-                ), currency: 'GHS');
-
                 // Create and return the account resource
-                $account = Account::create([
+                $account = Account::query()->create([
                     'customer_id' => $customer->id,
                     'susu_scheme_id' => $susu_scheme->id,
-                    'account_name' => $request_data['account_name'],
-                    'account_number' => Account::generateAccountNumber(
-                        product_code: config(key: 'susubox.susu_schemes.goal_getter_susu_code'),
-                    ),
-                    'purpose' => $request_data['purpose'],
-                    'susu_amount' => $susu_amount,
-                    'initial_deposit' => Money::of($request_data['initial_deposit'], currency: 'GHS'),
-                    'start_date' => $start_date,
-                    'end_date' => Helpers::getDateWithOffset(
-                        Carbon::parse($start_date),
-                        days: $duration->days
-                    ),
-                    'accepted_terms' => $request_data['accepted_terms'],
+                    'account_name' => $dto->account_name,
+                    'account_number' => Account::generateAccountNumber(product_code: config(key: 'susubox.susu_schemes.goal_getter_susu_code')),
+                    'purpose' => $dto->purpose,
+                    'susu_amount' => $dto->susu_amount,
+                    'initial_deposit' => $dto->initial_deposit,
+                    'start_date' => $dto->start_date,
+                    'end_date' => Helpers::getDateWithOffset(Carbon::parse($dto->start_date), days: $dto->duration->days),
+                    'accepted_terms' => $dto->accepted_terms,
                 ]);
 
                 // Linked the account_wallet
-                AccountWallet::create([
+                AccountWallet::query()->create([
                     'account_id' => $account->id,
                     'linked_wallet_id' => $linked_wallet->id,
                 ]);
 
                 // Create and return the GoalGetterSusu resource
-                return GoalGetterSusu::create([
+                return GoalGetterSusu::query()->create([
                     'account_id' => $account->id,
                     'frequency_id' => $frequency->id,
-                    'target_amount' => Money::of($request_data['target_amount'], currency: 'GHS'),
-                    'duration_id' => $duration->id,
+                    'target_amount' => $dto->target_amount,
+                    'duration_id' => $dto->duration->id,
                 ]);
             });
         } catch (
@@ -99,7 +77,7 @@ final class GoalGetterSusuCreateService
                 'susu_scheme' => $susu_scheme,
                 'frequency' => $frequency,
                 'linked_wallet' => $linked_wallet,
-                'request_data' => $request_data,
+                'dto' => $dto,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),
@@ -112,17 +90,5 @@ final class GoalGetterSusuCreateService
                 message: 'A system error occurred while trying to create the goal getter susu.',
             );
         }
-    }
-
-    private static function getDebitAmount(
-        $amount,
-        $frequency,
-        $duration
-    ): float {
-        return Helpers::calculateDebit(
-            amount: (float) $amount,
-            frequency: $frequency,
-            duration: $duration
-        );
     }
 }

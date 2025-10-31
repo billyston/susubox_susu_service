@@ -39,14 +39,14 @@ The SusuBox susu service API.
 - [ ] Validate create daily susu
 - [x] Cancel create daily susu
 - [x] Approve create daily susu
-- [ ] Activate create daily susu
+- [x] Activate create daily susu
 
 ###### Update / Cancel
-- [ ] Update daily susu create
+- [x] Update daily susu create
 - [ ] Validate update daily susu create
 - [x] Cancel daily susu create
 - [ ] Validate cancel daily susu create
-- [ ] Update recurring_debit_status
+- [x] Update recurring_debit_status
 
 ###### Get
 - [x] Get single daily susu for customer
@@ -64,14 +64,14 @@ The SusuBox susu service API.
 - [ ] Validate create biz susu
 - [x] Cancel create biz susu
 - [x] Approve create biz susu
-- [ ] Activate create biz susu
+- [x] Activate create biz susu
 
 ###### Update / Cancel
-- [ ] Update biz susu create
+- [x] Update biz susu create
 - [ ] Validate update biz susu create
 - [x] Cancel biz susu create
 - [ ] Validate cancel biz susu create
-- [ ] Update recurring_debit_status
+- [x] Update recurring_debit_status
 
 ###### Get
 - [x] Get single biz susu for customer
@@ -89,14 +89,14 @@ The SusuBox susu service API.
 - [ ] Validate create goal getter susu
 - [x] Cancel create goal getter susu
 - [x] Approve create goal getter susu
-- [ ] Activate create goal getter susu
+- [x] Activate create goal getter susu
 
 ###### Update / Cancel
-- [ ] Update goal getter susu create
+- [x] Update goal getter susu create
 - [ ] Validate update goal getter susu create
 - [x] Cancel goal getter susu create
 - [ ] Validate cancel goal getter susu create
-- [ ] Update recurring_debit_status
+- [x] Update recurring_debit_status
 
 ###### Get
 - [x] Get single goal getter susu for customer
@@ -114,10 +114,10 @@ The SusuBox susu service API.
 - [ ] Validate create flexy susu
 - [x] Cancel create flexy susu
 - [x] Approve create flexy susu
-- [ ] Activate create flexy susu
+- [x] Activate create flexy susu
 
 ###### Update / Cancel
-- [ ] Update flexy susu create
+- [x] Update flexy susu create
 - [ ] Validate update flexy susu create
 - [x] Cancel flexy susu create
 - [ ] Validate cancel flexy susu create

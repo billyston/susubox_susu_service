@@ -20,11 +20,13 @@ final class CustomerLinkedWalletService
      */
     public function execute(
         Customer $customer,
-        string $wallet_resource_id
+        string $wallet_resource_id,
+        string $wallet_number,
     ): LinkedWallet {
         try {
             return LinkedWallet::where([
                 ['resource_id', '=', $wallet_resource_id],
+                ['wallet_number', '=', $wallet_number],
                 ['customer_id', '=', $customer->id],
                 ['status', '=', 'active'],
             ])->firstOrFail();

@@ -19,7 +19,7 @@ final class DurationsService
     public function execute(
     ): Collection {
         try {
-            return Duration::get();
+            return Duration::query()->get();
         } catch (
             ModelNotFoundException $modelNotFoundException
         ) {

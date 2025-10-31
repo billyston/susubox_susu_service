@@ -10,7 +10,7 @@ use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
 use App\Domain\Susu\Models\GoalGetterSusu;
 use App\Domain\Susu\Services\GoalGetterSusu\GoalGetterSusuShowService;
-use App\Interface\Http\Resources\V1\Susu\GoalGetterSusu\GoalGetterSusuResource;
+use App\Interface\Resources\V1\Susu\GoalGetterSusu\GoalGetterSusuResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 

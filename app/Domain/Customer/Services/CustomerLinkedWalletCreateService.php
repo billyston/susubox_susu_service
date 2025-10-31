@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Customer\Services;
 
+use App\Application\Customer\DTOs\CustomerLinkedWalletDTO;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Models\LinkedWallet;
 use App\Domain\Shared\Exceptions\SystemFailureException;
@@ -18,7 +19,7 @@ final class CustomerLinkedWalletCreateService
      */
     public static function execute(
         Customer $customer,
-        array $data
+        CustomerLinkedWalletDTO $data
     ): LinkedWallet {
         try {
             // Execute the database transaction
@@ -28,20 +29,20 @@ final class CustomerLinkedWalletCreateService
                     $data
                 ) {
                     // Get the LinkedWalletData for the Customer (if it exists)
-                    $linked_wallet = LinkedWallet::firstOrNew([
-                        'wallet_number' => $data['wallet_number'],
+                    $linked_wallet = LinkedWallet::query()->firstOrNew([
+                        'wallet_number' => $data->wallet_number,
                         'customer_id' => $customer->id,
                     ]);
 
                     return LinkedWallet::updateOrCreate([
-                        'wallet_number' => $data['wallet_number'],
+                        'wallet_number' => $data->wallet_number,
                         'customer_id' => $customer->id,
                     ], [
-                        'resource_id' => $data['resource_id'],
+                        'resource_id' => $data->resource_id,
                         'customer_id' => $customer->id,
-                        'wallet_name' => $data['wallet_name'] ?? $linked_wallet->wallet_name,
-                        'wallet_number' => $data['wallet_number'] ?? $linked_wallet->wallet_number,
-                        'network_code' => $data['network_code'] ?? $linked_wallet->network_code,
+                        'wallet_name' => $data->wallet_name ?? $linked_wallet->wallet_name,
+                        'wallet_number' => $data->wallet_number ?? $linked_wallet->wallet_number,
+                        'network_code' => $data->network_code ?? $linked_wallet->network_code,
                     ])->refresh();
                 }
             );
@@ -50,7 +51,8 @@ final class CustomerLinkedWalletCreateService
         ) {
             // Log the full exception with context
             Log::error('Exception in CustomerLinkedWalletCreateService', [
-                'request' => $data,
+                'customer' => $customer,
+                'data' => $data,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),
@@ -59,7 +61,9 @@ final class CustomerLinkedWalletCreateService
             ]);
 
             // Throw the SystemFailureException
-            throw new SystemFailureException;
+            throw new SystemFailureException(
+                message: 'There was an error while trying to create the link the wallet.',
+            );
         }
     }
 }

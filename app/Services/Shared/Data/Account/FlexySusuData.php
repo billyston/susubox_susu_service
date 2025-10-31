@@ -16,8 +16,8 @@ final class FlexySusuData
             // Account main data
             'data' => AccountData::toArray($flexySusu->account),
 
-            // Included data
-            'included' => [
+            // Related data
+            'relationships' => [
                 'service' => [
                     'type' => 'service',
 

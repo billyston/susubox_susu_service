@@ -16,8 +16,8 @@ final class BizSusuData
             // Account main data
             'data' => AccountData::toArray($bizSusu->account),
 
-            // Included data
-            'included' => [
+            // Related data
+            'relationships' => [
                 'service' => [
                     'type' => 'service',
 

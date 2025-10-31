@@ -19,7 +19,7 @@ final class FrequenciesService
     public function execute(
     ): Collection {
         try {
-            return Frequency::get();
+            return Frequency::query()->get();
         } catch (
             ModelNotFoundException $modelNotFoundException
         ) {

@@ -11,7 +11,7 @@ use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
 use App\Domain\Shared\Services\SusuSchemeService;
 use App\Domain\Susu\Services\GoalGetterSusu\GoalGetterSusuIndexService;
-use App\Interface\Http\Resources\V1\Susu\GoalGetterSusu\GoalGetterSusuCollectionResource;
+use App\Interface\Resources\V1\Susu\GoalGetterSusu\GoalGetterSusuCollectionResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 

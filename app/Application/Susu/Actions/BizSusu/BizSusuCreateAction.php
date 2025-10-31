@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\BizSusu;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Shared\Helpers\Helpers;
+use App\Application\Susu\DTOs\BizSusu\BizSusuCreateDTO;
 use App\Domain\Customer\Exceptions\LinkedWalletNotFoundException;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Services\CustomerLinkedWalletService;
@@ -15,8 +15,8 @@ use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Services\FrequencyService;
 use App\Domain\Shared\Services\SusuSchemeService;
 use App\Domain\Susu\Services\BizSusu\BizSusuCreateService;
-use App\Interface\Http\Requests\V1\Susu\BizSusu\BizSusuCreateRequest;
-use App\Interface\Http\Resources\V1\Susu\BizSusu\BizSusuResource;
+use App\Interface\Requests\V1\Susu\BizSusu\BizSusuCreateRequest;
+use App\Interface\Resources\V1\Susu\BizSusu\BizSusuResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -49,20 +49,16 @@ final class BizSusuCreateAction
         Customer $customer,
         BizSusuCreateRequest $bizSusuCreateRequest
     ): JsonResponse {
-        // Extract the main attributes from the request body
-        $request_data = Helpers::extractDataAttributes(
-            request_data: $bizSusuCreateRequest->all()
-        );
-
-        // Extract the linked_wallet from the request body
-        $request_wallet = Helpers::extractIncludedAttributes(
-            request_data: data_get($bizSusuCreateRequest->all(), 'data.relationships.linked_wallet')
+        // Build the BizSusuCreateDTO and return the DTO
+        $dto = BizSusuCreateDTO::fromArray(
+            payload: $bizSusuCreateRequest->validated()
         );
 
         // Execute the CustomerLinkedWalletService and return the resource
         $linked_wallet = $this->customerLinkedWalletService->execute(
             customer: $customer,
-            wallet_resource_id: $request_wallet['resource_id'],
+            wallet_resource_id: $dto->linked_wallet_id,
+            wallet_number: $dto->wallet_number
         );
 
         // Execute the SusuSchemeService and return the resource
@@ -72,7 +68,7 @@ final class BizSusuCreateAction
 
         // Execute the FrequencyService and return the resource
         $frequency = $this->frequencyService->execute(
-            frequency_code: $request_data['frequency']
+            frequency_code: $dto->frequency
         );
 
         // Execute the BizSusuCreateService and return the resource
@@ -81,14 +77,14 @@ final class BizSusuCreateAction
             susu_scheme: $susu_scheme,
             frequency: $frequency,
             linked_wallet: $linked_wallet,
-            request_data: $request_data
+            dto: $dto
         );
 
         // Build and return the JsonResponse
         return ApiResponseBuilder::success(
             code: Response::HTTP_OK,
             message: 'Request successful.',
-            description: 'Your biz susu account is created pending approval.',
+            description: 'The biz susu account is created pending approval.',
             data: new BizSusuResource(
                 resource: $biz_susu->refresh()
             ),

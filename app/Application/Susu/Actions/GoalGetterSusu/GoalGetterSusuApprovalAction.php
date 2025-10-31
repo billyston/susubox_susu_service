@@ -11,8 +11,8 @@ use App\Domain\Account\Services\AccountStatusUpdateService;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\GoalGetterSusu;
-use App\Interface\Http\Requests\V1\Susu\GoalGetterSusu\GoalGetterSusuApprovalRequest;
-use App\Interface\Http\Resources\V1\Susu\GoalGetterSusu\GoalGetterSusuResource;
+use App\Interface\Requests\V1\Susu\GoalGetterSusu\GoalGetterSusuApprovalRequest;
+use App\Interface\Resources\V1\Susu\GoalGetterSusu\GoalGetterSusuResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 

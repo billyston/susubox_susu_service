@@ -10,6 +10,7 @@ use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Services\SchemeAccountStatusUpdateService;
 use App\Domain\Transaction\Models\Transaction;
 use App\Services\Shared\Jobs\Transaction\TransactionCreatedPublishJob;
+use Illuminate\Support\Facades\Bus;
 
 final class TransactionCreatedSuccessAction
 {
@@ -26,6 +27,7 @@ final class TransactionCreatedSuccessAction
 
     /**
      * @throws SystemFailureException
+     * @throws \Throwable
      */
     public function execute(
         Transaction $transaction,
@@ -44,11 +46,13 @@ final class TransactionCreatedSuccessAction
             );
 
             // Dispatch the TransactionCreatedPublishJob (asynchronously)
-            TransactionCreatedPublishJob::dispatch(
-                transaction: $transaction
-            );
         }
 
-        // Other Account to be handled here
+        Bus::batch([
+            new TransactionCreatedPublishJob(transaction: $transaction),
+        ])
+            ->name('transaction_created_success_action')
+            ->allowFailures()
+            ->dispatch();
     }
 }

@@ -16,11 +16,10 @@ final class DailySusuData
             // Account main data
             'data' => AccountData::toArray($dailySusu->account),
 
-            // Included data
-            'included' => [
+            // Related data
+            'relationships' => [
                 'service' => [
                     'type' => 'service',
-
                     'attributes' => [
                         'service' => 'susu',
                         'frequency' => $dailySusu->frequency->code,

@@ -19,7 +19,7 @@ final class StartDatesService
     public function execute(
     ): Collection {
         try {
-            return StartDate::get();
+            return StartDate::query()->get();
         } catch (
             ModelNotFoundException $modelNotFoundException
         ) {

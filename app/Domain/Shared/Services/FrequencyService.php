@@ -22,7 +22,7 @@ final class FrequencyService
     ): Frequency {
         try {
             // Execute the DB transaction and return the Transaction
-            return Frequency::where([
+            return Frequency::query()->where([
                 ['code', '=', $frequency_code],
                 ['is_allowed', '=', true],
             ])->firstOrFail();
@@ -46,7 +46,9 @@ final class FrequencyService
             ]);
 
             // Throw the SystemFailureException
-            throw new SystemFailureException;
+            throw new SystemFailureException(
+                message: 'A system failure occurred while trying to fetch the frequency.',
+            );
         }
     }
 }

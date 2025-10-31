@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Application\Customer\Actions;
 
+use App\Application\Customer\DTOs\CustomerLinkedWalletDTO;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Shared\Helpers\Helpers;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Services\CustomerLinkedWalletCreateService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Interface\Http\Resources\V1\Customer\CustomerLinkedWalletResource;
+use App\Interface\Resources\V1\Customer\CustomerLinkedWalletResource;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,15 +31,15 @@ final class CustomerLinkedWalletCreateAction
         Customer $customer,
         Request $request,
     ): JsonResponse {
-        // Extract the recipients data from the $request
-        $data = Helpers::extractIncludedAttributes(
-            request_data: data_get($request->all(), 'data.relationships.mobile_money_wallet')
+        // Build the CustomerLinkedWalletDTO
+        $dto = CustomerLinkedWalletDTO::fromArray(
+            payload: $request->all()
         );
 
         // Execute the CustomerLinkedWalletCreateService
         $linked_wallet = $this->customerLinkedWalletCreateService->execute(
             customer: $customer,
-            data: $data,
+            data: $dto,
         );
 
         // Build and return the JsonResponse

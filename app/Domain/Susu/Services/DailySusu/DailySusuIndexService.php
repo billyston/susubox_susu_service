@@ -38,7 +38,7 @@ final class DailySusuIndexService
                 }
 
                 // Fetch all daily susu accounts for the customer
-                $accounts = Account::where('customer_id', $customer->id)
+                $accounts = Account::query()->where('customer_id', $customer->id)
                     ->where('susu_scheme_id', $susu_scheme->id)
                     ->with('daily')
                     ->orderBy('created_at', 'desc')

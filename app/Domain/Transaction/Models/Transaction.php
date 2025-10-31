@@ -78,7 +78,7 @@ final class Transaction extends Model
 
     public static function narration(
         TransactionCategory|string $category,
-        string $amount,
+        float $amount,
         string $account_number,
         string $wallet,
         string $date,

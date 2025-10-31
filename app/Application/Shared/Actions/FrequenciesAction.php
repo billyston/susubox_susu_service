@@ -7,7 +7,7 @@ namespace App\Application\Shared\Actions;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Services\FrequenciesService;
-use App\Interface\Http\Resources\V1\Shared\FrequencyResource;
+use App\Interface\Resources\V1\Shared\FrequencyResource;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;

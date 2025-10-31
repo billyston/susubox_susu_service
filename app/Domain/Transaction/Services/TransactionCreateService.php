@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Domain\Transaction\Services;
 
+use App\Application\Transaction\DTOs\TransactionCreateDTO;
 use App\Domain\Account\Models\Account;
 use App\Domain\Customer\Models\LinkedWallet;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Transaction\Models\Transaction;
 use App\Domain\Transaction\Models\TransactionCategory;
-use Brick\Money\Money;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -24,7 +24,7 @@ final class TransactionCreateService
         Account $account,
         ?LinkedWallet $linkedWallet,
         TransactionCategory $transactionCategory,
-        array $request_data
+        TransactionCreateDTO $data
     ): Transaction {
         try {
             // Execute the database transaction
@@ -32,36 +32,31 @@ final class TransactionCreateService
                 $account,
                 $linkedWallet,
                 $transactionCategory,
-                $request_data
+                $data
             ) {
-                // Extract and create the Money values
-                $amount = Money::of($request_data['amount'], currency: 'GHS');
-                $charge = Money::of($request_data['charges'], currency: 'GHS');
-                $total = Money::of($request_data['total'], currency: 'GHS');
-
                 // Create and return the Transaction resource
-                return Transaction::updateOrCreate([
-                    'reference_number' => $request_data['reference_number'],
+                return Transaction::query()->updateOrCreate([
+                    'reference_number' => $data->reference_number,
                 ], [
                     'account_id' => $account->id,
                     'transaction_category_id' => $transactionCategory->id,
                     'linked_wallet_id' => $linkedWallet->id ?? null,
-                    'reference_number' => $request_data['reference_number'],
-                    'amount' => $amount,
-                    'charge' => $charge,
-                    'total' => $total,
-                    'description' => $request_data['description'],
+                    'reference_number' => $data->reference_number,
+                    'amount' => $data->amount,
+                    'charge' => $data->charges,
+                    'total' => $data->total,
+                    'description' => $data->description,
                     'narration' => Transaction::narration(
                         category: $transactionCategory,
-                        amount: $request_data['amount'],
+                        amount: $data->amount->getAmount()->toFloat(),
                         account_number: $account->account_number,
-                        wallet: $request_data['wallet'],
-                        date: $request_data['date'],
+                        wallet: $data->wallet_number,
+                        date: $data->date,
                     ),
-                    'date' => $request_data['date'],
-                    'extra_data' => ['is_initial_deposit' => $request_data['is_initial_deposit']],
-                    'status_code' => $request_data['status_code'],
-                    'status' => $request_data['status'],
+                    'date' => $data->date,
+                    'extra_data' => ['is_initial_deposit' => $data->is_initial_deposit],
+                    'status_code' => $data->status_code,
+                    'status' => $data->status,
                 ])->refresh();
             });
         } catch (
@@ -74,8 +69,9 @@ final class TransactionCreateService
             // Log the full exception with context
             Log::error('Exception in TransactionCreateService', [
                 'account' => $account,
+                'linked_wallet' => $linkedWallet,
                 'transaction_category' => $transactionCategory,
-                'request_data' => $request_data,
+                'dto' => $data,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),

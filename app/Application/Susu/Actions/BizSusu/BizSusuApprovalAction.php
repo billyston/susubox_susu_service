@@ -11,8 +11,8 @@ use App\Domain\Account\Services\AccountStatusUpdateService;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\BizSusu;
-use App\Interface\Http\Requests\V1\Susu\BizSusu\BizSusuApprovalRequest;
-use App\Interface\Http\Resources\V1\Susu\BizSusu\BizSusuResource;
+use App\Interface\Requests\V1\Susu\BizSusu\BizSusuApprovalRequest;
+use App\Interface\Resources\V1\Susu\BizSusu\BizSusuResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 

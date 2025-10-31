@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Susu\Services\BizSusu;
 
+use App\Application\Susu\DTOs\BizSusu\BizSusuCreateDTO;
 use App\Domain\Account\Models\Account;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Models\LinkedWallet;
@@ -12,7 +13,6 @@ use App\Domain\Shared\Models\AccountWallet;
 use App\Domain\Shared\Models\Frequency;
 use App\Domain\Shared\Models\SusuScheme;
 use App\Domain\Susu\Models\BizSusu;
-use Brick\Money\Money;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -27,7 +27,7 @@ final class BizSusuCreateService
         SusuScheme $susu_scheme,
         Frequency $frequency,
         LinkedWallet $linked_wallet,
-        array $request_data
+        BizSusuCreateDTO $dto
     ): BizSusu {
         try {
             // Execute the database transaction
@@ -36,33 +36,31 @@ final class BizSusuCreateService
                 $susu_scheme,
                 $frequency,
                 $linked_wallet,
-                $request_data
+                $dto
             ) {
                 // Create and return the account resource
-                $account = Account::create([
+                $account = Account::query()->create([
                     'customer_id' => $customer->id,
                     'susu_scheme_id' => $susu_scheme->id,
-                    'account_name' => $request_data['account_name'],
-                    'account_number' => Account::generateAccountNumber(
-                        product_code: config(key: 'susubox.susu_schemes.biz_susu_code'),
-                    ),
-                    'purpose' => $request_data['purpose'],
-                    'susu_amount' => Money::of($request_data['susu_amount'], currency: 'GHS'),
-                    'initial_deposit' => Money::of($request_data['initial_deposit'], currency: 'GHS'),
-                    'accepted_terms' => $request_data['accepted_terms'],
+                    'account_name' => $dto->account_name,
+                    'account_number' => Account::generateAccountNumber(product_code: config(key: 'susubox.susu_schemes.biz_susu_code')),
+                    'purpose' => $dto->purpose,
+                    'susu_amount' => $dto->susu_amount,
+                    'initial_deposit' => $dto->initial_deposit,
+                    'accepted_terms' => $dto->accepted_terms,
                 ]);
 
                 // Linked the account_wallet
-                AccountWallet::create([
+                AccountWallet::query()->create([
                     'account_id' => $account->id,
                     'linked_wallet_id' => $linked_wallet->id,
                 ]);
 
                 // Create and return the BizSusu resource
-                return BizSusu::create([
+                return BizSusu::query()->create([
                     'account_id' => $account->id,
                     'frequency_id' => $frequency->id,
-                    'rollover_enabled' => $request_data['rollover_enabled'],
+                    'rollover_enabled' => $dto->rollover_enabled,
                 ]);
             });
         } catch (
@@ -74,7 +72,7 @@ final class BizSusuCreateService
                 'susu_scheme' => $susu_scheme,
                 'frequency' => $frequency,
                 'linked_wallet' => $linked_wallet,
-                'request_data' => $request_data,
+                'dto' => $dto,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),

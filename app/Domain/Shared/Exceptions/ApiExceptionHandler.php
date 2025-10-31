@@ -38,12 +38,12 @@ final class ApiExceptionHandler extends ExceptionHandler
         Throwable $e
     ): JsonResponse {
         $exceptions = [
-            ThrottleRequestsException::class => [Response::HTTP_TOO_MANY_REQUESTS, 'Too many requests.', 'You have made too many requests.'],
             UnauthorisedAccessException::class => [Response::HTTP_FORBIDDEN, 'Request forbidden.', 'You are forbidden to perform this action.'],
             LinkedWalletNotFoundException::class => [Response::HTTP_NOT_FOUND, 'Resource not found.', 'The wallet was not found.'],
             CancellationNotAllowedException::class => [Response::HTTP_NOT_FOUND, 'Request unprocessable.', 'You are not allowed to perform this action.'],
             SusuSchemeNotFoundException::class => [Response::HTTP_NOT_FOUND, 'Resource not found.', 'The susu scheme was not found.'],
             FrequencyNotFoundException::class => [Response::HTTP_NOT_FOUND, 'Resource not found.', 'The frequency was not found.'],
+            ThrottleRequestsException::class => [Response::HTTP_TOO_MANY_REQUESTS, 'Too many requests.', 'You have made too many requests.'],
             ModelNotFoundException::class => [Response::HTTP_NOT_FOUND, 'Resource not found.', 'The requested resource does not exist.'],
             NotFoundHttpException::class => [Response::HTTP_NOT_FOUND, 'Endpoint not found.', 'The requested endpoint does not exist.'],
             InvalidArgumentException::class => [Response::HTTP_UNPROCESSABLE_ENTITY, 'Request unprocessable.', 'An unexpected error occurred.'],

@@ -16,7 +16,6 @@ final class AccountData
             // Account main data
             'type' => 'Account',
             'resource_id' => $account->resource_id,
-
             'attributes' => [
                 'account_name' => $account->account_name,
                 'account_number' => $account->account_number,

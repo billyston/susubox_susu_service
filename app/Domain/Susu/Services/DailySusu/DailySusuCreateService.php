@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Susu\Services\DailySusu;
 
+use App\Application\Susu\DTOs\DailySusu\DailySusuCreateDTO;
 use App\Domain\Account\Models\Account;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Models\LinkedWallet;
@@ -12,7 +13,6 @@ use App\Domain\Shared\Models\AccountWallet;
 use App\Domain\Shared\Models\Frequency;
 use App\Domain\Shared\Models\SusuScheme;
 use App\Domain\Susu\Models\DailySusu;
-use Brick\Money\Money;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -27,7 +27,7 @@ final class DailySusuCreateService
         SusuScheme $susu_scheme,
         Frequency $frequency,
         LinkedWallet $linked_wallet,
-        array $request_data
+        DailySusuCreateDTO $dto
     ): DailySusu {
         try {
             // Execute the database transaction
@@ -36,36 +36,31 @@ final class DailySusuCreateService
                 $susu_scheme,
                 $frequency,
                 $linked_wallet,
-                $request_data
+                $dto
             ) {
-                // Get the susu_amount
-                $susu_amount = Money::of($request_data['susu_amount'], currency: 'GHS');
-
                 // Create and return the account resource
-                $account = Account::create([
+                $account = Account::query()->create([
                     'customer_id' => $customer->id,
                     'susu_scheme_id' => $susu_scheme->id,
-                    'account_name' => $request_data['account_name'],
-                    'account_number' => Account::generateAccountNumber(
-                        product_code: config(key: 'susubox.susu_schemes.daily_susu_code'),
-                    ),
-                    'purpose' => $request_data['purpose'],
-                    'susu_amount' => $susu_amount,
-                    'initial_deposit' => $susu_amount->multipliedBy($request_data['initial_deposit']),
-                    'accepted_terms' => $request_data['accepted_terms'],
+                    'account_name' => $dto->account_name,
+                    'account_number' => Account::generateAccountNumber(product_code: config(key: 'susubox.susu_schemes.daily_susu_code')),
+                    'purpose' => $dto->purpose,
+                    'susu_amount' => $dto->susu_amount,
+                    'initial_deposit' => $dto->susu_amount->multipliedBy($dto->initial_deposit),
+                    'accepted_terms' => $dto->accepted_terms,
                 ]);
 
                 // Linked the account_wallet
-                AccountWallet::create([
+                AccountWallet::query()->create([
                     'account_id' => $account->id,
                     'linked_wallet_id' => $linked_wallet->id,
                 ]);
 
                 // Create and return the DailySusu resource
-                return DailySusu::create([
+                return DailySusu::query()->create([
                     'account_id' => $account->id,
                     'frequency_id' => $frequency->id,
-                    'rollover_enabled' => $request_data['rollover_enabled'],
+                    'rollover_enabled' => $dto->rollover_enabled,
                 ]);
             });
         } catch (
@@ -77,7 +72,7 @@ final class DailySusuCreateService
                 'susu_scheme' => $susu_scheme,
                 'frequency' => $frequency,
                 'linked_wallet' => $linked_wallet,
-                'request_data' => $request_data,
+                'dto' => $dto,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),

@@ -20,7 +20,7 @@ final class TransactionCategoryByCodeGetService
         string $code,
     ): TransactionCategory {
         try {
-            return TransactionCategory::where(
+            return TransactionCategory::query()->where(
                 'code',
                 $code
             )->firstOrFail();

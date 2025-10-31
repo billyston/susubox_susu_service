@@ -20,7 +20,7 @@ final class SusuSchemesService
     public function execute(
     ): Collection {
         try {
-            return SusuScheme::where(
+            return SusuScheme::query()->where(
                 'status',
                 SusuSchemeStatus::ACTIVE->value,
             )->get();

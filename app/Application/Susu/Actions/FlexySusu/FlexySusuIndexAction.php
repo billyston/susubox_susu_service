@@ -11,7 +11,7 @@ use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
 use App\Domain\Shared\Services\SusuSchemeService;
 use App\Domain\Susu\Services\FlexySusu\FlexySusuIndexService;
-use App\Interface\Http\Resources\V1\Susu\FlexySusu\FlexySusuCollectionResource;
+use App\Interface\Resources\V1\Susu\FlexySusu\FlexySusuCollectionResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 

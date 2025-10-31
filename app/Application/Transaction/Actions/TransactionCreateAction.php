@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Transaction\Actions;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Shared\Helpers\Helpers;
+use App\Application\Transaction\DTOs\TransactionCreateDTO;
 use App\Application\Transaction\Jobs\TransactionCreatedJob;
 use App\Domain\Account\Models\Account;
 use App\Domain\Customer\Services\CustomerLinkedWalletByNumberService;
@@ -39,24 +39,19 @@ final class TransactionCreateAction
         Account $account,
         Request $request,
     ): JsonResponse {
-        // Extract the account data from the $request
-        $request_data = Helpers::extractDataAttributes(
-            request_data: $request->all()
-        );
-
-        // Extract the linked_wallet data from the $request
-        $request_wallet = Helpers::extractIncludedAttributes(
-            request_data: data_get($request->all(), 'included.linked_wallet')
+        // Build the TransactionCreateDTO and return the DTO
+        $dto = TransactionCreateDTO::fromArray(
+            payload: $request->all()
         );
 
         // Execute the TransactionCreateService and return the Transaction resource
         $transactionCategory = $this->transactionCategoryByCodeGetService->execute(
-            code: $request_data['transaction_category'],
+            code: $dto->transaction_category,
         );
 
         // Execute the CustomerLinkedWalletByNumberService and return the wallet resource
         $wallet = $this->customerLinkedWalletByNumberService->execute(
-            wallet_number: $request_wallet['wallet_number'],
+            wallet_number: $dto->wallet_number,
         );
 
         // Execute the TransactionCreateService and return the Transaction resource
@@ -64,7 +59,7 @@ final class TransactionCreateAction
             account: $account,
             linkedWallet: $wallet,
             transactionCategory: $transactionCategory,
-            request_data: $request_data
+            data: $dto
         );
 
         // Dispatch the TransactionCreatedJob

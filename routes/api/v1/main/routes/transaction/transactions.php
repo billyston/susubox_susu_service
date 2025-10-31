@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Interface\Http\Controllers\V1\Transaction\TransactionCreateController;
+use App\Interface\Controllers\V1\Transaction\TransactionCreateController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([

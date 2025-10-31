@@ -10,7 +10,7 @@ use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\CancellationNotAllowedException;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\BizSusu;
-use App\Interface\Http\Requests\V1\Susu\BizSusu\BizSusuCancelRequest;
+use App\Interface\Requests\V1\Susu\BizSusu\BizSusuCancelRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
