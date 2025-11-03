@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Interface\Controllers\V1\Susu\FlexySusu\FlexySusuDirectDepositCancelController;
 use App\Interface\Controllers\V1\Susu\FlexySusu\FlexySusuDirectDepositCreateController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,20 @@ Route::group([
         parameters: [
             'customer',
             'flexy_susu',
+        ]
+    );
+
+    // Cancel direct deposit request route
+    Route::post(
+        uri: '/{direct_deposit}',
+        action: FlexySusuDirectDepositCancelController::class,
+    )->name(
+        name: 'direct_deposit.cancel'
+    )->whereUuid(
+        parameters: [
+            'customer',
+            'flexy_susu',
+            'direct_deposit',
         ]
     );
 });

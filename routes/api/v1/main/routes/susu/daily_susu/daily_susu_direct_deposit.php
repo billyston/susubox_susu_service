@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Interface\Controllers\V1\Susu\DailySusu\DailySusuDirectDepositCancelController;
 use App\Interface\Controllers\V1\Susu\DailySusu\DailySusuDirectDepositCreateController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,20 @@ Route::group([
         parameters: [
             'customer',
             'daily_susu',
+        ]
+    );
+
+    // Cancel direct deposit request route
+    Route::post(
+        uri: '/{direct_deposit}',
+        action: DailySusuDirectDepositCancelController::class,
+    )->name(
+        name: 'direct_deposit.cancel'
+    )->whereUuid(
+        parameters: [
+            'customer',
+            'daily_susu',
+            'direct_deposit',
         ]
     );
 });
