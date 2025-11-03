@@ -52,6 +52,16 @@ The SusuBox susu service API.
 - [x] Get single daily susu for customer
 - [x] Get all daily susu for customer
 
+###### Direct Deposit
+- [x] Create direct deposit 
+- [ ] Cancel direct deposit 
+- [ ] Approve direct deposit 
+- [ ] Validate direct deposit
+
+###### Account Activation
+- [ ] Implement account activation (if initial_debit failed)
+- [ ] Validate account activation
+
 ###### Stats
 - [ ] Get all statistics for daily susu
 
@@ -76,6 +86,16 @@ The SusuBox susu service API.
 ###### Get
 - [x] Get single biz susu for customer
 - [x] Get all biz susu for customer
+
+###### Direct Deposit
+- [x] Create direct deposit
+- [ ] Cancel direct deposit
+- [ ] Approve direct deposit 
+- [ ] Validate direct deposit
+
+###### Account Activation
+- [ ] Implement account activation (if initial_debit failed)
+- [ ] Validate account activation
 
 ###### Stats
 - [ ] Get all statistics for biz susu
@@ -102,6 +122,16 @@ The SusuBox susu service API.
 - [x] Get single goal getter susu for customer
 - [x] Get all goal getter susu for customer
 
+###### Direct Deposit
+- [x] Create direct deposit
+- [ ] Cancel direct deposit
+- [ ] Approve direct deposit
+- [ ] Validate direct deposit
+
+###### Account Activation
+- [ ] Implement account activation (if initial_debit failed)
+- [ ] Validate account activation
+
 ###### Stats
 - [ ] Get all statistics for goal getter susu
 
@@ -125,6 +155,16 @@ The SusuBox susu service API.
 ###### Get
 - [x] Get single flexy susu for customer
 - [x] Get all flexy susu for customer
+
+###### Direct Deposit
+- [x] Create direct deposit
+- [ ] Cancel direct deposit
+- [ ] Approve direct deposit
+- [ ] Validate direct deposit
+
+###### Account Activation
+- [ ] Implement account activation (if initial_debit failed)
+- [ ] Validate account activation
 
 ###### Stats
 - [ ] Get all statistics for flexy susu

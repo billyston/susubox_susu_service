@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Application\Susu\DTOs\BizSusu;
 
+use Brick\Math\Exception\NumberFormatException;
+use Brick\Math\Exception\RoundingNecessaryException;
+use Brick\Money\Exception\UnknownCurrencyException;
 use Brick\Money\Money;
 
 final readonly class BizSusuCreateDTO
@@ -22,6 +25,11 @@ final readonly class BizSusuCreateDTO
         //..
     }
 
+    /**
+     * @throws RoundingNecessaryException
+     * @throws UnknownCurrencyException
+     * @throws NumberFormatException
+     */
     public static function fromArray(
         array $payload
     ): self {
@@ -31,8 +39,8 @@ final readonly class BizSusuCreateDTO
         $linkedWallet = $relationships['linked_wallet'] ?? [];
 
         // Compute intermediate values
-        $susu_amount = Money::of($attributes['susu_amount'], 'GHS');
-        $initial_deposit = Money::of($attributes['initial_deposit'], 'GHS');
+        $susu_amount = Money::of(amount: $attributes['susu_amount'], currency: 'GHS');
+        $initial_deposit = Money::of(amount: $attributes['initial_deposit'], currency: 'GHS');
 
         return new self(
             account_name: $attributes['account_name'],

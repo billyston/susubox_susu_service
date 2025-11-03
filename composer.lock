@@ -4,29 +4,29 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ce7d4644fc98d4e85cfd28c9133c6deb",
+    "content-hash": "ef94de81eedb04752138d90438d873f0",
     "packages": [
         {
             "name": "brick/math",
-            "version": "0.11.0",
+            "version": "0.14.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/brick/math.git",
-                "reference": "0ad82ce168c82ba30d1c01ec86116ab52f589478"
+                "reference": "113a8ee2656b882d4c3164fa31aa6e12cbb7aaa2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brick/math/zipball/0ad82ce168c82ba30d1c01ec86116ab52f589478",
-                "reference": "0ad82ce168c82ba30d1c01ec86116ab52f589478",
+                "url": "https://api.github.com/repos/brick/math/zipball/113a8ee2656b882d4c3164fa31aa6e12cbb7aaa2",
+                "reference": "113a8ee2656b882d4c3164fa31aa6e12cbb7aaa2",
                 "shasum": ""
             },
             "require": {
-                "php": "^8.0"
+                "php": "^8.2"
             },
             "require-dev": {
                 "php-coveralls/php-coveralls": "^2.2",
-                "phpunit/phpunit": "^9.0",
-                "vimeo/psalm": "5.0.0"
+                "phpstan/phpstan": "2.1.22",
+                "phpunit/phpunit": "^11.5"
             },
             "type": "library",
             "autoload": {
@@ -46,12 +46,17 @@
                 "arithmetic",
                 "bigdecimal",
                 "bignum",
+                "bignumber",
                 "brick",
-                "math"
+                "decimal",
+                "integer",
+                "math",
+                "mathematics",
+                "rational"
             ],
             "support": {
                 "issues": "https://github.com/brick/math/issues",
-                "source": "https://github.com/brick/math/tree/0.11.0"
+                "source": "https://github.com/brick/math/tree/0.14.0"
             },
             "funding": [
                 {
@@ -59,34 +64,33 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-01-15T23:15:59+00:00"
+            "time": "2025-08-29T12:40:03+00:00"
         },
         {
             "name": "brick/money",
-            "version": "0.8.1",
+            "version": "0.10.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/brick/money.git",
-                "reference": "25f484a347756b7f3fbe7ad63ed9ad2d87b20004"
+                "reference": "b1b0bb6035d26a58f29b1c06b1265c01a0b5c9c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brick/money/zipball/25f484a347756b7f3fbe7ad63ed9ad2d87b20004",
-                "reference": "25f484a347756b7f3fbe7ad63ed9ad2d87b20004",
+                "url": "https://api.github.com/repos/brick/money/zipball/b1b0bb6035d26a58f29b1c06b1265c01a0b5c9c3",
+                "reference": "b1b0bb6035d26a58f29b1c06b1265c01a0b5c9c3",
                 "shasum": ""
             },
             "require": {
-                "brick/math": "~0.10.1 || ~0.11.0",
-                "ext-json": "*",
-                "php": "^8.0"
+                "brick/math": "~0.12.0|~0.13.0|~0.14.0",
+                "php": "^8.1"
             },
             "require-dev": {
-                "brick/varexporter": "~0.3.0",
+                "brick/varexporter": "~0.5.0",
                 "ext-dom": "*",
                 "ext-pdo": "*",
                 "php-coveralls/php-coveralls": "^2.2",
-                "phpunit/phpunit": "^9.4.3",
-                "vimeo/psalm": "5.14.1"
+                "phpunit/phpunit": "^10.1",
+                "vimeo/psalm": "6.3.0"
             },
             "suggest": {
                 "ext-intl": "Required to format Money objects"
@@ -109,7 +113,7 @@
             ],
             "support": {
                 "issues": "https://github.com/brick/money/issues",
-                "source": "https://github.com/brick/money/tree/0.8.1"
+                "source": "https://github.com/brick/money/tree/0.10.3"
             },
             "funding": [
                 {
@@ -117,7 +121,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-09-23T21:17:11+00:00"
+            "time": "2025-09-03T09:55:48+00:00"
         },
         {
             "name": "carbonphp/carbon-doctrine-types",
@@ -432,29 +436,28 @@
         },
         {
             "name": "dragonmantank/cron-expression",
-            "version": "v3.4.0",
+            "version": "v3.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dragonmantank/cron-expression.git",
-                "reference": "8c784d071debd117328803d86b2097615b457500"
+                "reference": "d61a8a9604ec1f8c3d150d09db6ce98b32675013"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dragonmantank/cron-expression/zipball/8c784d071debd117328803d86b2097615b457500",
-                "reference": "8c784d071debd117328803d86b2097615b457500",
+                "url": "https://api.github.com/repos/dragonmantank/cron-expression/zipball/d61a8a9604ec1f8c3d150d09db6ce98b32675013",
+                "reference": "d61a8a9604ec1f8c3d150d09db6ce98b32675013",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.2|^8.0",
-                "webmozart/assert": "^1.0"
+                "php": "^8.2|^8.3|^8.4|^8.5"
             },
             "replace": {
                 "mtdowling/cron-expression": "^1.0"
             },
             "require-dev": {
-                "phpstan/extension-installer": "^1.0",
-                "phpstan/phpstan": "^1.0",
-                "phpunit/phpunit": "^7.0|^8.0|^9.0"
+                "phpstan/extension-installer": "^1.4.3",
+                "phpstan/phpstan": "^1.12.32|^2.1.31",
+                "phpunit/phpunit": "^8.5.48|^9.0"
             },
             "type": "library",
             "extra": {
@@ -485,7 +488,7 @@
             ],
             "support": {
                 "issues": "https://github.com/dragonmantank/cron-expression/issues",
-                "source": "https://github.com/dragonmantank/cron-expression/tree/v3.4.0"
+                "source": "https://github.com/dragonmantank/cron-expression/tree/v3.6.0"
             },
             "funding": [
                 {
@@ -493,7 +496,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-10-09T13:47:03+00:00"
+            "time": "2025-10-31T18:51:33+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -6308,64 +6311,6 @@
                 }
             ],
             "time": "2024-11-21T01:49:47+00:00"
-        },
-        {
-            "name": "webmozart/assert",
-            "version": "1.12.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/webmozarts/assert.git",
-                "reference": "9be6926d8b485f55b9229203f962b51ed377ba68"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/webmozarts/assert/zipball/9be6926d8b485f55b9229203f962b51ed377ba68",
-                "reference": "9be6926d8b485f55b9229203f962b51ed377ba68",
-                "shasum": ""
-            },
-            "require": {
-                "ext-ctype": "*",
-                "ext-date": "*",
-                "ext-filter": "*",
-                "php": "^7.2 || ^8.0"
-            },
-            "suggest": {
-                "ext-intl": "",
-                "ext-simplexml": "",
-                "ext-spl": ""
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.10-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Webmozart\\Assert\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Bernhard Schussek",
-                    "email": "bschussek@gmail.com"
-                }
-            ],
-            "description": "Assertions to validate method input/output with nice error messages.",
-            "keywords": [
-                "assert",
-                "check",
-                "validate"
-            ],
-            "support": {
-                "issues": "https://github.com/webmozarts/assert/issues",
-                "source": "https://github.com/webmozarts/assert/tree/1.12.1"
-            },
-            "time": "2025-10-29T15:56:20+00:00"
         }
     ],
     "packages-dev": [
@@ -6818,21 +6763,21 @@
         },
         {
             "name": "driftingly/rector-laravel",
-            "version": "2.1.1",
+            "version": "2.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/driftingly/rector-laravel.git",
-                "reference": "abc336cbf06f53d90ab74cecfd319379fc55d408"
+                "reference": "d7cd932cff9e398a43393f1a1a63b27d574e35ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/driftingly/rector-laravel/zipball/abc336cbf06f53d90ab74cecfd319379fc55d408",
-                "reference": "abc336cbf06f53d90ab74cecfd319379fc55d408",
+                "url": "https://api.github.com/repos/driftingly/rector-laravel/zipball/d7cd932cff9e398a43393f1a1a63b27d574e35ef",
+                "reference": "d7cd932cff9e398a43393f1a1a63b27d574e35ef",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.4 || ^8.0",
-                "rector/rector": "^2.0"
+                "rector/rector": "^2.2.7"
             },
             "type": "rector-extension",
             "autoload": {
@@ -6847,9 +6792,9 @@
             "description": "Rector upgrades rules for Laravel Framework",
             "support": {
                 "issues": "https://github.com/driftingly/rector-laravel/issues",
-                "source": "https://github.com/driftingly/rector-laravel/tree/2.1.1"
+                "source": "https://github.com/driftingly/rector-laravel/tree/2.1.2"
             },
-            "time": "2025-10-23T13:53:44+00:00"
+            "time": "2025-10-31T21:56:58+00:00"
         },
         {
             "name": "evenement/evenement",

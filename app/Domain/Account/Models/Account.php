@@ -18,6 +18,7 @@ use App\Domain\Transaction\Models\Transaction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -109,6 +110,30 @@ final class Account extends Model
     ): HasOne {
         return $this->hasOne(
             related: FlexySusu::class,
+            foreignKey: 'account_id'
+        );
+    }
+
+    public function directDeposits(
+    ): HasMany {
+        return $this->hasMany(
+            related: DirectDeposit::class,
+            foreignKey: 'account_id'
+        );
+    }
+
+    public function settlements(
+    ): HasMany {
+        return $this->hasMany(
+            related: Settlement::class,
+            foreignKey: 'account_id'
+        );
+    }
+
+    public function withdrawals(
+    ): HasMany {
+        return $this->hasMany(
+            related: Withdrawal::class,
             foreignKey: 'account_id'
         );
     }

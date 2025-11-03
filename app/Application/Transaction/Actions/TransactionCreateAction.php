@@ -12,6 +12,9 @@ use App\Domain\Customer\Services\CustomerLinkedWalletByNumberService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Transaction\Services\TransactionCategoryByCodeGetService;
 use App\Domain\Transaction\Services\TransactionCreateService;
+use Brick\Math\Exception\NumberFormatException;
+use Brick\Math\Exception\RoundingNecessaryException;
+use Brick\Money\Exception\UnknownCurrencyException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,6 +37,9 @@ final class TransactionCreateAction
 
     /**
      * @throws SystemFailureException
+     * @throws NumberFormatException
+     * @throws RoundingNecessaryException
+     * @throws UnknownCurrencyException
      */
     public function execute(
         Account $account,

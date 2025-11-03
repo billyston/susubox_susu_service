@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Application\Transaction\DTOs;
 
+use Brick\Math\Exception\NumberFormatException;
+use Brick\Math\Exception\RoundingNecessaryException;
+use Brick\Money\Exception\UnknownCurrencyException;
 use Brick\Money\Money;
 
 final readonly class TransactionCreateDTO
@@ -30,8 +33,14 @@ final readonly class TransactionCreateDTO
         // ..
     }
 
-    public static function fromArray(array $payload): self
-    {
+    /**
+     * @throws UnknownCurrencyException
+     * @throws RoundingNecessaryException
+     * @throws NumberFormatException
+     */
+    public static function fromArray(
+        array $payload
+    ): self {
         $data = $payload['data'] ?? [];
         $attributes = $data['attributes'] ?? [];
 
@@ -68,8 +77,8 @@ final readonly class TransactionCreateDTO
         );
     }
 
-    public function toArray(): array
-    {
+    public function toArray(
+    ): array {
         return [
             'resource_id' => $this->resource_id,
             'is_initial_deposit' => $this->is_initial_deposit,
