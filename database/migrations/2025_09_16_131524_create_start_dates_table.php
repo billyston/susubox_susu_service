@@ -17,23 +17,13 @@ return new class extends Migration
              ) {
                 // Table ids
                 $table->id();
-                $table->uuid(column: 'resource_id')
-                    ->unique()
-                    ->index();
-
-                // Table related fields
+                $table->uuid(column: 'resource_id')->unique()->index();
 
                 // Table main attributes
                 $table->string(column: 'name');
-
                 $table->string(column: 'code');
-
                 $table->string(column: 'days');
-
-                $table->string(column: 'description')
-                    ->nullable();
-
-                // Foreign key fields
+                $table->string(column: 'description')->nullable();
 
                 // Timestamps (created_at / updated_at) fields
             });

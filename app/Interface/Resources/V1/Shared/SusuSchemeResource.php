@@ -14,7 +14,7 @@ final class SusuSchemeResource extends JsonResource
     ): array {
         return [
             // Resource type and id
-            'type' => 'Frequency',
+            'type' => 'SusuScheme',
             'resource_id' => $this->resource->resource_id,
 
             // Resource exposed attributes

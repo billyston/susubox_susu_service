@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Susu\DTOs\FlexySusu;
 
+use Brick\Money\Exception\UnknownCurrencyException;
 use Brick\Money\Money;
 
 final readonly class FlexySusuCreateDTO
@@ -14,19 +15,21 @@ final readonly class FlexySusuCreateDTO
         public Money $susu_amount,
         public Money $initial_deposit,
         public bool $accepted_terms,
-        public string $linked_wallet_id,
-        public string $wallet_number,
+        public string $wallet_id,
     ) {
         //..
     }
 
+    /**
+     * @throws UnknownCurrencyException
+     */
     public static function fromArray(
         array $payload
     ): self {
         $data = $payload['data'] ?? [];
         $attributes = $data['attributes'] ?? [];
         $relationships = $data['relationships'] ?? [];
-        $linkedWallet = $relationships['linked_wallet'] ?? [];
+        $wallet = $relationships['wallet'] ?? [];
 
         // Compute intermediate values
         $susu_amount = Money::of(0.00, 'GHS');
@@ -38,8 +41,7 @@ final readonly class FlexySusuCreateDTO
             susu_amount: $susu_amount,
             initial_deposit: $initial_deposit,
             accepted_terms: filter_var($attributes['accepted_terms'], FILTER_VALIDATE_BOOLEAN),
-            linked_wallet_id: $linkedWallet['resource_id'],
-            wallet_number: $linkedWallet['attributes']['wallet_number'],
+            wallet_id: $wallet['resource_id'],
         );
     }
 
@@ -51,8 +53,7 @@ final readonly class FlexySusuCreateDTO
             'susu_amount' => $this->susu_amount,
             'initial_deposit' => $this->initial_deposit,
             'accepted_terms' => $this->accepted_terms,
-            'linked_wallet_id' => $this->linked_wallet_id,
-            'wallet_number' => $this->wallet_number,
+            'wallet_id' => $this->wallet_id,
         ];
     }
 }

@@ -12,15 +12,21 @@ use App\Domain\Shared\Exceptions\SusuSchemeNotFoundException;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Interface\Controllers\Shared\Controller;
 use App\Interface\Requests\V1\Susu\DailySusu\DailySusuCreateRequest;
+use Brick\Money\Exception\UnknownCurrencyException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class DailySusuCreateController extends Controller
 {
     /**
-     * @throws SystemFailureException
+     * @param Customer $customer
+     * @param DailySusuCreateRequest $dailySusuCreateRequest
+     * @param DailySusuCreateAction $dailySusuCreateAction
+     * @return JsonResponse
+     * @throws FrequencyNotFoundException
      * @throws LinkedWalletNotFoundException
      * @throws SusuSchemeNotFoundException
-     * @throws FrequencyNotFoundException
+     * @throws SystemFailureException
+     * @throws UnknownCurrencyException
      */
     public function __invoke(
         Customer $customer,
@@ -30,7 +36,7 @@ final class DailySusuCreateController extends Controller
         // Execute the DailySusuCreateAction and return the DailySusu
         return $dailySusuCreateAction->execute(
             customer: $customer,
-            dailySusuCreateRequest: $dailySusuCreateRequest
+            request: $dailySusuCreateRequest->validated()
         );
     }
 }

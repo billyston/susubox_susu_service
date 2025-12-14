@@ -9,8 +9,7 @@ use App\Domain\Account\Services\AccountCancelService;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\CancellationNotAllowedException;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Susu\Models\GoalGetterSusu;
-use App\Interface\Requests\V1\Susu\GoalGetterSusu\GoalGetterSusuCancelRequest;
+use App\Domain\Susu\Models\IndividualSusu\GoalGetterSusu;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -31,7 +30,7 @@ final class GoalGetterSusuCancelAction
     public function execute(
         Customer $customer,
         GoalGetterSusu $goal_getter_susu,
-        GoalGetterSusuCancelRequest $goalGetterSusuCancelRequest,
+        array $request,
     ): JsonResponse {
         // Execute the AccountCancelService
         $this->accountCancelService->execute(
@@ -42,7 +41,7 @@ final class GoalGetterSusuCancelAction
         return ApiResponseBuilder::success(
             code: Response::HTTP_OK,
             message: 'Request successful.',
-            description: 'The goal getter susu account setup has been cancelled.'
+            description: 'The goal getter susu account setup has been cancelled successfully.'
         );
     }
 }

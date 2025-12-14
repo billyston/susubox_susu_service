@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Interface\Resources\V1\Susu\GoalGetterSusu;
 
 use App\Interface\Resources\V1\Account\AccountResource;
-use App\Interface\Resources\V1\Customer\CustomerLinkedWalletResource;
+use App\Interface\Resources\V1\Customer\CustomerWalletResource;
 use App\Interface\Resources\V1\Shared\DurationResource;
 use App\Interface\Resources\V1\Shared\FrequencyResource;
 use App\Interface\Resources\V1\Shared\SusuSchemeResource;
@@ -34,7 +34,7 @@ final class GoalGetterSusuCollectionResource extends JsonResource
             // Relationships
             'relationships' => [
                 'account' => new AccountResource($this->resource->account),
-                'linked_wallet' => CustomerLinkedWalletResource::collection($this->resource->account->wallets),
+                'linked_wallet' => CustomerWalletResource::collection($this->resource->account->wallets),
                 'frequency' => new FrequencyResource($this->resource->account->frequency),
                 'duration' => new DurationResource($this->resource->account->goal->duration),
                 'scheme' => new SusuSchemeResource($this->resource->account->scheme),

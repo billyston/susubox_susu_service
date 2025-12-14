@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Application\Susu\Jobs\FlexySusu;
 
 use App\Domain\Customer\Models\Customer;
-use App\Domain\Susu\Models\FlexySusu;
+use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
 use App\Services\Http\Common\Jobs\Account\FlexySusuActivationHttpPublishJob;
 use App\Services\RabbitMQ\Jobs\Account\FlexySusuActivationRabbitMQPublishJob;
 use App\Services\Redis\Jobs\Account\FlexySusuActivationRedisPublishJob;
-use App\Services\Shared\Data\Account\FlexySusuData;
+use App\Services\Shared\Data\Susu\FlexySusuData;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Interface\Resources\V1\Susu\BizSusu;
 
 use App\Interface\Resources\V1\Account\AccountResource;
-use App\Interface\Resources\V1\Customer\CustomerLinkedWalletResource;
-use App\Interface\Resources\V1\Shared\FrequencyResource;
-use App\Interface\Resources\V1\Shared\SusuSchemeResource;
+use App\Interface\Resources\V1\Customer\CustomerWalletResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -24,6 +22,9 @@ final class BizSusuResource extends JsonResource
 
             // Resource exposed attributes
             'attributes' => [
+                'susu_amount' => $this->resource->susu_amount->getAmount()->__toString(),
+                'initial_deposit' => $this->resource->initial_deposit->getAmount()->__toString(),
+                'frequency' => $this->resource->frequency->code,
                 'rollover_enabled' => $this->resource->rollover_enabled,
                 'is_collateralized' => $this->resource->is_collateralized,
                 'withdrawal_status' => $this->resource->withdrawal_status,
@@ -32,10 +33,12 @@ final class BizSusuResource extends JsonResource
 
             // Included resource
             'included' => [
-                'account' => new AccountResource($this->resource->account),
-                'linked_wallet' => CustomerLinkedWalletResource::collection($this->resource->account->wallets),
-                'frequency' => new FrequencyResource($this->resource->account->frequency),
-                'scheme' => new SusuSchemeResource($this->resource->account->scheme),
+                'account' => new AccountResource($this->resource->individual->account),
+                'wallet' => new CustomerWalletResource($this->resource->wallet),
+
+//                'susu_scheme' => new SusuSchemeResource($this->resource->individualAccount->susuScheme),
+//                'account_lock' => $this->when(! empty($this->resource->lock), new SusuAccountLockData($this->resource)),
+//                'account_pause' => $this->when(! empty($this->resource->pause), new SusuAccountPauseData($this->resource)),
             ],
         ];
     }

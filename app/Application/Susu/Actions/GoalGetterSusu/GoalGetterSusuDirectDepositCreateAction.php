@@ -10,7 +10,7 @@ use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Domain\Account\Services\DirectDepositCreateService;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Susu\Models\GoalGetterSusu;
+use App\Domain\Susu\Models\IndividualSusu\GoalGetterSusu;
 use App\Interface\Requests\V1\Susu\GoalGetterSusu\GoalGetterSusuDirectDepositCreateRequest;
 use App\Interface\Resources\V1\Account\DirectDepositResource;
 use Brick\Money\Exception\UnknownCurrencyException;

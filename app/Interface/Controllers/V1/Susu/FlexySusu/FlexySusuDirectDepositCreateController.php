@@ -7,7 +7,7 @@ namespace App\Interface\Controllers\V1\Susu\FlexySusu;
 use App\Application\Susu\Actions\FlexySusu\FlexySusuDirectDepositCreateAction;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Susu\Models\FlexySusu;
+use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
 use App\Interface\Controllers\Shared\Controller;
 use App\Interface\Requests\V1\Susu\FlexySusu\FlexySusuDirectDepositCreateRequest;
 use Brick\Money\Exception\UnknownCurrencyException;

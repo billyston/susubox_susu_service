@@ -4,24 +4,44 @@ declare(strict_types=1);
 
 namespace App\Domain\Account\Models;
 
-use App\Domain\Customer\Models\Customer;
-use App\Domain\Customer\Models\LinkedWallet;
-use App\Domain\Shared\Casts\MoneyCasts;
-use App\Domain\Shared\Models\AccountWallet;
 use App\Domain\Shared\Models\HasUuid;
-use App\Domain\Shared\Models\SusuScheme;
-use App\Domain\Susu\Models\BizSusu;
-use App\Domain\Susu\Models\DailySusu;
-use App\Domain\Susu\Models\FlexySusu;
-use App\Domain\Susu\Models\GoalGetterSusu;
 use App\Domain\Transaction\Models\Transaction;
+use Eloquent;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Carbon;
 
+/**
+ * Class Account
+ *
+ * @property string $id
+ * @property string $resource_id
+ * @property string $accountable_type
+ * @property string $accountable_id
+ * @property string $account_name
+ * @property string $account_number
+ * @property Carbon|null $account_activity_period
+ * @property bool $accepted_terms
+ * @property string $status
+ *
+ * Relationships:
+ * @property Model $accountable
+ * @property Collection<int, Transaction> $transactions
+ *
+ * @method static Builder|Account whereResourceId($value)
+ * @method static Builder|Account whereAccountableType($value)
+ * @method static Builder|Account whereAccountableId($value)
+ * @method static Builder|Account whereAccountName($value)
+ * @method static Builder|Account whereAccountNumber($value)
+ * @method static Builder|Account whereAccountActivityPeriod($value)
+ * @method static Builder|Account whereAcceptedTerms($value)
+ * @method static Builder|Account whereStatus($value)
+ *
+ * @mixin Eloquent
+ */
 final class Account extends Model
 {
     use HasUuid;
@@ -29,25 +49,18 @@ final class Account extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'initial_deposit' => MoneyCasts::class,
-        'susu_amount' => MoneyCasts::class,
+        'account_activity_period' => 'datetime',
+        'accepted_terms' => 'boolean',
     ];
 
     protected $fillable = [
         'resource_id',
-        'customer_id',
-        'susu_scheme_id',
+        'accountable_type',
+        'accountable_id',
         'account_name',
         'account_number',
-        'purpose',
-        'initial_deposit',
-        'susu_amount',
-        'currency',
-        'start_date',
-        'end_date',
         'account_activity_period',
         'accepted_terms',
-        'extra_data',
         'status',
     ];
 
@@ -56,112 +69,34 @@ final class Account extends Model
         return 'resource_id';
     }
 
-    public function customer(
-    ): BelongsTo {
-        return $this->belongsTo(
-            related: Customer::class,
-            foreignKey: 'customer_id'
-        );
-    }
-
-    public function scheme(
-    ): BelongsTo {
-        return $this->belongsTo(
-            related: SusuScheme::class,
-            foreignKey: 'susu_scheme_id'
-        );
-    }
-
-    public function wallets(
-    ): BelongsToMany {
-        return $this->belongsToMany(
-            related: LinkedWallet::class,
-            table: 'account_wallets',
-            foreignPivotKey: 'account_id',
-            relatedPivotKey: 'linked_wallet_id',
-        );
-    }
-
-    public function daily(
-    ): HasOne {
-        return $this->hasOne(
-            related: DailySusu::class,
-            foreignKey: 'account_id'
-        );
-    }
-
-    public function biz(
-    ): HasOne {
-        return $this->hasOne(
-            related: BizSusu::class,
-            foreignKey: 'account_id'
-        );
-    }
-
-    public function goal(
-    ): HasOne {
-        return $this->hasOne(
-            related: GoalGetterSusu::class,
-            foreignKey: 'account_id'
-        );
-    }
-
-    public function flexy(
-    ): HasOne {
-        return $this->hasOne(
-            related: FlexySusu::class,
-            foreignKey: 'account_id'
-        );
-    }
-
-    public function directDeposits(
-    ): HasMany {
-        return $this->hasMany(
-            related: DirectDeposit::class,
-            foreignKey: 'account_id'
-        );
-    }
-
-    public function settlements(
-    ): HasMany {
-        return $this->hasMany(
-            related: Settlement::class,
-            foreignKey: 'account_id'
-        );
-    }
-
-    public function withdrawals(
-    ): HasMany {
-        return $this->hasMany(
-            related: Withdrawal::class,
-            foreignKey: 'account_id'
-        );
+    public function accountable(
+    ): MorphTo {
+        return $this->morphTo();
     }
 
     public function transactions(
-    ): HasManyThrough {
-        return $this->hasManyThrough(
+    ): HasMany {
+        return $this->hasMany(
             related: Transaction::class,
-            through: AccountWallet::class,
-            firstKey: 'account_id',
-            secondKey: 'account_id',
+            foreignKey: 'account_id'
         );
     }
 
+    public function getSusuScheme(
+    ) {
+        if (! $this->accountable) {
+            return null;
+        }
+
+        return $this->accountable->susuScheme;
+    }
+
     public static function generateAccountNumber(
-        string $product_code
     ): string {
         do {
-            $timestampPart = now()->format('ymd');
-            $randomPart = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+            $number = 'ACC' . date('Ymd') . str_pad((string) random_int(0, 9999), 4, '0', STR_PAD_LEFT);
+        } while (self::where('account_number', $number)->exists());
 
-            // Merge both parts to get 12 digits — you can trim or pad if needed
-            $uniqueDigits = substr("{$timestampPart}{$randomPart}", 0, 11);
-
-            // Build full account number
-            $accountNumber = sprintf('%s%s', $product_code, $uniqueDigits);
-        } while (Account::where('account_number', $accountNumber)->exists());
-
-        return $accountNumber;
+        return $number;
     }
 }

@@ -54,7 +54,7 @@ The SusuBox susu service API.
 
 ###### Direct Deposit
 - [x] Create direct deposit 
-- [ ] Cancel direct deposit 
+- [x] Cancel direct deposit 
 - [ ] Approve direct deposit 
 - [ ] Validate direct deposit
 
@@ -89,7 +89,7 @@ The SusuBox susu service API.
 
 ###### Direct Deposit
 - [x] Create direct deposit
-- [ ] Cancel direct deposit
+- [x] Cancel direct deposit
 - [ ] Approve direct deposit 
 - [ ] Validate direct deposit
 
@@ -124,7 +124,7 @@ The SusuBox susu service API.
 
 ###### Direct Deposit
 - [x] Create direct deposit
-- [ ] Cancel direct deposit
+- [x] Cancel direct deposit
 - [ ] Approve direct deposit
 - [ ] Validate direct deposit
 
@@ -158,7 +158,7 @@ The SusuBox susu service API.
 
 ###### Direct Deposit
 - [x] Create direct deposit
-- [ ] Cancel direct deposit
+- [x] Cancel direct deposit
 - [ ] Approve direct deposit
 - [ ] Validate direct deposit
 
@@ -176,4 +176,4 @@ The SusuBox susu service API.
 
 
 ## Others
-- [ ] Move all jobs that publishes job into the services/shared folder 
+- [ ] Move all jobs that publishes job into the services / shared folder

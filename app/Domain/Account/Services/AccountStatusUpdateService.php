@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Account\Services;
 
-use App\Domain\Account\Enums\AccountStatus;
 use App\Domain\Account\Models\Account;
+use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
@@ -30,7 +30,7 @@ final class AccountStatusUpdateService
                     $status
                 ) {
                     // Validate status
-                    if (! in_array($status, AccountStatus::allowed(), true)) {
+                    if (! in_array($status, Statuses::allowed(), true)) {
                         throw new InvalidArgumentException("Invalid account status: {$status}");
                     }
 

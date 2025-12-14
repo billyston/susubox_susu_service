@@ -8,7 +8,7 @@ use App\Application\Susu\Actions\GoalGetterSusu\GoalGetterSusuDirectDepositCance
 use App\Domain\Account\Models\DirectDeposit;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Susu\Models\GoalGetterSusu;
+use App\Domain\Susu\Models\IndividualSusu\GoalGetterSusu;
 use App\Interface\Controllers\Shared\Controller;
 use App\Interface\Requests\V1\Susu\GoalGetterSusu\GoalGetterSusuDirectDepositCancelRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;

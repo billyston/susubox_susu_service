@@ -20,12 +20,9 @@ final class AccountIndexService
     ): Collection {
         try {
             // Query and return all active susu for the customer
-            return $customer
-                ->accounts()
-                ->orderBy(
-                    column: 'created_at',
-                    direction: 'asc'
-                )->get();
+            return $customer->accounts()
+                ->orderBy(column: 'created_at', direction: 'asc')
+                ->get();
         } catch (
             Throwable $throwable
         ) {

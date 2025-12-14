@@ -6,6 +6,7 @@ namespace App\Application\Susu\DTOs\GoalGetterSusu;
 
 use App\Application\Shared\Helpers\Helpers;
 use App\Domain\Shared\Models\Duration;
+use Brick\Money\Exception\UnknownCurrencyException;
 use Brick\Money\Money;
 
 final readonly class GoalGetterSusuCreateDTO
@@ -20,19 +21,21 @@ final readonly class GoalGetterSusuCreateDTO
         public string $start_date,
         public string $frequency,
         public bool $accepted_terms,
-        public string $linked_wallet_id,
-        public string $wallet_number,
+        public string $wallet_id,
     ) {
         //..
     }
 
+    /**
+     * @throws UnknownCurrencyException
+     */
     public static function fromArray(
         array $payload
     ): self {
         $data = $payload['data'] ?? [];
         $attributes = $data['attributes'] ?? [];
         $relationships = $data['relationships'] ?? [];
-        $linkedWallet = $relationships['linked_wallet'] ?? [];
+        $wallet = $relationships['wallet'] ?? [];
 
         // Compute intermediate values
         $targetAmount = Money::of($attributes['target_amount'], 'GHS');
@@ -58,8 +61,7 @@ final readonly class GoalGetterSusuCreateDTO
             start_date: Helpers::calculateDate($attributes['start_date']),
             frequency: $frequency,
             accepted_terms: filter_var($attributes['accepted_terms'], FILTER_VALIDATE_BOOLEAN),
-            linked_wallet_id: $linkedWallet['resource_id'],
-            wallet_number: $linkedWallet['attributes']['wallet_number'],
+            wallet_id: $wallet['resource_id'],
         );
     }
 
@@ -68,15 +70,14 @@ final readonly class GoalGetterSusuCreateDTO
         return [
             'account_name' => $this->account_name,
             'purpose' => $this->purpose,
-            'target_amount' => $this->target_amount->getAmount(),
-            'initial_deposit' => $this->initial_deposit->getAmount(),
-            'susu_amount' => $this->susu_amount->getAmount(),
+            'target_amount' => $this->target_amount,
+            'initial_deposit' => $this->initial_deposit,
+            'susu_amount' => $this->susu_amount,
             'start_date' => $this->start_date,
             'duration' => $this->duration,
             'frequency' => $this->frequency,
             'accepted_terms' => $this->accepted_terms,
-            'linked_wallet_id' => $this->linked_wallet_id,
-            'wallet_number' => $this->wallet_number,
+            'wallet_id' => $this->wallet_id,
         ];
     }
 }

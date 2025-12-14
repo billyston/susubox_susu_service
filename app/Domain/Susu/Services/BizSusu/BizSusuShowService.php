@@ -7,7 +7,7 @@ namespace App\Domain\Susu\Services\BizSusu;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
-use App\Domain\Susu\Models\BizSusu;
+use App\Domain\Susu\Models\IndividualSusu\BizSusu;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 

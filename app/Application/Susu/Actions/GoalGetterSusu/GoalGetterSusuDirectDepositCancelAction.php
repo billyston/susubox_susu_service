@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\GoalGetterSusu;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Domain\Account\Models\DirectDeposit;
 use App\Domain\Account\Services\DirectDepositStatusUpdateService;
 use App\Domain\Customer\Models\Customer;
+use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Susu\Models\GoalGetterSusu;
-use App\Domain\Transaction\Enums\TransactionStatus;
+use App\Domain\Susu\Models\IndividualSusu\GoalGetterSusu;
 use App\Interface\Requests\V1\Susu\GoalGetterSusu\GoalGetterSusuDirectDepositCancelRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,13 +30,11 @@ final class GoalGetterSusuDirectDepositCancelAction
     public function execute(
         Customer $customer,
         GoalGetterSusu $goal_getter_susu,
-        DirectDeposit $direct_deposit,
         GoalGetterSusuDirectDepositCancelRequest $request
     ): JsonResponse {
         // Execute the DirectDepositStatusUpdateService and return the DirectDeposit resource
         $this->directDepositStatusUpdateService->execute(
-            direct_deposit: $direct_deposit,
-            status: TransactionStatus::CANCELLED->value,
+            status: Statuses::CANCELLED->value,
         );
 
         // Build and return the JsonResponse

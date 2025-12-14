@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Shared\Services;
 
-use App\Domain\Shared\Enums\SusuSchemeStatus;
+use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Models\SusuScheme;
 use Illuminate\Database\Eloquent\Collection;
@@ -22,7 +22,7 @@ final class SusuSchemesService
         try {
             return SusuScheme::query()->where(
                 'status',
-                SusuSchemeStatus::ACTIVE->value,
+                Statuses::ACTIVE->value,
             )->get();
         } catch (
             ModelNotFoundException $modelNotFoundException

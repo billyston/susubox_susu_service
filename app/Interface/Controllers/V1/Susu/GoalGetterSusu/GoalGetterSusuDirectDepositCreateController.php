@@ -7,7 +7,7 @@ namespace App\Interface\Controllers\V1\Susu\GoalGetterSusu;
 use App\Application\Susu\Actions\GoalGetterSusu\GoalGetterSusuDirectDepositCreateAction;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Susu\Models\GoalGetterSusu;
+use App\Domain\Susu\Models\IndividualSusu\GoalGetterSusu;
 use App\Interface\Controllers\Shared\Controller;
 use App\Interface\Requests\V1\Susu\GoalGetterSusu\GoalGetterSusuDirectDepositCreateRequest;
 use Brick\Money\Exception\UnknownCurrencyException;

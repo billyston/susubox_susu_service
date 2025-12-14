@@ -2,8 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Application\Shared\Helpers\Helpers;
-use App\Domain\Account\Enums\AccountStatus;
+use App\Domain\Shared\Enums\Statuses;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Carbon;
@@ -20,66 +19,24 @@ return new class extends Migration
              ) {
                 // Table ids
                 $table->id();
-                $table->uuid(column: 'resource_id')
-                    ->unique()
-                    ->index();
+                $table->uuid(column: 'resource_id')->unique()->index();
 
-                // Table related fields
-                $table->unsignedBigInteger(column: 'customer_id');
-
-                $table->unsignedBigInteger(column: 'susu_scheme_id');
+                // Add polymorphic fields for accountable relationship
+                $table->string(column: 'accountable_type')->nullable()->index();
+                $table->unsignedBigInteger(column: 'accountable_id')->nullable()->index();
 
                 // Table main attributes
-                $table->string(column: 'account_name')
-                    ->nullable(value: false)
-                    ->index();
-
-                $table->string(column: 'account_number')
-                    ->unique()
-                    ->index();
-
-                $table->string(column: 'purpose')
-                    ->nullable();
-
-                $table->integer(column: 'susu_amount');
-
-                $table->integer(column: 'initial_deposit');
-
-                $table->string(column: 'currency')
-                    ->default(value: 'GHS');
-
-                $table->date(column: 'start_date')
-                    ->default(value: Carbon::today());
-
-                $table->date(column: 'end_date')
-                    ->default(value: Helpers::getEndCollectionDate());
-
-                $table->dateTime(column: 'account_activity_period')
-                    ->default(value: Carbon::now());
-
-                $table->boolean(column: 'accepted_terms')
-                    ->default(value: false);
-
+                $table->string(column: 'account_name')->index();
+                $table->string(column: 'account_number')->unique()->index();
+                $table->dateTime(column: 'account_activity_period')->default(value: Carbon::now());
+                $table->boolean(column: 'accepted_terms')->default(value: false);
                 $table->enum(column: 'status', allowed: [
-                    AccountStatus::PENDING->value,
-                    AccountStatus::APPROVED->value,
-                    AccountStatus::ACTIVE->value,
-                    AccountStatus::CLOSED->value,
-                    AccountStatus::SUSPENDED->value,
-                ])->default(
-                    value: AccountStatus::PENDING->value,
-                );
-
-                // Foreign key fields
-                $table->foreign(columns: 'customer_id')
-                    ->references(columns: 'id')
-                    ->on(table: 'customers')
-                    ->onDelete(action: 'cascade');
-
-                $table->foreign(columns: 'susu_scheme_id')
-                    ->references(columns: 'id')
-                    ->on(table: 'susu_schemes')
-                    ->onDelete(action: 'cascade');
+                    Statuses::PENDING->value,
+                    Statuses::APPROVED->value,
+                    Statuses::ACTIVE->value,
+                    Statuses::CLOSED->value,
+                    Statuses::SUSPENDED->value,
+                ])->default(value: Statuses::PENDING->value);
 
                 // Timestamps (created_at / updated_at) fields
                 $table->timestamps();

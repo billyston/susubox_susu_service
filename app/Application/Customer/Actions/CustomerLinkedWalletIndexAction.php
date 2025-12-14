@@ -6,19 +6,19 @@ namespace App\Application\Customer\Actions;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Domain\Customer\Models\Customer;
-use App\Domain\Customer\Services\CustomerLinkedWalletIndexService;
+use App\Domain\Customer\Services\CustomerWalletIndexService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Interface\Resources\V1\Customer\CustomerLinkedWalletResource;
+use App\Interface\Resources\V1\Customer\CustomerWalletResource;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class CustomerLinkedWalletIndexAction
 {
-    private CustomerLinkedWalletIndexService $customerLinkedWalletIndexService;
+    private CustomerWalletIndexService $customerLinkedWalletIndexService;
 
     public function __construct(
-        CustomerLinkedWalletIndexService $customerLinkedWalletIndexService
+        CustomerWalletIndexService $customerLinkedWalletIndexService
     ) {
         $this->customerLinkedWalletIndexService = $customerLinkedWalletIndexService;
     }
@@ -39,7 +39,7 @@ final class CustomerLinkedWalletIndexAction
             code: Response::HTTP_OK,
             message: 'Request successful',
             description: '',
-            data: CustomerLinkedWalletResource::collection(
+            data: CustomerWalletResource::collection(
                 resource: $linked_wallets,
             ),
         );

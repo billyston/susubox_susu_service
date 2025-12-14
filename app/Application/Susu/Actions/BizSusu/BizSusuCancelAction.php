@@ -9,8 +9,7 @@ use App\Domain\Account\Services\AccountCancelService;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\CancellationNotAllowedException;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Susu\Models\BizSusu;
-use App\Interface\Requests\V1\Susu\BizSusu\BizSusuCancelRequest;
+use App\Domain\Susu\Models\IndividualSusu\BizSusu;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -31,7 +30,7 @@ final class BizSusuCancelAction
     public function execute(
         Customer $customer,
         BizSusu $biz_susu,
-        BizSusuCancelRequest $bizSusuCancelRequest,
+        array $request,
     ): JsonResponse {
         // Execute the AccountCancelService
         $this->accountCancelService->execute(
@@ -42,7 +41,7 @@ final class BizSusuCancelAction
         return ApiResponseBuilder::success(
             code: Response::HTTP_OK,
             message: 'Request successful.',
-            description: 'The biz susu account setup has been cancelled.'
+            description: 'The biz susu account setup has been cancelled successfully.'
         );
     }
 }

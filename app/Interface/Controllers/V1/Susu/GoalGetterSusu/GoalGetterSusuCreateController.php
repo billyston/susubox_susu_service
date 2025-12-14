@@ -12,15 +12,21 @@ use App\Domain\Shared\Exceptions\SusuSchemeNotFoundException;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Interface\Controllers\Shared\Controller;
 use App\Interface\Requests\V1\Susu\GoalGetterSusu\GoalGetterSusuCreateRequest;
+use Brick\Money\Exception\UnknownCurrencyException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class GoalGetterSusuCreateController extends Controller
 {
     /**
-     * @throws SystemFailureException
-     * @throws LinkedWalletNotFoundException
+     * @param Customer $customer
+     * @param GoalGetterSusuCreateRequest $goalGetterSusuCreateRequest
+     * @param GoalGetterSusuCreateAction $goalGetterSusuCreateAction
+     * @return JsonResponse
      * @throws FrequencyNotFoundException
+     * @throws LinkedWalletNotFoundException
      * @throws SusuSchemeNotFoundException
+     * @throws SystemFailureException
+     * @throws UnknownCurrencyException
      */
     public function __invoke(
         Customer $customer,
@@ -30,7 +36,7 @@ final class GoalGetterSusuCreateController extends Controller
         // Execute the GoalGetterSusuCreateAction and return the GoalGetterSusu resource
         return $goalGetterSusuCreateAction->execute(
             customer: $customer,
-            goalGetterSusuCreateRequest: $goalGetterSusuCreateRequest
+            request: $goalGetterSusuCreateRequest->validated()
         );
     }
 }

@@ -24,7 +24,7 @@ return new class extends Migration
 
                 // Foreign key fields
 
-                // Timestamps (created_at/updated_at) fields
+                // Timestamps (created_at / updated_at) fields
                 $table->timestamps();
             });
     }

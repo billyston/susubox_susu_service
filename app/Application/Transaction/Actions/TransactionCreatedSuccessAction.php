@@ -4,55 +4,49 @@ declare(strict_types=1);
 
 namespace App\Application\Transaction\Actions;
 
-use App\Domain\Account\Enums\AccountStatus;
 use App\Domain\Account\Services\AccountStatusUpdateService;
+use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Shared\Services\SchemeAccountStatusUpdateService;
+use App\Domain\Shared\Services\RecurringDebitStatusUpdateService;
 use App\Domain\Transaction\Models\Transaction;
-use App\Services\Shared\Jobs\Transaction\TransactionCreatedPublishJob;
-use Illuminate\Support\Facades\Bus;
+use Throwable;
 
 final class TransactionCreatedSuccessAction
 {
     private AccountStatusUpdateService $accountStatusUpdateService;
-    private SchemeAccountStatusUpdateService $schemeAccountStatusUpdateService;
+    private RecurringDebitStatusUpdateService $recurringDebitStatusUpdateService;
 
     public function __construct(
         AccountStatusUpdateService $accountStatusUpdateService,
-        SchemeAccountStatusUpdateService $schemeAccountStatusUpdateService
+        RecurringDebitStatusUpdateService $recurringDebitStatusUpdateService,
     ) {
         $this->accountStatusUpdateService = $accountStatusUpdateService;
-        $this->schemeAccountStatusUpdateService = $schemeAccountStatusUpdateService;
+        $this->recurringDebitStatusUpdateService = $recurringDebitStatusUpdateService;
     }
 
     /**
      * @throws SystemFailureException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function execute(
         Transaction $transaction,
+        array $responseDto,
     ): void {
         // Handle initial deposit activation
-        if ($transaction->extra_data['is_initial_deposit'] ?? false) {
+        if ($responseDto['data']['attributes']['is_initial_deposit']) {
             // Execute the AccountStatusUpdateService
             $this->accountStatusUpdateService->execute(
                 account: $transaction->account,
-                status: AccountStatus::ACTIVE->value
+                status: Statuses::ACTIVE->value
             );
 
-            // Execute the SchemeAccountStatusUpdateService
-            $this->schemeAccountStatusUpdateService->execute(
-                account: $transaction->account,
+            // Execute the RecurringDebitStatusUpdateService
+            $this->recurringDebitStatusUpdateService->execute(
+                model: $transaction->account->accountable->susu(),
+                status: Statuses::ACTIVE->value
             );
-
-            // Dispatch the TransactionCreatedPublishJob (asynchronously)
         }
 
-        Bus::batch([
-            new TransactionCreatedPublishJob(transaction: $transaction),
-        ])
-            ->name('transaction_created_success_action')
-            ->allowFailures()
-            ->dispatch();
+        // Other actions goes here
     }
 }

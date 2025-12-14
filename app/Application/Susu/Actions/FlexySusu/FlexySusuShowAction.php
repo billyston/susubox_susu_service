@@ -8,7 +8,7 @@ use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
-use App\Domain\Susu\Models\FlexySusu;
+use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
 use App\Domain\Susu\Services\FlexySusu\FlexySusuShowService;
 use App\Interface\Resources\V1\Susu\FlexySusu\FlexySusuResource;
 use Symfony\Component\HttpFoundation\JsonResponse;

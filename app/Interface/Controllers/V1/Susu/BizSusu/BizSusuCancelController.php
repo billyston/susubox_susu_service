@@ -8,7 +8,7 @@ use App\Application\Susu\Actions\BizSusu\BizSusuCancelAction;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\CancellationNotAllowedException;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Susu\Models\BizSusu;
+use App\Domain\Susu\Models\IndividualSusu\BizSusu;
 use App\Interface\Controllers\Shared\Controller;
 use App\Interface\Requests\V1\Susu\BizSusu\BizSusuCancelRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,7 +29,7 @@ final class BizSusuCancelController extends Controller
         return $bizSusuCancelAction->execute(
             customer: $customer,
             biz_susu: $biz_susu,
-            bizSusuCancelRequest: $bizSusuCancelRequest
+            request: $bizSusuCancelRequest->validated()
         );
     }
 }

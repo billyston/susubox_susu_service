@@ -10,7 +10,7 @@ use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Domain\Account\Services\DirectDepositCreateService;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Susu\Models\BizSusu;
+use App\Domain\Susu\Models\IndividualSusu\BizSusu;
 use App\Interface\Requests\V1\Susu\BizSusu\BizSusuDirectDepositCreateRequest;
 use App\Interface\Resources\V1\Account\DirectDepositResource;
 use Brick\Money\Exception\UnknownCurrencyException;

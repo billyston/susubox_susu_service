@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Domain\Susu\Services\BizSusu;
 
-use App\Application\Susu\DTOs\BizSusu\BizSusuCreateDTO;
 use App\Domain\Account\Models\Account;
 use App\Domain\Customer\Models\Customer;
-use App\Domain\Customer\Models\LinkedWallet;
+use App\Domain\Customer\Models\Wallet;
+use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Shared\Models\AccountWallet;
 use App\Domain\Shared\Models\Frequency;
 use App\Domain\Shared\Models\SusuScheme;
-use App\Domain\Susu\Models\BizSusu;
+use App\Domain\Susu\Models\IndividualSusu\BizSusu;
+use App\Domain\Susu\Models\IndividualSusu\IndividualAccount;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -26,8 +26,8 @@ final class BizSusuCreateService
         Customer $customer,
         SusuScheme $susu_scheme,
         Frequency $frequency,
-        LinkedWallet $linked_wallet,
-        BizSusuCreateDTO $dto
+        Wallet $wallet,
+        array $dto
     ): BizSusu {
         try {
             // Execute the database transaction
@@ -35,32 +35,38 @@ final class BizSusuCreateService
                 $customer,
                 $susu_scheme,
                 $frequency,
-                $linked_wallet,
+                $wallet,
                 $dto
             ) {
-                // Create and return the account resource
-                $account = Account::query()->create([
+                // Create Financial Account
+                $account = Account::create([
                     'customer_id' => $customer->id,
-                    'susu_scheme_id' => $susu_scheme->id,
-                    'account_name' => $dto->account_name,
-                    'account_number' => Account::generateAccountNumber(product_code: config(key: 'susubox.susu_schemes.biz_susu_code')),
-                    'purpose' => $dto->purpose,
-                    'susu_amount' => $dto->susu_amount,
-                    'initial_deposit' => $dto->initial_deposit,
-                    'accepted_terms' => $dto->accepted_terms,
+                    'accountable_type' => IndividualAccount::class,
+                    'account_name' => $dto['account_name'],
+                    'account_number' => Account::generateAccountNumber(),
+                    'accepted_terms' => $dto['accepted_terms'],
                 ]);
 
-                // Linked the account_wallet
-                AccountWallet::query()->create([
-                    'account_id' => $account->id,
-                    'linked_wallet_id' => $linked_wallet->id,
+                // Create IndividualAccount (polymorphic bridge)
+                $individualAccount = IndividualAccount::create([
+                    'customer_id' => $customer->id,
+                    'susu_scheme_id' => $susu_scheme->id,
+                ]);
+
+                // Link Account to IndividualAccount (Update polymorphic fields)
+                $account->update([
+                    'accountable_id' => $individualAccount->id,
                 ]);
 
                 // Create and return the BizSusu resource
                 return BizSusu::query()->create([
-                    'account_id' => $account->id,
+                    'individual_account_id' => $individualAccount->id,
+                    'wallet_id' => $wallet->id,
                     'frequency_id' => $frequency->id,
-                    'rollover_enabled' => $dto->rollover_enabled,
+                    'susu_amount' => $dto['susu_amount'],
+                    'initial_deposit' => $dto['initial_deposit'],
+                    'rollover_enabled' => $dto['rollover_enabled'],
+                    'recurring_debit_status' => Statuses::PENDING->value,
                 ]);
             });
         } catch (
@@ -71,7 +77,7 @@ final class BizSusuCreateService
                 'customer' => $customer,
                 'susu_scheme' => $susu_scheme,
                 'frequency' => $frequency,
-                'linked_wallet' => $linked_wallet,
+                'linked_wallet' => $wallet,
                 'dto' => $dto,
                 'exception' => [
                     'message' => $throwable->getMessage(),

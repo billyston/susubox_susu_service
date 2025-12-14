@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Transaction\Services;
 
-use App\Application\Transaction\DTOs\TransactionCreateDTO;
-use App\Domain\Account\Models\Account;
-use App\Domain\Customer\Models\LinkedWallet;
+use App\Application\Transaction\DTOs\TransactionCreateRequestDTO;
+use App\Domain\PaymentInstruction\Models\PaymentInstruction;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Transaction\Models\Transaction;
-use App\Domain\Transaction\Models\TransactionCategory;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -21,42 +19,40 @@ final class TransactionCreateService
      * @throws SystemFailureException
      */
     public function execute(
-        Account $account,
-        ?LinkedWallet $linkedWallet,
-        TransactionCategory $transactionCategory,
-        TransactionCreateDTO $data
+        PaymentInstruction $payment_instruction,
+        TransactionCreateRequestDTO $dto
     ): Transaction {
         try {
             // Execute the database transaction
             return DB::transaction(function () use (
-                $account,
-                $linkedWallet,
-                $transactionCategory,
-                $data
+                $payment_instruction,
+                $dto
             ) {
                 // Create and return the Transaction resource
                 return Transaction::query()->updateOrCreate([
-                    'reference_number' => $data->reference_number,
+                    'reference_number' => $dto->reference,
                 ], [
-                    'account_id' => $account->id,
-                    'transaction_category_id' => $transactionCategory->id,
-                    'linked_wallet_id' => $linkedWallet->id ?? null,
-                    'reference_number' => $data->reference_number,
-                    'amount' => $data->amount,
-                    'charge' => $data->charges,
-                    'total' => $data->total,
-                    'description' => $data->description,
+                    'resource_id' => $dto->resource_id,
+                    'account_id' => $payment_instruction->account_id,
+                    'payment_instruction_id' => $payment_instruction->id,
+                    'transaction_category_id' => $payment_instruction->transaction_category_id,
+                    'wallet_id' => $payment_instruction->wallet->id,
+                    'reference_number' => $dto->reference,
+                    'amount' => $dto->amount,
+                    'charge' => $dto->charges,
+                    'total' => $dto->total,
+                    'description' => $dto->description,
                     'narration' => Transaction::narration(
-                        category: $transactionCategory,
-                        amount: $data->amount->getAmount()->toFloat(),
-                        account_number: $account->account_number,
-                        wallet: $data->wallet_number,
-                        date: $data->date,
+                        category: $payment_instruction->transactionCategory->name,
+                        amount: $dto->amount->getAmount()->toFloat(),
+                        account_number: $payment_instruction->account->account_number,
+                        wallet: $payment_instruction->wallet->wallet_number,
+                        date: $dto->date,
                     ),
-                    'date' => $data->date,
-                    'extra_data' => ['is_initial_deposit' => $data->is_initial_deposit],
-                    'status_code' => $data->status_code,
-                    'status' => $data->status,
+                    'date' => $dto->date,
+                    'status_code' => $dto->code,
+                    'status' => $dto->status,
+                    'extra_data' => $dto->toArray() ?? null,
                 ])->refresh();
             });
         } catch (
@@ -68,10 +64,8 @@ final class TransactionCreateService
         ) {
             // Log the full exception with context
             Log::error('Exception in TransactionCreateService', [
-                'account' => $account,
-                'linked_wallet' => $linkedWallet,
-                'transaction_category' => $transactionCategory,
-                'dto' => $data,
+                'payment_instruction' => $payment_instruction,
+                'dto' => $dto,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),

@@ -6,8 +6,9 @@ namespace App\Application\Transaction\Jobs;
 
 use App\Application\Transaction\Actions\TransactionCreatedFailureAction;
 use App\Application\Transaction\Actions\TransactionCreatedSuccessAction;
+use App\Application\Transaction\DTOs\TransactionCreateResponseDTO;
+use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Transaction\Enums\TransactionStatus;
 use App\Domain\Transaction\Models\Transaction;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
@@ -15,7 +16,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 use Throwable;
 
 final class TransactionCreatedJob implements ShouldQueue
@@ -28,41 +28,37 @@ final class TransactionCreatedJob implements ShouldQueue
 
     public function __construct(
         public readonly Transaction $transaction,
+        public readonly bool $isInitialDeposit,
     ) {
         // ...
     }
 
     /**
+     * @throws Throwable
      * @throws SystemFailureException
      */
     public function handle(
     ): void {
-        try {
-            // Define the StatusActions array
-            $statusActions = [
-                TransactionStatus::SUCCESS->value => app(TransactionCreatedSuccessAction::class),
-                TransactionStatus::FAILED->value => app(TransactionCreatedFailureAction::class),
-            ];
+        // Build the TransactionCreateResponseDTO
+        $response_dto = TransactionCreateResponseDTO::fromDomain(
+            transaction: $this->transaction,
+            is_initial_deposit: $this->isInitialDeposit
+        );
 
-            // Execute the (TransactionCreatedSuccessAction, TransactionCreatedFailureAction)
-            $statusActions[$this->transaction->status->value]->execute($this->transaction);
-        } catch (
-            Throwable $throwable
-        ) {
-            // Log the full exception with context
-            Log::error('Exception in TransactionCreatedJob', [
-                'transaction' => $this->transaction,
-                'exception' => [
-                    'message' => $throwable->getMessage(),
-                    'file' => $throwable->getFile(),
-                    'line' => $throwable->getLine(),
-                ],
-            ]);
+        // Check the transaction status and execute the appropriate action
+        $action = $this->resolveAction($this->transaction->status);
+        $action->execute(
+            transaction: $this->transaction,
+            responseDto: $response_dto->toArray()
+        );
+    }
 
-            // Throw the SystemFailureException
-            throw new SystemFailureException(
-                message: 'An error occurred while trying to dispatch the transaction created job.',
-            );
-        }
+    private function resolveAction(
+        string $status
+    ): object {
+        return match ($status) {
+            Statuses::SUCCESS->value => app(TransactionCreatedSuccessAction::class),
+            Statuses::FAILED->value => app(TransactionCreatedFailureAction::class),
+        };
     }
 }

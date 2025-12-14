@@ -8,7 +8,7 @@ use App\Application\Susu\Actions\DailySusu\DailySusuCancelAction;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\CancellationNotAllowedException;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Susu\Models\DailySusu;
+use App\Domain\Susu\Models\IndividualSusu\DailySusu;
 use App\Interface\Controllers\Shared\Controller;
 use App\Interface\Requests\V1\Susu\DailySusu\DailySusuCancelRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,7 +29,7 @@ final class DailySusuCancelController extends Controller
         return $dailySusuCancelAction->execute(
             customer: $customer,
             daily_susu: $daily_susu,
-            dailySusuCancelRequest: $dailySusuCancelRequest
+            request: $dailySusuCancelRequest->validated()
         );
     }
 }

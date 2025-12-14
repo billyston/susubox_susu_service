@@ -1,0 +1,140 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Domain\Susu\Models\IndividualSusu;
+
+use App\Domain\Account\Models\Account;
+use App\Domain\Customer\Models\Customer;
+use App\Domain\Shared\Models\HasUuid;
+use App\Domain\Shared\Models\SusuScheme;
+use Eloquent;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+
+/**
+ * Class IndividualAccount
+ *
+ * @property string $id
+ * @property string $resource_id
+ * @property string $customer_id
+ * @property string $susu_scheme_id
+ *
+ * Relationships:
+ * @property Account|null $account
+ * @property Customer $customer
+ * @property SusuScheme $susuScheme
+ *
+ * Morph Relations:
+ * @property DailySusu|BizSusu|GoalGetterSusu|FlexySusu|DriveToOwnSusu|null $susuable
+ *
+ * Typed Accessors:
+ * @property DailySusu|null $dailySusu
+ * @property BizSusu|null $bizSusu
+ * @property GoalGetterSusu|null $goalGetterSusu
+ * @property FlexySusu|null $flexySusu
+ * @property DriveToOwnSusu|null $driveToOwnSusu
+ *
+ * @method static Builder|IndividualAccount whereResourceId($value)
+ * @method static Builder|IndividualAccount whereCustomerId($value)
+ * @method static Builder|IndividualAccount whereSusuSchemeId($value)
+ *
+ * @mixin Eloquent
+ */
+final class IndividualAccount extends Model
+{
+    use HasUuid;
+
+    public $timestamps = false;
+
+    protected $guarded = ['id'];
+
+    protected $casts = [];
+
+    protected $fillable = [
+        'resource_id',
+        'customer_id',
+        'susu_scheme_id',
+    ];
+
+    public function getRouteKeyName(
+    ): string {
+        return 'resource_id';
+    }
+
+    public function account(
+    ): MorphOne {
+        return $this->morphOne(
+            related: Account::class,
+            name: 'accountable'
+        );
+    }
+
+    public function customer(
+    ): BelongsTo {
+        return $this->belongsTo(
+            related: Customer::class,
+            foreignKey: 'customer_id'
+        );
+    }
+
+    public function susuScheme(
+    ): BelongsTo {
+        return $this->belongsTo(
+            related: SusuScheme::class,
+            foreignKey: 'susu_scheme_id'
+        );
+    }
+
+    public function dailySusu(
+    ): HasOne {
+        return $this->hasOne(
+            related: DailySusu::class,
+            foreignKey: 'individual_account_id'
+        );
+    }
+
+    public function bizSusu(
+    ): HasOne {
+        return $this->hasOne(
+            related: BizSusu::class,
+            foreignKey: 'individual_account_id'
+        );
+    }
+
+    public function goalGetterSusu(
+    ): HasOne {
+        return $this->hasOne(
+            related: GoalGetterSusu::class,
+            foreignKey: 'individual_account_id'
+        );
+    }
+
+    public function flexySusu(
+    ): HasOne {
+        return $this->hasOne(
+            related: FlexySusu::class,
+            foreignKey: 'individual_account_id'
+        );
+    }
+
+    public function driveToOwnSusu(
+    ): HasOne {
+        return $this->hasOne(
+            related: DriveToOwnSusu::class,
+            foreignKey: 'individual_account_id'
+        );
+    }
+
+    public function susu(
+    ) {
+        return $this->dailySusu
+            ?? $this->bizSusu
+            ?? $this->goalGetterSusu
+            ?? $this->flexySusu
+            ?? $this->driveToOwnSusu;
+    }
+}

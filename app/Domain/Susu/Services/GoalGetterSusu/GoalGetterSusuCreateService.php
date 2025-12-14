@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace App\Domain\Susu\Services\GoalGetterSusu;
 
 use App\Application\Shared\Helpers\Helpers;
-use App\Application\Susu\DTOs\GoalGetterSusu\GoalGetterSusuCreateDTO;
 use App\Domain\Account\Models\Account;
 use App\Domain\Customer\Models\Customer;
-use App\Domain\Customer\Models\LinkedWallet;
+use App\Domain\Customer\Models\Wallet;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Shared\Models\AccountWallet;
 use App\Domain\Shared\Models\Frequency;
 use App\Domain\Shared\Models\SusuScheme;
-use App\Domain\Susu\Models\GoalGetterSusu;
+use App\Domain\Susu\Models\IndividualSusu\GoalGetterSusu;
+use App\Domain\Susu\Models\IndividualSusu\IndividualAccount;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -28,8 +27,8 @@ final class GoalGetterSusuCreateService
         Customer $customer,
         SusuScheme $susu_scheme,
         Frequency $frequency,
-        LinkedWallet $linked_wallet,
-        GoalGetterSusuCreateDTO $dto
+        Wallet $wallet,
+        array $dto
     ): GoalGetterSusu {
         try {
             // Execute the database transaction
@@ -37,35 +36,40 @@ final class GoalGetterSusuCreateService
                 $customer,
                 $susu_scheme,
                 $frequency,
-                $linked_wallet,
+                $wallet,
                 $dto
             ) {
-                // Create and return the account resource
-                $account = Account::query()->create([
+                // Create Financial Account
+                $account = Account::create([
                     'customer_id' => $customer->id,
-                    'susu_scheme_id' => $susu_scheme->id,
-                    'account_name' => $dto->account_name,
-                    'account_number' => Account::generateAccountNumber(product_code: config(key: 'susubox.susu_schemes.goal_getter_susu_code')),
-                    'purpose' => $dto->purpose,
-                    'susu_amount' => $dto->susu_amount,
-                    'initial_deposit' => $dto->initial_deposit,
-                    'start_date' => $dto->start_date,
-                    'end_date' => Helpers::getDateWithOffset(Carbon::parse($dto->start_date), days: $dto->duration->days),
-                    'accepted_terms' => $dto->accepted_terms,
+                    'accountable_type' => IndividualAccount::class,
+                    'account_name' => $dto['account_name'],
+                    'account_number' => Account::generateAccountNumber(),
+                    'accepted_terms' => $dto['accepted_terms'],
                 ]);
 
-                // Linked the account_wallet
-                AccountWallet::query()->create([
-                    'account_id' => $account->id,
-                    'linked_wallet_id' => $linked_wallet->id,
+                // Create IndividualAccount (polymorphic bridge)
+                $individualAccount = IndividualAccount::create([
+                    'customer_id' => $customer->id,
+                    'susu_scheme_id' => $susu_scheme->id,
+                ]);
+
+                // Link Account to IndividualAccount (Update polymorphic fields)
+                $account->update([
+                    'accountable_id' => $individualAccount->id,
                 ]);
 
                 // Create and return the GoalGetterSusu resource
                 return GoalGetterSusu::query()->create([
-                    'account_id' => $account->id,
+                    'individual_account_id' => $individualAccount->id,
+                    'wallet_id' => $wallet->id,
                     'frequency_id' => $frequency->id,
-                    'target_amount' => $dto->target_amount,
-                    'duration_id' => $dto->duration->id,
+                    'duration_id' => $dto['duration']['id'],
+                    'target_amount' => $dto['target_amount'],
+                    'susu_amount' => $dto['susu_amount'],
+                    'initial_deposit' => $dto['initial_deposit'],
+                    'start_date' => $dto['start_date'],
+                    'end_date' => Helpers::getDateWithOffset(Carbon::parse($dto['start_date']), days: $dto['duration']['days']),
                 ]);
             });
         } catch (
@@ -76,7 +80,7 @@ final class GoalGetterSusuCreateService
                 'customer' => $customer,
                 'susu_scheme' => $susu_scheme,
                 'frequency' => $frequency,
-                'linked_wallet' => $linked_wallet,
+                'linked_wallet' => $wallet,
                 'dto' => $dto,
                 'exception' => [
                     'message' => $throwable->getMessage(),

@@ -7,7 +7,7 @@ namespace App\Interface\Controllers\V1\Susu\GoalGetterSusu;
 use App\Application\Susu\Actions\GoalGetterSusu\GoalGetterSusuApprovalAction;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Susu\Models\GoalGetterSusu;
+use App\Domain\Susu\Models\IndividualSusu\GoalGetterSusu;
 use App\Interface\Controllers\Shared\Controller;
 use App\Interface\Requests\V1\Susu\GoalGetterSusu\GoalGetterSusuApprovalRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,7 +27,6 @@ final class GoalGetterSusuApprovalController extends Controller
         return $goalGetterSusuApprovalAction->execute(
             customer: $customer,
             goalGetterSusu: $goalGetterSusu,
-            goalGetterSusuApprovalRequest: $goalGetterSusuApprovalRequest
         );
     }
 }

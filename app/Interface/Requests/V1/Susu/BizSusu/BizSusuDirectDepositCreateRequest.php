@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Interface\Requests\V1\Susu\BizSusu;
 
-use App\Domain\Shared\Enums\DepositType;
+use App\Domain\Transaction\Enums\DepositType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

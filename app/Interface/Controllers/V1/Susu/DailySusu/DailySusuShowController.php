@@ -8,7 +8,7 @@ use App\Application\Susu\Actions\DailySusu\DailySusuShowAction;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
-use App\Domain\Susu\Models\DailySusu;
+use App\Domain\Susu\Models\IndividualSusu\DailySusu;
 use App\Interface\Controllers\Shared\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 

@@ -5,48 +5,83 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\FlexySusu;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Susu\Jobs\FlexySusu\FlexySusuApprovalJob;
-use App\Domain\Account\Enums\AccountStatus;
-use App\Domain\Account\Services\AccountStatusUpdateService;
+use App\Application\Transaction\DTOs\DirectDebitApprovalResponseDTO;
+use App\Application\Transaction\ValueObject\PaymentInstructionCreateRequestVO;
 use App\Domain\Customer\Models\Customer;
+use App\Domain\PaymentInstruction\Services\PaymentInstructionCreateService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Susu\Models\FlexySusu;
-use App\Interface\Requests\V1\Susu\FlexySusu\FlexySusuApprovalRequest;
+use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
+use App\Domain\Transaction\Enums\TransactionCategoryCode;
+use App\Domain\Transaction\Enums\TransactionType;
+use App\Domain\Transaction\Services\TransactionCategoryByCodeService;
 use App\Interface\Resources\V1\Susu\FlexySusu\FlexySusuResource;
+use App\Services\SusuBox\Http\Requests\DirectDebitApprovalRequestHandler;
+use Brick\Money\Exception\MoneyMismatchException;
+use Brick\Money\Exception\UnknownCurrencyException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class FlexySusuApprovalAction
 {
-    private AccountStatusUpdateService $accountStatusUpdateService;
-    private FlexySusuApprovalJob $flexySusuApprovalJob;
+    private PaymentInstructionCreateService $paymentInstructionCreateService;
+    private TransactionCategoryByCodeService $transactionCategoryByCodeGetService;
+    private DirectDebitApprovalRequestHandler $dispatcher;
 
     public function __construct(
-        AccountStatusUpdateService $accountStatusUpdateService,
-        FlexySusuApprovalJob $flexySusuApprovalJob
+        PaymentInstructionCreateService $paymentInstructionCreateService,
+        TransactionCategoryByCodeService $transactionCategoryByCodeGetService,
+        DirectDebitApprovalRequestHandler $dispatcher
     ) {
-        $this->accountStatusUpdateService = $accountStatusUpdateService;
-        $this->flexySusuApprovalJob = $flexySusuApprovalJob;
+        $this->paymentInstructionCreateService = $paymentInstructionCreateService;
+        $this->transactionCategoryByCodeGetService = $transactionCategoryByCodeGetService;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
+     * @param Customer $customer
+     * @param FlexySusu $flexySusu
+     * @return JsonResponse
      * @throws SystemFailureException
+     * @throws MoneyMismatchException
+     * @throws UnknownCurrencyException
      */
     public function execute(
         Customer $customer,
         FlexySusu $flexySusu,
-        FlexySusuApprovalRequest $flexySusuApprovalRequest,
     ): JsonResponse {
-        // Execute the AccountStatusUpdateService and return the account resource
-        $this->accountStatusUpdateService->execute(
-            account: $flexySusu->account,
-            status: AccountStatus::APPROVED->value
+        // Execute the TransactionCreateService and return the Transaction resource
+        $transactionCategory = $this->transactionCategoryByCodeGetService->execute(
+            TransactionCategoryCode::DIRECT_DEBIT_CODE->value
         );
 
-        // Dispatch the FlexySusuApprovalJob
-        $this->flexySusuApprovalJob::dispatch(
+        // Build the PaymentInstructionCreateRequestVO
+        $vo = PaymentInstructionCreateRequestVO::create(
+            transaction_type: TransactionType::DEBIT,
+            initial_amount: $flexySusu->initial_deposit,
+            amount: $flexySusu->initial_deposit,
+            charge: null,
+        );
+
+        // Execute the PaymentInstructionCreateService and return the payment instruction resource
+        $payment_instruction = $this->paymentInstructionCreateService->execute(
+            transaction_category: $transactionCategory,
+            account: $flexySusu->account,
+            wallet: $flexySusu->wallet,
             customer: $customer,
-            flexySusu: $flexySusu,
+            data: $vo->toArray()
+        );
+
+        // Build the DirectDebitApprovalResponseDTO
+        $response_dto = DirectDebitApprovalResponseDTO::fromDomain(
+            payment_instruction: $payment_instruction,
+            wallet: $payment_instruction->wallet,
+            product: $flexySusu,
+        );
+
+        // Execute the RecurringDebitApprovalRequestHandler
+        $this->dispatcher->sendToService(
+            service: config('susubox.payment.name'),
+            data: $response_dto->toArray(),
         );
 
         // Build and return the JsonResponse

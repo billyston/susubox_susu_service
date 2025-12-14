@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Domain\Shared\Enums\RecurringDebitStatus;
-use App\Domain\Shared\Enums\WithdrawalStatus;
+use App\Application\Shared\Helpers\Helpers;
+use App\Domain\Shared\Enums\Statuses;
+use Carbon\Carbon;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -19,51 +20,32 @@ return new class extends Migration
              ) {
                 // Table ids
                 $table->id();
-                $table->uuid(column: 'resource_id')
-                    ->unique()
-                    ->index();
+                $table->uuid(column: 'resource_id')->unique()->index();
 
                 // Table related fields
-                $table->unsignedBigInteger(column: 'account_id');
-
-                $table->unsignedBigInteger(column: 'frequency_id');
+                $table->foreignId(column: 'individual_account_id')->constrained(table: 'individual_accounts')->cascadeOnDelete();
+                $table->foreignId(column: 'wallet_id')->constrained(table: 'wallets');
+                $table->foreignId(column: 'frequency_id')->constrained(table: 'frequencies');
 
                 // Table main attributes
-                $table->string(column: 'currency')
-                    ->default(value: 'GHS');
-
-                $table->boolean(column: 'rollover_enabled')
-                    ->default(value: false);
-
-                $table->boolean(column: 'is_collateralized')
-                    ->default(value: false);
-
+                $table->bigInteger(column: 'susu_amount');
+                $table->bigInteger(column: 'initial_deposit');
+                $table->string(column: 'currency')->default(value: 'GHS');
+                $table->date(column: 'start_date')->default(value: Carbon::today());
+                $table->date(column: 'end_date')->default(value: Helpers::getEndCollectionDate());
+                $table->boolean(column: 'rollover_enabled')->default(value: false);
+                $table->boolean(column: 'is_collateralized')->default(value: false);
                 $table->enum(column: 'recurring_debit_status', allowed: [
-                    RecurringDebitStatus::ACTIVE->value,
-                    RecurringDebitStatus::PENDING->value,
-                    RecurringDebitStatus::PAUSED->value,
-                    RecurringDebitStatus::STOPPED->value,
-                ])
-                    ->default(value: RecurringDebitStatus::PENDING->value);
-
-                $table->string(column: 'withdrawal_status')
-                    ->default(value: WithdrawalStatus::ACTIVE->value);
-
-                $table->json(column: 'extra_data')
-                    ->nullable();
-
-                // Foreign key fields
-                $table->foreign(columns: 'account_id')
-                    ->references(columns: 'id')
-                    ->on(table: 'accounts')
-                    ->onDelete(action: 'cascade');
-
-                $table->foreign(columns: 'frequency_id')
-                    ->references(columns: 'id')
-                    ->on(table: 'frequencies')
-                    ->onDelete(action: 'cascade');
-
-                // Timestamps (created_at / updated_at) fields
+                    Statuses::ACTIVE->value,
+                    Statuses::PENDING->value,
+                    Statuses::PAUSED->value,
+                    Statuses::STOPPED->value,
+                ])->default(value: Statuses::PENDING->value);
+                $table->enum(column: 'withdrawal_status', allowed: [
+                    Statuses::ACTIVE->value,
+                    Statuses::LOCKED->value,
+                ])->default(value: Statuses::ACTIVE->value);
+                $table->json(column: 'extra_data')->nullable();
             });
     }
 

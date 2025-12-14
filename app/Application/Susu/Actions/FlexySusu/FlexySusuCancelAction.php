@@ -9,8 +9,7 @@ use App\Domain\Account\Services\AccountCancelService;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\CancellationNotAllowedException;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Susu\Models\FlexySusu;
-use App\Interface\Requests\V1\Susu\FlexySusu\FlexySusuCancelRequest;
+use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -31,7 +30,7 @@ final class FlexySusuCancelAction
     public function execute(
         Customer $customer,
         FlexySusu $flexy_susu,
-        FlexySusuCancelRequest $flexySusuCancelRequest,
+        array $request,
     ): JsonResponse {
         // Execute the AccountCancelService
         $this->accountCancelService->execute(
@@ -42,7 +41,7 @@ final class FlexySusuCancelAction
         return ApiResponseBuilder::success(
             code: Response::HTTP_OK,
             message: 'Request successful.',
-            description: 'The flexy susu account setup has been cancelled.'
+            description: 'The flexy susu account setup has been cancelled successfully.'
         );
     }
 }

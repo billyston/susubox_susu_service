@@ -11,14 +11,20 @@ use App\Domain\Shared\Exceptions\SusuSchemeNotFoundException;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Interface\Controllers\Shared\Controller;
 use App\Interface\Requests\V1\Susu\FlexySusu\FlexySusuCreateRequest;
+use Brick\Money\Exception\UnknownCurrencyException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class FlexySusuCreateController extends Controller
 {
     /**
-     * @throws SystemFailureException
+     * @param Customer $customer
+     * @param FlexySusuCreateRequest $flexySusuCreateRequest
+     * @param FlexySusuCreateAction $flexySusuCreateAction
+     * @return JsonResponse
      * @throws LinkedWalletNotFoundException
      * @throws SusuSchemeNotFoundException
+     * @throws SystemFailureException
+     * @throws UnknownCurrencyException
      */
     public function __invoke(
         Customer $customer,
@@ -28,7 +34,7 @@ final class FlexySusuCreateController extends Controller
         // Execute the FlexySusuCreateAction and return the FlexySusu resource
         return $flexySusuCreateAction->execute(
             customer: $customer,
-            flexySusuCreateRequest: $flexySusuCreateRequest
+            request: $flexySusuCreateRequest->validated()
         );
     }
 }

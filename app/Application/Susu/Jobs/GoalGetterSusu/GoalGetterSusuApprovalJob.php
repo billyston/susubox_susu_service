@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Application\Susu\Jobs\GoalGetterSusu;
 
 use App\Domain\Customer\Models\Customer;
-use App\Domain\Susu\Models\GoalGetterSusu;
+use App\Domain\Susu\Models\IndividualSusu\GoalGetterSusu;
 use App\Services\Http\Common\Jobs\Account\GoalGetterSusuActivationHttpPublishJob;
 use App\Services\RabbitMQ\Jobs\Account\GoalGetterSusuActivationRabbitMQPublishJob;
 use App\Services\Redis\Jobs\Account\GoalGetterSusuActivationRedisPublishJob;
-use App\Services\Shared\Data\Account\GoalGetterSusuData;
+use App\Services\Shared\Data\Susu\GoalGetterSusuData;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

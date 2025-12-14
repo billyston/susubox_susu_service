@@ -8,7 +8,7 @@ use App\Application\Susu\Actions\GoalGetterSusu\GoalGetterSusuShowAction;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
-use App\Domain\Susu\Models\GoalGetterSusu;
+use App\Domain\Susu\Models\IndividualSusu\GoalGetterSusu;
 use App\Interface\Controllers\Shared\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 

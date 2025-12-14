@@ -8,7 +8,7 @@ use App\Application\Susu\Actions\FlexySusu\FlexySusuDirectDepositCancelAction;
 use App\Domain\Account\Models\DirectDeposit;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Susu\Models\FlexySusu;
+use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
 use App\Interface\Controllers\Shared\Controller;
 use App\Interface\Requests\V1\Susu\FlexySusu\FlexySusuDirectDepositCancelRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;

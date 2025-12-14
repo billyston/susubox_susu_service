@@ -17,20 +17,17 @@ return new class extends Migration
              ) {
                 // Table ids
                 $table->id();
-                $table->uuid(column: 'resource_id')
-                    ->unique()
-                    ->index();
+                $table->uuid(column: 'resource_id')->unique()->index();
 
                 // Table related fields
 
                 // Table main attributes
-                $table->string(column: 'phone_number')
-                    ->unique();
-
-                // Foreign key fields
+                $table->string(column: 'phone_number')->unique();
 
                 // Timestamps (created_at / updated_at) fields
                 $table->timestamps();
+
+                $table->softDeletes();
             });
     }
 

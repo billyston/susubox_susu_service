@@ -16,13 +16,13 @@ Route::middleware([
 
     // V1 resources
     Route::prefix('v1/susu/resources')->group(function (): void {
-        Route::as('v1:susu.resources')
+        Route::as('v1:susu.resources.')
             ->group(base_path('routes/api/v1/resources/resources.php'));
     });
 
     // V1 main (for all version 1 main)
     Route::prefix('v1/susu')->group(function (): void {
-        Route::as('v1:susu')
+        Route::as('v1:susu.')
             ->group(base_path('routes/api/v1/main/main.php'));
     });
 });
