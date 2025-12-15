@@ -11,7 +11,7 @@ use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
 use App\Domain\Shared\Services\SusuSchemeService;
 use App\Domain\Susu\Services\BizSusu\BizSusuIndexService;
-use App\Interface\Resources\V1\Susu\BizSusu\BizSusuCollectionResource;
+use App\Interface\Resources\V1\Susu\IndividualSusu\BizSusu\BizSusuCollectionResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 

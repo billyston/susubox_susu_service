@@ -87,6 +87,7 @@ final class GoalGetterSusu extends Model
         'start_date',
         'end_date',
         'is_collateralized',
+        'recurring_debit_status',
         'withdrawal_status',
         'extra_data',
     ];

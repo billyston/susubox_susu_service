@@ -13,7 +13,7 @@ use App\Domain\Shared\Exceptions\SusuSchemeNotFoundException;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Services\SusuSchemeService;
 use App\Domain\Susu\Services\FlexySusu\FlexySusuCreateService;
-use App\Interface\Resources\V1\Susu\FlexySusu\FlexySusuResource;
+use App\Interface\Resources\V1\Susu\IndividualSusu\FlexySusu\FlexySusuResource;
 use Brick\Money\Exception\UnknownCurrencyException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;

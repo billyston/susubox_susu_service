@@ -13,7 +13,7 @@ use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\GoalGetterSusu;
 use App\Domain\Transaction\Enums\TransactionCategoryCode;
 use App\Domain\Transaction\Services\TransactionCategoryByCodeService;
-use App\Interface\Resources\V1\Susu\GoalGetterSusu\GoalGetterSusuResource;
+use App\Interface\Resources\V1\Susu\IndividualSusu\GoalGetterSusu\GoalGetterSusuResource;
 use App\Services\SusuBox\Http\Requests\RecurringDebitApprovalRequestHandler;
 use Brick\Money\Exception\MoneyMismatchException;
 use Brick\Money\Exception\UnknownCurrencyException;
@@ -54,10 +54,9 @@ final class GoalGetterSusuApprovalAction
         );
 
         // Build the RecurringDepositValueObject
-        $value_object = RecurringDepositValueObject::create(
+        $debitValues = RecurringDepositValueObject::create(
             initial_deposit: $goalGetterSusu->initial_deposit,
             susu_amount: $goalGetterSusu->susu_amount,
-            charge: null,
             start_date: $goalGetterSusu->start_date,
             end_date: $goalGetterSusu->end_date,
             frequency: $goalGetterSusu->frequency->code,
@@ -65,17 +64,17 @@ final class GoalGetterSusuApprovalAction
         );
 
         // Execute the PaymentInstructionCreateService and return the payment instruction resource
-        $payment_instruction = $this->paymentInstructionCreateService->execute(
+        $paymentInstruction = $this->paymentInstructionCreateService->execute(
             transaction_category: $transactionCategory,
             account: $goalGetterSusu->account,
             wallet: $goalGetterSusu->wallet,
             customer: $customer,
-            data: $value_object->toArray()
+            data: $debitValues->toArray()
         );
 
         // Build the RecurringDebitApprovalResponseDTO
         $response_dto = RecurringDebitApprovalResponseDTO::fromDomain(
-            payment_instruction: $payment_instruction,
+            payment_instruction: $paymentInstruction,
         );
 
         // Execute the RecurringDebitApprovalRequestHandler

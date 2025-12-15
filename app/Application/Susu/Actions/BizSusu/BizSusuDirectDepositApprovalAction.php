@@ -11,8 +11,8 @@ use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\BizSusu;
-use App\Interface\Requests\V1\Susu\BizSusu\BizSusuDirectDepositApprovalRequest;
-use App\Interface\Resources\V1\Account\DirectDepositResource;
+use App\Interface\Requests\V1\Susu\IndividualSusu\BizSusu\BizSusuDirectDepositApprovalRequest;
+use App\Interface\Resources\V1\PaymentInstruction\DirectDepositResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 

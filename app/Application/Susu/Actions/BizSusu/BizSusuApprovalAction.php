@@ -13,7 +13,7 @@ use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\BizSusu;
 use App\Domain\Transaction\Enums\TransactionCategoryCode;
 use App\Domain\Transaction\Services\TransactionCategoryByCodeService;
-use App\Interface\Resources\V1\Susu\BizSusu\BizSusuResource;
+use App\Interface\Resources\V1\Susu\IndividualSusu\BizSusu\BizSusuResource;
 use App\Services\SusuBox\Http\Requests\RecurringDebitApprovalRequestHandler;
 use Brick\Money\Exception\MoneyMismatchException;
 use Brick\Money\Exception\UnknownCurrencyException;
@@ -54,10 +54,9 @@ final class BizSusuApprovalAction
         );
 
         // Build the RecurringDepositValueObject
-        $value_object = RecurringDepositValueObject::create(
+        $debitValues = RecurringDepositValueObject::create(
             initial_deposit: $bizSusu->initial_deposit,
             susu_amount: $bizSusu->susu_amount,
-            charge: null,
             start_date: $bizSusu->start_date,
             end_date: $bizSusu->end_date,
             frequency: $bizSusu->frequency->code,
@@ -65,17 +64,17 @@ final class BizSusuApprovalAction
         );
 
         // Execute the PaymentInstructionCreateService and return the payment instruction resource
-        $payment_instruction = $this->paymentInstructionCreateService->execute(
+        $paymentInstruction = $this->paymentInstructionCreateService->execute(
             transaction_category: $transactionCategory,
             account: $bizSusu->account,
             wallet: $bizSusu->wallet,
             customer: $customer,
-            data: $value_object->toArray()
+            data: $debitValues->toArray()
         );
 
         // Build the RecurringDebitApprovalResponseDTO
         $response_dto = RecurringDebitApprovalResponseDTO::fromDomain(
-            payment_instruction: $payment_instruction,
+            payment_instruction: $paymentInstruction,
         );
 
         // Execute the RecurringDebitApprovalRequestHandler

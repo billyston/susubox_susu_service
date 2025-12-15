@@ -10,7 +10,7 @@ use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
 use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
 use App\Domain\Susu\Services\FlexySusu\FlexySusuShowService;
-use App\Interface\Resources\V1\Susu\FlexySusu\FlexySusuResource;
+use App\Interface\Resources\V1\Susu\IndividualSusu\FlexySusu\FlexySusuResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 

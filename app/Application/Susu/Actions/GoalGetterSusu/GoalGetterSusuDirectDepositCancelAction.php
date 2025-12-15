@@ -10,7 +10,7 @@ use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\GoalGetterSusu;
-use App\Interface\Requests\V1\Susu\GoalGetterSusu\GoalGetterSusuDirectDepositCancelRequest;
+use App\Interface\Requests\V1\Susu\IndividualSusu\GoalGetterSusu\GoalGetterSusuDirectDepositCancelRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 

@@ -176,4 +176,5 @@ The SusuBox susu service API.
 
 
 ## Others
+- [ ] All transactions (recurring, direct, settlement, and withdrawals) must have a TransactionType (debit or credit)
 - [ ] Move all jobs that publishes job into the services / shared folder

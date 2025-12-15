@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Interface\Controllers\V1\Susu\BizSusu\BizSusuDirectDepositApprovalController;
-use App\Interface\Controllers\V1\Susu\BizSusu\BizSusuDirectDepositCancelController;
-use App\Interface\Controllers\V1\Susu\BizSusu\BizSusuDirectDepositCreateController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\BizSusu\BizSusuDirectDepositApprovalController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\BizSusu\BizSusuDirectDepositCancelController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\BizSusu\BizSusuDirectDepositCreateController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([

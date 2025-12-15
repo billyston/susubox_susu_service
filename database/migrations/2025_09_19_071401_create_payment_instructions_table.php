@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Domain\Shared\Enums\Statuses;
+use App\Domain\Transaction\Enums\TransactionType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -40,12 +41,18 @@ return new class extends Migration
                 $table->string(column: 'currency')->nullable()->default(value: 'GHS');
 
                 $table->string(column: 'internal_reference')->index()->nullable();
+                $table->enum(column: 'transaction_type', allowed: [
+                    TransactionType::CREDIT->value,
+                    TransactionType::DEBIT->value,
+                ]);
+                $table->boolean(column: 'accepted_terms')->default(value: false);
                 $table->enum(column: 'approval_status', allowed: [
                     Statuses::PENDING->value,
                     Statuses::APPROVED->value,
                     Statuses::CANCELLED->value,
+                    Statuses::ACTIVE->value,
+                    Statuses::SUCCESS->value,
                 ])->default(value: Statuses::PENDING->value);
-                $table->json(column: 'extra_data')->nullable();
                 $table->enum(column: 'status', allowed: [
                     Statuses::PENDING->value,
                     Statuses::APPROVED->value,
@@ -53,6 +60,7 @@ return new class extends Migration
                     Statuses::SUCCESS->value,
                     Statuses::FAILED->value,
                 ])->index()->default(value: Statuses::PENDING->value);
+                $table->json(column: 'extra_data')->nullable();
 
                 // Timestamps (created_at / updated_at) fields
                 $table->timestamps();

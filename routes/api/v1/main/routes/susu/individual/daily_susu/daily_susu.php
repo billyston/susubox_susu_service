@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Interface\Controllers\V1\Susu\DailySusu\DailySusuApprovalController;
-use App\Interface\Controllers\V1\Susu\DailySusu\DailySusuCancelController;
-use App\Interface\Controllers\V1\Susu\DailySusu\DailySusuCreateController;
-use App\Interface\Controllers\V1\Susu\DailySusu\DailySusuIndexController;
-use App\Interface\Controllers\V1\Susu\DailySusu\DailySusuShowController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\DailySusu\DailySusuApprovalController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\DailySusu\DailySusuCancelController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\DailySusu\DailySusuCreateController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\DailySusu\DailySusuIndexController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\DailySusu\DailySusuShowController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([

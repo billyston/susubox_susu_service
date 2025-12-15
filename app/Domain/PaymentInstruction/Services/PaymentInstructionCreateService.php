@@ -49,9 +49,11 @@ final class PaymentInstructionCreateService
                     'amount' => $data['amount'],
                     'charge' => $data['charge'],
                     'total' => $data['total'],
-                    'approval_status' => Statuses::APPROVED->value,
-                    'extra_data' => $data['extra_data'] ?? null,
+                    'transaction_type' => $data['transaction_type'],
+                    'accepted_terms' => $data['accepted_terms'],
+                    'approval_status' => $data['approval_status'] ?? Statuses::PENDING->value,
                     'status' => Statuses::PENDING->value,
+                    'extra_data' => $data['extra_data'] ?? null,
                 ]);
             });
         } catch (

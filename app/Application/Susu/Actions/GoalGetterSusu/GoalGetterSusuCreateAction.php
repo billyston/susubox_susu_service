@@ -15,7 +15,7 @@ use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Services\FrequencyService;
 use App\Domain\Shared\Services\SusuSchemeService;
 use App\Domain\Susu\Services\GoalGetterSusu\GoalGetterSusuCreateService;
-use App\Interface\Resources\V1\Susu\GoalGetterSusu\GoalGetterSusuResource;
+use App\Interface\Resources\V1\Susu\IndividualSusu\GoalGetterSusu\GoalGetterSusuResource;
 use Brick\Money\Exception\UnknownCurrencyException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;

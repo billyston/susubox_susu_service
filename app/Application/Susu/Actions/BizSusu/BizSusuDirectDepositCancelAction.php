@@ -10,7 +10,7 @@ use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\BizSusu;
-use App\Interface\Requests\V1\Susu\BizSusu\BizSusuDirectDepositCancelRequest;
+use App\Interface\Requests\V1\Susu\IndividualSusu\BizSusu\BizSusuDirectDepositCancelRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 

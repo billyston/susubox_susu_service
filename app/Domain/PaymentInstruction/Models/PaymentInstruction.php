@@ -38,6 +38,9 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property mixed $total
  *
  * @property string $currency
+ * @property string $internal_reference
+ * @property string $transaction_type
+ * @property string $accepted_terms
  * @property string $approval_status
  * @property string $status
  *
@@ -87,9 +90,12 @@ final class PaymentInstruction extends Model
         'charge',
         'total',
         'currency',
+        'internal_reference',
+        'transaction_type',
+        'accepted_terms',
         'approval_status',
-        'extra_data',
         'status',
+        'extra_data',
     ];
 
     public function getRouteKeyName(

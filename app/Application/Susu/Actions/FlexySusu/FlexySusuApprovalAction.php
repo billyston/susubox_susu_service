@@ -6,15 +6,14 @@ namespace App\Application\Susu\Actions\FlexySusu;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Application\Transaction\DTOs\DirectDebitApprovalResponseDTO;
-use App\Application\Transaction\ValueObject\PaymentInstructionCreateRequestVO;
+use App\Application\Transaction\ValueObject\DirectDepositInitialValueObject;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\PaymentInstruction\Services\PaymentInstructionCreateService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
 use App\Domain\Transaction\Enums\TransactionCategoryCode;
-use App\Domain\Transaction\Enums\TransactionType;
 use App\Domain\Transaction\Services\TransactionCategoryByCodeService;
-use App\Interface\Resources\V1\Susu\FlexySusu\FlexySusuResource;
+use App\Interface\Resources\V1\Susu\IndividualSusu\FlexySusu\FlexySusuResource;
 use App\Services\SusuBox\Http\Requests\DirectDebitApprovalRequestHandler;
 use Brick\Money\Exception\MoneyMismatchException;
 use Brick\Money\Exception\UnknownCurrencyException;
@@ -55,26 +54,23 @@ final class FlexySusuApprovalAction
         );
 
         // Build the PaymentInstructionCreateRequestVO
-        $vo = PaymentInstructionCreateRequestVO::create(
-            transaction_type: TransactionType::DEBIT,
-            initial_amount: $flexySusu->initial_deposit,
-            amount: $flexySusu->initial_deposit,
-            charge: null,
+        $debitValues = DirectDepositInitialValueObject::create(
+            initial_deposit: $flexySusu->initial_deposit,
         );
 
         // Execute the PaymentInstructionCreateService and return the payment instruction resource
-        $payment_instruction = $this->paymentInstructionCreateService->execute(
+        $paymentInstruction = $this->paymentInstructionCreateService->execute(
             transaction_category: $transactionCategory,
             account: $flexySusu->account,
             wallet: $flexySusu->wallet,
             customer: $customer,
-            data: $vo->toArray()
+            data: $debitValues->toArray()
         );
 
         // Build the DirectDebitApprovalResponseDTO
         $response_dto = DirectDebitApprovalResponseDTO::fromDomain(
-            payment_instruction: $payment_instruction,
-            wallet: $payment_instruction->wallet,
+            payment_instruction: $paymentInstruction,
+            wallet: $paymentInstruction->wallet,
             product: $flexySusu,
         );
 

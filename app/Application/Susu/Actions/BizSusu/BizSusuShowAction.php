@@ -10,7 +10,7 @@ use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
 use App\Domain\Susu\Models\IndividualSusu\BizSusu;
 use App\Domain\Susu\Services\BizSusu\BizSusuShowService;
-use App\Interface\Resources\V1\Susu\BizSusu\BizSusuResource;
+use App\Interface\Resources\V1\Susu\IndividualSusu\BizSusu\BizSusuResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 

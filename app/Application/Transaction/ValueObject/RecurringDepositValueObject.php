@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Transaction\ValueObject;
 
+use App\Domain\Shared\Enums\Statuses;
+use App\Domain\Transaction\Enums\TransactionType;
 use Brick\Money\Exception\MoneyMismatchException;
 use Brick\Money\Exception\UnknownCurrencyException;
 use Brick\Money\Money;
@@ -39,7 +41,6 @@ final readonly class RecurringDepositValueObject
     public static function create(
         Money $initial_deposit,
         Money $susu_amount,
-        Money|null $charge,
         string $start_date,
         string $end_date,
         string $frequency,
@@ -67,6 +68,9 @@ final readonly class RecurringDepositValueObject
             'amount' => $this->initial_deposit,
             'charge' => $this->charge,
             'total' => $this->total,
+            'approval_status' => Statuses::APPROVED->value,
+            'transaction_type' => TransactionType::CREDIT->value,
+            'accepted_terms' => true,
 
             'extra_data' => [
                 'is_initial_deposit' => true,
