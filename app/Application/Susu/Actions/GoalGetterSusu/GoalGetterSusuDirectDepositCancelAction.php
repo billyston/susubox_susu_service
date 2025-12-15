@@ -5,23 +5,23 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\GoalGetterSusu;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Domain\Account\Services\DirectDepositStatusUpdateService;
 use App\Domain\Customer\Models\Customer;
+use App\Domain\PaymentInstruction\Models\PaymentInstruction;
+use App\Domain\PaymentInstruction\Services\PaymentInstructionStatusUpdateService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\GoalGetterSusu;
-use App\Interface\Requests\V1\Susu\IndividualSusu\GoalGetterSusu\GoalGetterSusuDirectDepositCancelRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class GoalGetterSusuDirectDepositCancelAction
 {
-    private DirectDepositStatusUpdateService $directDepositStatusUpdateService;
+    private PaymentInstructionStatusUpdateService $paymentInstructionStatusUpdateService;
 
     public function __construct(
-        DirectDepositStatusUpdateService $directDepositStatusUpdateService
+        PaymentInstructionStatusUpdateService $paymentInstructionStatusUpdateService
     ) {
-        $this->directDepositStatusUpdateService = $directDepositStatusUpdateService;
+        $this->paymentInstructionStatusUpdateService = $paymentInstructionStatusUpdateService;
     }
 
     /**
@@ -29,11 +29,13 @@ final class GoalGetterSusuDirectDepositCancelAction
      */
     public function execute(
         Customer $customer,
-        GoalGetterSusu $goal_getter_susu,
-        GoalGetterSusuDirectDepositCancelRequest $request
+        GoalGetterSusu $goalGetterSusu,
+        PaymentInstruction $paymentInstruction,
+        array $request
     ): JsonResponse {
-        // Execute the DirectDepositStatusUpdateService and return the DirectDeposit resource
-        $this->directDepositStatusUpdateService->execute(
+        // Execute the PaymentInstructionStatusUpdateService and return the resource
+        $this->paymentInstructionStatusUpdateService->execute(
+            paymentInstruction: $paymentInstruction,
             status: Statuses::CANCELLED->value,
         );
 
@@ -41,7 +43,7 @@ final class GoalGetterSusuDirectDepositCancelAction
         return ApiResponseBuilder::success(
             code: Response::HTTP_OK,
             message: 'Request successful.',
-            description: 'The direct deposit process was canceled successfully.',
+            description: 'The direct deposit process has been canceled successfully.',
         );
     }
 }

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Interface\Controllers\V1\Susu\IndividualSusu\DailySusu;
 
 use App\Application\Susu\Actions\DailySusu\DailySusuDirectDepositCancelAction;
-use App\Domain\Account\Models\DirectDeposit;
 use App\Domain\Customer\Models\Customer;
+use App\Domain\PaymentInstruction\Models\PaymentInstruction;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
 use App\Interface\Controllers\Shared\Controller;
@@ -21,16 +21,16 @@ final class DailySusuDirectDepositCancelController extends Controller
     public function __invoke(
         Customer $customer,
         DailySusu $dailySusu,
-        DirectDeposit $directDeposit,
+        PaymentInstruction $paymentInstruction,
         DailySusuDirectDepositCancelRequest $dailySusuDirectDepositCancelRequest,
         DailySusuDirectDepositCancelAction $dailySusuDirectDepositCancelAction
     ): JsonResponse {
         // Execute the DailySusuDirectDepositCancelAction and return the JsonResponse
         return $dailySusuDirectDepositCancelAction->execute(
             customer: $customer,
-            daily_susu: $dailySusu,
-            direct_deposit: $directDeposit,
-            request: $dailySusuDirectDepositCancelRequest
+            dailySusu: $dailySusu,
+            paymentInstruction: $paymentInstruction,
+            request: $dailySusuDirectDepositCancelRequest->validated()
         );
     }
 }

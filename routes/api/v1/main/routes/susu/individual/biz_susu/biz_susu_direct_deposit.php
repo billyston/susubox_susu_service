@@ -26,29 +26,29 @@ Route::group([
 
     // Cancel direct deposit request route
     Route::post(
-        uri: '/{direct_deposit}/cancel',
+        uri: '/{payment_instruction}/cancel',
         action: BizSusuDirectDepositCancelController::class,
     )->name(
-        name: 'direct_deposit.cancel'
+        name: 'payment_instruction.cancel'
     )->whereUuid(
         parameters: [
             'customer',
             'biz_susu',
-            'direct_deposit',
+            'payment_instruction',
         ]
     );
 
     // Approve direct deposit request route
     Route::post(
-        uri: '/{direct_deposit}/approval',
+        uri: '/{payment_instruction}/approval',
         action: BizSusuDirectDepositApprovalController::class,
     )->name(
-        name: 'direct_deposit.approval'
+        name: 'payment_instruction.approval'
     )->whereUuid(
         parameters: [
             'customer',
             'biz_susu',
-            'direct_deposit',
+            'payment_instruction',
         ]
     );
 });

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Interface\Controllers\V1\Susu\IndividualSusu\FlexySusu;
 
 use App\Application\Susu\Actions\FlexySusu\FlexySusuDirectDepositCancelAction;
-use App\Domain\Account\Models\DirectDeposit;
 use App\Domain\Customer\Models\Customer;
+use App\Domain\PaymentInstruction\Models\PaymentInstruction;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
 use App\Interface\Controllers\Shared\Controller;
@@ -21,16 +21,16 @@ final class FlexySusuDirectDepositCancelController extends Controller
     public function __invoke(
         Customer $customer,
         FlexySusu $flexySusu,
-        DirectDeposit $directDeposit,
+        PaymentInstruction $paymentInstruction,
         FlexySusuDirectDepositCancelRequest $flexySusuDirectDepositCancelRequest,
         FlexySusuDirectDepositCancelAction $flexySusuDirectDepositCancelAction
     ): JsonResponse {
         // Execute the FlexySusuDirectDepositCancelAction and return the JsonResponse
         return $flexySusuDirectDepositCancelAction->execute(
             customer: $customer,
-            flexy_susu: $flexySusu,
-            direct_deposit: $directDeposit,
-            request: $flexySusuDirectDepositCancelRequest
+            flexySusu: $flexySusu,
+            paymentInstruction: $paymentInstruction,
+            request: $flexySusuDirectDepositCancelRequest->validated()
         );
     }
 }
