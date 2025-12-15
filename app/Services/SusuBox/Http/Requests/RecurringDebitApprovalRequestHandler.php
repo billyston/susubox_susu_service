@@ -12,7 +12,7 @@ final readonly class RecurringDebitApprovalRequestHandler
         // ..
     }
 
-    public function sendToService(
+    public function sendToSusuBoxService(
         string $service,
         array $data
     ) {

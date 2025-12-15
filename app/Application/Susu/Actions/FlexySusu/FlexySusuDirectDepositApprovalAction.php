@@ -4,26 +4,30 @@ declare(strict_types=1);
 
 namespace App\Application\Susu\Actions\FlexySusu;
 
-use App\Application\Account\Jobs\DirectDepositApprovedJob;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Domain\Account\Services\DirectDepositStatusUpdateService;
+use App\Application\Transaction\DTOs\DirectDebitApprovalResponseDTO;
 use App\Domain\Customer\Models\Customer;
+use App\Domain\PaymentInstruction\Models\PaymentInstruction;
+use App\Domain\PaymentInstruction\Services\PaymentInstructionStatusUpdateService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
-use App\Interface\Requests\V1\Susu\IndividualSusu\FlexySusu\FlexySusuDirectDepositApprovalRequest;
 use App\Interface\Resources\V1\PaymentInstruction\DirectDepositResource;
+use App\Services\SusuBox\Http\Requests\DirectDebitApprovalRequestHandler;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class FlexySusuDirectDepositApprovalAction
 {
-    private DirectDepositStatusUpdateService $directDepositStatusUpdateService;
+    private PaymentInstructionStatusUpdateService $paymentInstructionStatusUpdateService;
+    private DirectDebitApprovalRequestHandler $dispatcher;
 
     public function __construct(
-        DirectDepositStatusUpdateService $directDepositStatusUpdateService
+        PaymentInstructionStatusUpdateService $paymentInstructionStatusUpdateService,
+        DirectDebitApprovalRequestHandler $dispatcher
     ) {
-        $this->directDepositStatusUpdateService = $directDepositStatusUpdateService;
+        $this->paymentInstructionStatusUpdateService = $paymentInstructionStatusUpdateService;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -31,18 +35,27 @@ final class FlexySusuDirectDepositApprovalAction
      */
     public function execute(
         Customer $customer,
-        FlexySusu $flexy_susu,
-        FlexySusuDirectDepositApprovalRequest $request
+        FlexySusu $flexySusu,
+        PaymentInstruction $paymentInstruction,
+        array $request
     ): JsonResponse {
-        // Execute the DirectDepositStatusUpdateService and return bool
-        $this->directDepositStatusUpdateService->execute(
-            direct_deposit: $direct_deposit,
+        // Execute the PaymentInstructionStatusUpdateService and return the resource
+        $paymentInstruction = $this->paymentInstructionStatusUpdateService->execute(
+            paymentInstruction: $paymentInstruction,
             status: Statuses::APPROVED->value,
         );
 
-        // Dispatch the DirectDepositApprovedJob
-        DirectDepositApprovedJob::dispatch(
-            directDeposit: $direct_deposit,
+        // Build the DirectDebitApprovalResponseDTO
+        $responseDto = DirectDebitApprovalResponseDTO::fromDomain(
+            paymentInstruction: $paymentInstruction,
+            wallet: $paymentInstruction->wallet,
+            product: $flexySusu,
+        );
+
+        // Dispatch to SusuBox Service (Payment Service)
+        $this->dispatcher->sendToSusuBoxService(
+            service: config('susubox.payment.name'),
+            data: $responseDto->toArray(),
         );
 
         // Build and return the JsonResponse
@@ -51,7 +64,7 @@ final class FlexySusuDirectDepositApprovalAction
             message: 'Request successful.',
             description: 'Your request is successful. You will be notified shortly.',
             data: new DirectDepositResource(
-                resource: $direct_deposit->refresh()
+                resource: $paymentInstruction->refresh()
             )
         );
     }

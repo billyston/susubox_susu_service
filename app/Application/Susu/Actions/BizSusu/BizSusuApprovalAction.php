@@ -77,8 +77,8 @@ final class BizSusuApprovalAction
             payment_instruction: $paymentInstruction,
         );
 
-        // Execute the RecurringDebitApprovalRequestHandler
-        $this->dispatcher->sendToService(
+        // Dispatch to SusuBox Service (Payment Service)
+        $this->dispatcher->sendToSusuBoxService(
             service: config('susubox.payment.name'),
             data: $response_dto->toArray(),
         );

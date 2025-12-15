@@ -55,7 +55,7 @@ The SusuBox susu service API.
 ###### Direct Deposit
 - [x] Create direct deposit 
 - [x] Cancel direct deposit 
-- [ ] Approve direct deposit 
+- [x] Approve direct deposit 
 - [ ] Validate direct deposit
 
 ###### Account Activation
@@ -90,7 +90,7 @@ The SusuBox susu service API.
 ###### Direct Deposit
 - [x] Create direct deposit
 - [x] Cancel direct deposit
-- [ ] Approve direct deposit 
+- [x] Approve direct deposit 
 - [ ] Validate direct deposit
 
 ###### Account Activation
@@ -125,7 +125,7 @@ The SusuBox susu service API.
 ###### Direct Deposit
 - [x] Create direct deposit
 - [x] Cancel direct deposit
-- [ ] Approve direct deposit
+- [x] Approve direct deposit
 - [ ] Validate direct deposit
 
 ###### Account Activation
@@ -159,7 +159,7 @@ The SusuBox susu service API.
 ###### Direct Deposit
 - [x] Create direct deposit
 - [x] Cancel direct deposit
-- [ ] Approve direct deposit
+- [x] Approve direct deposit
 - [ ] Validate direct deposit
 
 ###### Account Activation
@@ -178,3 +178,4 @@ The SusuBox susu service API.
 ## Others
 - [ ] All transactions (recurring, direct, settlement, and withdrawals) must have a TransactionType (debit or credit)
 - [ ] Move all jobs that publishes job into the services / shared folder
+- [ ] Do not hard code 'service_category' in approval DTOs

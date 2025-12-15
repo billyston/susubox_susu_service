@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 final readonly class DirectDebitApprovalResponseDTO
 {
     public function __construct(
-        public PaymentInstruction $payment_instruction,
+        public PaymentInstruction $paymentInstruction,
         public Model $product,
         public Wallet $wallet,
     ) {
@@ -20,13 +20,13 @@ final readonly class DirectDebitApprovalResponseDTO
     }
 
     public static function fromDomain(
-        PaymentInstruction $payment_instruction,
+        PaymentInstruction $paymentInstruction,
         Wallet $wallet,
         Model $product,
-        bool $is_initial_debit = false
+        bool $isInitialDeposit = false
     ): self {
         return new self(
-            payment_instruction: $payment_instruction,
+            paymentInstruction: $paymentInstruction,
             product: $product,
             wallet: $wallet,
         );
@@ -46,10 +46,10 @@ final readonly class DirectDebitApprovalResponseDTO
                     'payment_instruction' => [
                         'type' => 'PaymentInstruction',
                         'attributes' => [
-                            'resource_id' => $this->payment_instruction->resource_id,
-                            'amount' => $this->payment_instruction->amount->getAmount()->__toString(),
-                            'charges' => $this->payment_instruction->charge->getAmount()->__toString(),
-                            'total' => $this->payment_instruction->total->getAmount()->__toString(),
+                            'resource_id' => $this->paymentInstruction->resource_id,
+                            'amount' => $this->paymentInstruction->amount->getAmount()->__toString(),
+                            'charges' => $this->paymentInstruction->charge->getAmount()->__toString(),
+                            'total' => $this->paymentInstruction->total->getAmount()->__toString(),
                         ],
                     ],
                     'wallet' => [

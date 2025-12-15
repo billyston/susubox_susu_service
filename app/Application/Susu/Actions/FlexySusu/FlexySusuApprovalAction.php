@@ -69,13 +69,13 @@ final class FlexySusuApprovalAction
 
         // Build the DirectDebitApprovalResponseDTO
         $response_dto = DirectDebitApprovalResponseDTO::fromDomain(
-            payment_instruction: $paymentInstruction,
+            paymentInstruction: $paymentInstruction,
             wallet: $paymentInstruction->wallet,
             product: $flexySusu,
         );
 
-        // Execute the RecurringDebitApprovalRequestHandler
-        $this->dispatcher->sendToService(
+        // Dispatch to SusuBox Service (Payment Service)
+        $this->dispatcher->sendToSusuBoxService(
             service: config('susubox.payment.name'),
             data: $response_dto->toArray(),
         );
