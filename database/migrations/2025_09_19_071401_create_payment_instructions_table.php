@@ -50,14 +50,12 @@ return new class extends Migration
                     Statuses::PENDING->value,
                     Statuses::APPROVED->value,
                     Statuses::CANCELLED->value,
-                    Statuses::ACTIVE->value,
-                    Statuses::SUCCESS->value,
                 ])->default(value: Statuses::PENDING->value);
                 $table->enum(column: 'status', allowed: [
                     Statuses::PENDING->value,
-                    Statuses::APPROVED->value,
-                    Statuses::CANCELLED->value,
+                    Statuses::ACTIVE->value,
                     Statuses::SUCCESS->value,
+                    Statuses::TERMINATED->value,
                     Statuses::FAILED->value,
                 ])->index()->default(value: Statuses::PENDING->value);
                 $table->json(column: 'extra_data')->nullable();

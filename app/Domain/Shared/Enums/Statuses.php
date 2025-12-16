@@ -20,6 +20,7 @@ enum Statuses: string
     case CANCELLED = 'cancelled';
     case APPROVED = 'approved';
     case CLOSED = 'closed';
+    case TERMINATED = 'terminated';
 
     public static function allowed(
     ): array {

@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $account_id
  * @property string $payment_instruction_id
  * @property string $transaction_category_id
+ * @property string $transaction_type
  * @property string $wallet_id
  *
  * Monetary fields (casted via MoneyCasts):
@@ -73,6 +74,7 @@ final class Transaction extends Model
         'account_id',
         'payment_instruction_id',
         'transaction_category_id',
+        'transaction_type',
         'wallet_id',
         'reference_number',
         'frequencies',

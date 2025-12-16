@@ -48,7 +48,7 @@ final class FlexySusuApprovalAction
         Customer $customer,
         FlexySusu $flexySusu,
     ): JsonResponse {
-        // Execute the TransactionCreateService and return the Transaction resource
+        // Execute the TransactionCreateDebitService and return the Transaction resource
         $transactionCategory = $this->transactionCategoryByCodeGetService->execute(
             TransactionCategoryCode::DIRECT_DEBIT_CODE->value
         );

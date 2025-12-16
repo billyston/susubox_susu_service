@@ -48,7 +48,7 @@ final class DailySusuApprovalAction
         Customer $customer,
         DailySusu $dailySusu,
     ): JsonResponse {
-        // Execute the TransactionCreateService and return the Transaction resource
+        // Execute the TransactionCreateDebitService and return the Transaction resource
         $transactionCategory = $this->transactionCategoryByCodeGetService->execute(
             TransactionCategoryCode::RECURRING_DEBIT_CODE->value
         );

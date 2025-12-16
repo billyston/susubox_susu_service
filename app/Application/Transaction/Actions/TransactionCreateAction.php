@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 final class TransactionCreateAction
 {
     /**
-     * @param PaymentInstruction $payment_instruction
+     * @param PaymentInstruction $paymentInstruction
      * @param array $request
      * @return JsonResponse
      * @throws UnknownCurrencyException
@@ -27,7 +27,7 @@ final class TransactionCreateAction
         // Build the TransactionCreateRequestDTO and return the DTO
         $requestDto = TransactionCreateRequestDTO::fromArray(
             payload: $request,
-            is_initial_deposit: $paymentInstruction->isFirstTransaction()
+            isInitialDeposit: $paymentInstruction->account->isFirstTransaction()
         );
 
         // Dispatch the TransactionCreateJob

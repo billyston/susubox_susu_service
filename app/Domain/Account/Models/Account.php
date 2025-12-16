@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Carbon;
 
@@ -30,6 +31,7 @@ use Illuminate\Support\Carbon;
  * Relationships:
  * @property Model $accountable
  * @property Collection<int, Transaction> $transactions
+ * @property AccountBalance $accountBalance
  *
  * @method static Builder|Account whereResourceId($value)
  * @method static Builder|Account whereAccountableType($value)
@@ -82,6 +84,14 @@ final class Account extends Model
         );
     }
 
+    public function accountBalance(
+    ): HasOne {
+        return $this->hasOne(
+            related: AccountBalance::class,
+            foreignKey: 'account_id'
+        );
+    }
+
     public function getSusuScheme(
     ) {
         if (! $this->accountable) {
@@ -89,6 +99,11 @@ final class Account extends Model
         }
 
         return $this->accountable->susuScheme;
+    }
+
+    public function isFirstTransaction(
+    ): bool {
+        return ! $this->transactions()->exists();
     }
 
     public static function generateAccountNumber(

@@ -17,7 +17,7 @@ final readonly class TransactionCreateRequestDTO
         public string $code,
         public string $status,
         public string $reference,
-        public bool $is_initial_deposit,
+        public bool $isInitialDeposit,
         public Money $amount,
         public Money $charges,
         public Money $total,
@@ -38,7 +38,7 @@ final readonly class TransactionCreateRequestDTO
      */
     public static function fromArray(
         array $payload,
-        bool $is_initial_deposit,
+        bool $isInitialDeposit,
     ): self {
         // Extract resource bodies
         $data = $payload['data'];
@@ -58,7 +58,7 @@ final readonly class TransactionCreateRequestDTO
             code: $transaction['code'],
             status: $transaction['status'],
             reference: $transaction['reference'],
-            is_initial_deposit: $is_initial_deposit,
+            isInitialDeposit: $isInitialDeposit,
             amount: $amount,
             charges: $charges,
             total: $total,
@@ -74,7 +74,7 @@ final readonly class TransactionCreateRequestDTO
     public function toArray(
     ): array {
         return [
-            'is_initial_deposit' => $this->is_initial_deposit,
+            'is_initial_deposit' => $this->isInitialDeposit,
         ];
     }
 }

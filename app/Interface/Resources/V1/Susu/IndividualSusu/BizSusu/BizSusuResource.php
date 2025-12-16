@@ -14,14 +14,14 @@ final class BizSusuResource extends JsonResource
     public function toArray(
         Request $request
     ): array {
-        // Return the resource array
+        // Build and return the resource array
         return [
             // Resource type and id
             'type' => 'BizSusu',
-            'resource_id' => $this->resource->resource_id,
 
             // Resource exposed attributes
             'attributes' => [
+                'resource_id' => $this->resource->resource_id,
                 'susu_amount' => $this->resource->susu_amount->getAmount()->__toString(),
                 'initial_deposit' => $this->resource->initial_deposit->getAmount()->__toString(),
                 'frequency' => $this->resource->frequency->code,

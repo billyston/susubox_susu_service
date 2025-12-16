@@ -15,22 +15,22 @@ final readonly class TransactionCreateResponseDTO
         public Transaction $transaction,
         public Account $account,
         public Customer $customer,
-        public Wallet $linked_wallet,
-        public bool $is_initial_deposit,
+        public Wallet $wallet,
+        public bool $isInitialDeposit,
     ) {
         // ..
     }
 
     public static function fromDomain(
         Transaction $transaction,
-        bool $is_initial_deposit
+        bool $isInitialDeposit
     ): self {
         return new self(
             transaction: $transaction,
             account: $transaction->account,
             customer: $transaction->payment->initiator,
-            linked_wallet: $transaction->wallet,
-            is_initial_deposit: $is_initial_deposit,
+            wallet: $transaction->wallet,
+            isInitialDeposit: $isInitialDeposit,
         );
     }
 
@@ -40,7 +40,7 @@ final readonly class TransactionCreateResponseDTO
             'data' => [
                 'type' => 'Transaction',
                 'attributes' => [
-                    'is_initial_deposit' => $this->is_initial_deposit,
+                    'is_initial_deposit' => $this->isInitialDeposit,
                     'resource_id' => $this->transaction->resource_id,
                     'reference_number' => $this->transaction->reference_number,
                     'transaction_category' => $this->transaction->category->code,
@@ -72,9 +72,9 @@ final readonly class TransactionCreateResponseDTO
                     'wallet' => [
                         'type' => 'Wallet',
                         'attributes' => [
-                            'wallet_name' => $this->linked_wallet->wallet_name,
-                            'wallet_number' => $this->linked_wallet->wallet_number,
-                            'wallet_network' => $this->linked_wallet->network_code,
+                            'wallet_name' => $this->wallet->wallet_name,
+                            'wallet_number' => $this->wallet->wallet_number,
+                            'wallet_network' => $this->wallet->network_code,
                         ],
                     ],
                 ],

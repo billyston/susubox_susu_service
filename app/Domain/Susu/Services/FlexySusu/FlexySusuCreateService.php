@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Susu\Services\FlexySusu;
 
 use App\Domain\Account\Models\Account;
+use App\Domain\Account\Models\AccountBalance;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Models\Wallet;
 use App\Domain\Shared\Exceptions\SystemFailureException;
@@ -36,7 +37,6 @@ final class FlexySusuCreateService
             ) {
                 // Create Financial Account
                 $account = Account::create([
-                    'customer_id' => $customer->id,
                     'accountable_type' => IndividualAccount::class,
                     'account_name' => $dto['account_name'],
                     'account_number' => Account::generateAccountNumber(),
@@ -54,8 +54,13 @@ final class FlexySusuCreateService
                     'accountable_id' => $individualAccount->id,
                 ]);
 
+                // Create the AccountBalance
+                AccountBalance::create([
+                    'account_id' => $account->id,
+                ]);
+
                 // Create and return the FlexySusu resource
-                return FlexySusu::query()->create([
+                return FlexySusu::create([
                     'individual_account_id' => $individualAccount->id,
                     'wallet_id' => $wallet->id,
                     'initial_deposit' => $dto['initial_deposit'],

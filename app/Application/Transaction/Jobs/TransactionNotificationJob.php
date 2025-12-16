@@ -47,7 +47,7 @@ final class TransactionNotificationJob implements ShouldQueue
         // Build the TransactionCreateResponseDTO
         $responseDto = TransactionCreateResponseDTO::fromDomain(
             transaction: $transaction,
-            is_initial_deposit: $this->isInitialDeposit
+            isInitialDeposit: $this->isInitialDeposit
         );
 
         // Dispatch the TransactionCreateResponseDTO to SusuBox services

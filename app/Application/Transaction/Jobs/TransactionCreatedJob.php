@@ -42,7 +42,7 @@ final class TransactionCreatedJob implements ShouldQueue
         // Build the TransactionCreateResponseDTO
         $response_dto = TransactionCreateResponseDTO::fromDomain(
             transaction: $this->transaction,
-            is_initial_deposit: $this->isInitialDeposit
+            isInitialDeposit: $this->isInitialDeposit
         );
 
         // Check the transaction status and execute the appropriate action

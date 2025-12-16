@@ -137,11 +137,6 @@ final class PaymentInstruction extends Model
         );
     }
 
-    public function isFirstTransaction(
-    ): bool {
-        return ! $this->transactions()->exists();
-    }
-
     public function transactions(
     ): HasMany {
         return $this->hasMany(

@@ -6,6 +6,7 @@ namespace App\Domain\Susu\Services\GoalGetterSusu;
 
 use App\Application\Shared\Helpers\Helpers;
 use App\Domain\Account\Models\Account;
+use App\Domain\Account\Models\AccountBalance;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Models\Wallet;
 use App\Domain\Shared\Exceptions\SystemFailureException;
@@ -41,7 +42,6 @@ final class GoalGetterSusuCreateService
             ) {
                 // Create Financial Account
                 $account = Account::create([
-                    'customer_id' => $customer->id,
                     'accountable_type' => IndividualAccount::class,
                     'account_name' => $dto['account_name'],
                     'account_number' => Account::generateAccountNumber(),
@@ -59,8 +59,13 @@ final class GoalGetterSusuCreateService
                     'accountable_id' => $individualAccount->id,
                 ]);
 
+                // Create the AccountBalance
+                AccountBalance::create([
+                    'account_id' => $account->id,
+                ]);
+
                 // Create and return the GoalGetterSusu resource
-                return GoalGetterSusu::query()->create([
+                return GoalGetterSusu::create([
                     'individual_account_id' => $individualAccount->id,
                     'wallet_id' => $wallet->id,
                     'frequency_id' => $frequency->id,

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Susu\Services\DailySusu;
 
 use App\Domain\Account\Models\Account;
+use App\Domain\Account\Models\AccountBalance;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Models\Wallet;
 use App\Domain\Shared\Enums\Statuses;
@@ -40,7 +41,6 @@ final class DailySusuCreateService
             ) {
                 // Create Financial Account
                 $account = Account::create([
-                    'customer_id' => $customer->id,
                     'accountable_type' => IndividualAccount::class,
                     'account_name' => $dto['account_name'],
                     'account_number' => Account::generateAccountNumber(),
@@ -56,6 +56,11 @@ final class DailySusuCreateService
                 // Link Account to IndividualAccount (Update polymorphic fields)
                 $account->update([
                     'accountable_id' => $individualAccount->id,
+                ]);
+
+                // Create the AccountBalance
+                AccountBalance::create([
+                    'account_id' => $account->id,
                 ]);
 
                 // Create and return the DailySusu resource

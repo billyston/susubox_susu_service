@@ -9,8 +9,8 @@ The SusuBox susu service API.
 
 ## Customer
 - [x] Create new customer
-- [x] Linked new customer wallet
-- [x] Get all linked wallets
+- [x] Create new customer wallet
+- [x] Get all wallets
 
 ## Resources
 - [x] Build the frequencies
@@ -27,7 +27,7 @@ The SusuBox susu service API.
 - [x] Create and Configure Account model and migration
 - [x] Get all customer susu accounts
 - [x] Work on a unique account_number
-- [ ] Get account balance
+- [x] Get account balance
 - [x] Update account status (active) after successful initial debit
 
 
@@ -172,10 +172,17 @@ The SusuBox susu service API.
 
 ## Transactions
 - [x] Create account transaction
-- [ ] TransactionStatus from Payment Service should match Susu Service 
+- [x] TransactionStatus from Payment Service should match Susu Service 
+- [x] All transactions must have a TransactionType (debit or credit)
+- [ ] Handle TransactionCreatedFailureAction
 
 
 ## Others
-- [ ] All transactions (recurring, direct, settlement, and withdrawals) must have a TransactionType (debit or credit)
 - [ ] Move all jobs that publishes job into the services / shared folder
 - [ ] Do not hard code 'service_category' in approval DTOs
+- [ ] When payment_instruction is cancelled, approval_status->cancelled, status->terminated
+- [ ] When transaction is created, update the payment_instruction->status (active, terminated, success, failed)
+- [ ] internal_reference field must be updated after payment_service returned data
+- [ ] Transaction notification (SMS / Email) should have balance updates
+- [ ] Rebuild all the Resource files (AccountBalanceResource as an example)
+- [ ] Provide descriptions for all api responses

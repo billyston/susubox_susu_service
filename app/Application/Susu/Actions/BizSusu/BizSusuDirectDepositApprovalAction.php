@@ -8,7 +8,7 @@ use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Application\Transaction\DTOs\DirectDebitApprovalResponseDTO;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\PaymentInstruction\Models\PaymentInstruction;
-use App\Domain\PaymentInstruction\Services\PaymentInstructionStatusUpdateService;
+use App\Domain\PaymentInstruction\Services\PaymentInstructionApprovalStatusUpdateService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\BizSusu;
@@ -19,14 +19,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class BizSusuDirectDepositApprovalAction
 {
-    private PaymentInstructionStatusUpdateService $paymentInstructionStatusUpdateService;
+    private PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService;
     private DirectDebitApprovalRequestHandler $dispatcher;
 
     public function __construct(
-        PaymentInstructionStatusUpdateService $paymentInstructionStatusUpdateService,
+        PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService,
         DirectDebitApprovalRequestHandler $dispatcher
     ) {
-        $this->paymentInstructionStatusUpdateService = $paymentInstructionStatusUpdateService;
+        $this->paymentInstructionApprovalStatusUpdateService = $paymentInstructionApprovalStatusUpdateService;
         $this->dispatcher = $dispatcher;
     }
 
@@ -39,8 +39,8 @@ final class BizSusuDirectDepositApprovalAction
         PaymentInstruction $paymentInstruction,
         array $request
     ): JsonResponse {
-        // Execute the PaymentInstructionStatusUpdateService and return the resource
-        $paymentInstruction = $this->paymentInstructionStatusUpdateService->execute(
+        // Execute the PaymentInstructionApprovalStatusUpdateService and return the resource
+        $paymentInstruction = $this->paymentInstructionApprovalStatusUpdateService->execute(
             paymentInstruction: $paymentInstruction,
             status: Statuses::APPROVED->value,
         );

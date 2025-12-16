@@ -50,7 +50,7 @@ final class FlexySusuDirectDepositCreateAction
             payload: $request,
         );
 
-        // Execute the TransactionCreateService and return the resource
+        // Execute the TransactionCreateDebitService and return the resource
         $transactionCategory = $this->transactionCategoryByCodeGetService->execute(
             TransactionCategoryCode::DIRECT_DEBIT_CODE->value
         );
