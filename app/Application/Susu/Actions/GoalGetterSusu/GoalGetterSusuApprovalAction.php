@@ -8,7 +8,9 @@ use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Application\Transaction\DTOs\RecurringDepositApprovalResponseDTO;
 use App\Application\Transaction\ValueObject\RecurringDepositValueObject;
 use App\Domain\Customer\Models\Customer;
+use App\Domain\PaymentInstruction\Services\PaymentInstructionApprovalStatusUpdateService;
 use App\Domain\PaymentInstruction\Services\PaymentInstructionCreateService;
+use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\GoalGetterSusu;
 use App\Domain\Transaction\Enums\TransactionCategoryCode;
@@ -23,20 +25,24 @@ use Symfony\Component\HttpFoundation\Response;
 final class GoalGetterSusuApprovalAction
 {
     private PaymentInstructionCreateService $paymentInstructionCreateService;
+    private PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService;
     private TransactionCategoryByCodeService $transactionCategoryByCodeGetService;
     private RecurringDepositApprovalRequestHandler $dispatcher;
 
     /**
      * @param PaymentInstructionCreateService $paymentInstructionCreateService
+     * @param PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService
      * @param TransactionCategoryByCodeService $transactionCategoryByCodeGetService
      * @param RecurringDepositApprovalRequestHandler $dispatcher
      */
     public function __construct(
         PaymentInstructionCreateService $paymentInstructionCreateService,
+        PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService,
         TransactionCategoryByCodeService $transactionCategoryByCodeGetService,
         RecurringDepositApprovalRequestHandler $dispatcher
     ) {
         $this->paymentInstructionCreateService = $paymentInstructionCreateService;
+        $this->paymentInstructionApprovalStatusUpdateService = $paymentInstructionApprovalStatusUpdateService;
         $this->transactionCategoryByCodeGetService = $transactionCategoryByCodeGetService;
         $this->dispatcher = $dispatcher;
     }
@@ -86,6 +92,12 @@ final class GoalGetterSusuApprovalAction
         $this->dispatcher->sendToSusuBoxService(
             service: config('susubox.payment.name'),
             data: $responseDTO->toArray(),
+        );
+
+        // Execute the PaymentInstructionCreateService
+        $this->paymentInstructionApprovalStatusUpdateService->execute(
+            paymentInstruction: $paymentInstruction,
+            status: Statuses::APPROVED->value,
         );
 
         // Build and return the JsonResponse

@@ -8,7 +8,9 @@ use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Application\Transaction\DTOs\DirectDepositApprovalResponseDTO;
 use App\Application\Transaction\ValueObject\DirectDepositInitialValueObject;
 use App\Domain\Customer\Models\Customer;
+use App\Domain\PaymentInstruction\Services\PaymentInstructionApprovalStatusUpdateService;
 use App\Domain\PaymentInstruction\Services\PaymentInstructionCreateService;
+use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
 use App\Domain\Transaction\Enums\TransactionCategoryCode;
@@ -23,20 +25,24 @@ use Symfony\Component\HttpFoundation\Response;
 final class FlexySusuApprovalAction
 {
     private PaymentInstructionCreateService $paymentInstructionCreateService;
+    private PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService;
     private TransactionCategoryByCodeService $transactionCategoryByCodeGetService;
     private DirectDepositApprovalRequestHandler $dispatcher;
 
     /**
      * @param PaymentInstructionCreateService $paymentInstructionCreateService
+     * @param PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService
      * @param TransactionCategoryByCodeService $transactionCategoryByCodeGetService
      * @param DirectDepositApprovalRequestHandler $dispatcher
      */
     public function __construct(
         PaymentInstructionCreateService $paymentInstructionCreateService,
+        PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService,
         TransactionCategoryByCodeService $transactionCategoryByCodeGetService,
         DirectDepositApprovalRequestHandler $dispatcher
     ) {
         $this->paymentInstructionCreateService = $paymentInstructionCreateService;
+        $this->paymentInstructionApprovalStatusUpdateService = $paymentInstructionApprovalStatusUpdateService;
         $this->transactionCategoryByCodeGetService = $transactionCategoryByCodeGetService;
         $this->dispatcher = $dispatcher;
     }
@@ -83,6 +89,12 @@ final class FlexySusuApprovalAction
         $this->dispatcher->sendToSusuBoxService(
             service: config('susubox.payment.name'),
             data: $responseDTO->toArray(),
+        );
+
+        // Execute the PaymentInstructionCreateService
+        $this->paymentInstructionApprovalStatusUpdateService->execute(
+            paymentInstruction: $paymentInstruction,
+            status: Statuses::APPROVED->value,
         );
 
         // Build and return the JsonResponse

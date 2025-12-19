@@ -39,7 +39,7 @@ final class PaymentInstructionApprovalStatusUpdateService
                     // Execute the update query
                     $paymentInstruction->update([
                         'approval_status' => $status,
-                        'approved_at' => now(),
+                        'approved_at' => $paymentInstruction->approved_at ?? now(),
                     ]);
 
                     // Return the account resource

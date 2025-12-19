@@ -189,5 +189,5 @@ The SusuBox susu service API.
 
 - [ ] Review all the exceptions and give proper messaging
 - [ ] Review all the response messages
-- [ ] All $variable, function and method names should follow CamelCase
+- [x] All $variable, function and method names should follow CamelCase
 - [ ] All APIResource, ResponseDTO toArray and DB fields names must follow snake_case 

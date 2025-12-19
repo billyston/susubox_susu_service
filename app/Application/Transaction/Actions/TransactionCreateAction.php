@@ -33,7 +33,7 @@ final class TransactionCreateAction
         // Dispatch the TransactionCreateJob
         TransactionCreateJob::dispatch(
             paymentInstructionResourceId: $paymentInstruction->resource_id,
-            requestDto: $requestDTO
+            requestDTO: $requestDTO
         );
 
         // Build and return the JsonResponse
