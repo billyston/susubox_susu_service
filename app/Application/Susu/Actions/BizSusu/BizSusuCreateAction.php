@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\BizSusu;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Susu\DTOs\BizSusu\BizSusuCreateDTO;
-use App\Domain\Customer\Exceptions\LinkedWalletNotFoundException;
+use App\Application\Susu\DTOs\BizSusu\BizSusuCreateRequestDTO;
+use App\Domain\Customer\Exceptions\WalletNotFoundException;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Services\CustomerWalletService;
 use App\Domain\Shared\Exceptions\FrequencyNotFoundException;
@@ -27,6 +27,12 @@ final class BizSusuCreateAction
     private FrequencyService $frequencyService;
     private BizSusuCreateService $bizSusuCreateService;
 
+    /**
+     * @param CustomerWalletService $customerLinkedWalletService
+     * @param SusuSchemeService $susuSchemeService
+     * @param FrequencyService $frequencyService
+     * @param BizSusuCreateService $bizSusuCreateService
+     */
     public function __construct(
         CustomerWalletService $customerLinkedWalletService,
         SusuSchemeService $susuSchemeService,
@@ -44,7 +50,7 @@ final class BizSusuCreateAction
      * @param array $request
      * @return JsonResponse
      * @throws FrequencyNotFoundException
-     * @throws LinkedWalletNotFoundException
+     * @throws WalletNotFoundException
      * @throws SusuSchemeNotFoundException
      * @throws SystemFailureException
      * @throws UnknownCurrencyException
@@ -54,33 +60,33 @@ final class BizSusuCreateAction
         array $request
     ): JsonResponse {
         // Build the BizSusuCreateDTO and return the DTO
-        $dto = BizSusuCreateDTO::fromArray(
+        $requestDTO = BizSusuCreateRequestDTO::fromPayload(
             payload: $request
         );
 
         // Execute the CustomerWalletService and return the resource
-        $linked_wallet = $this->customerLinkedWalletService->execute(
+        $wallet = $this->customerLinkedWalletService->execute(
             customer: $customer,
-            wallet_resource_id: $dto->wallet_id,
+            walletResourceID: $requestDTO->walletResourceID,
         );
 
         // Execute the SusuSchemeService and return the resource
-        $susu_scheme = $this->susuSchemeService->execute(
-            scheme_code: config(key: 'susubox.susu_schemes.biz_susu_code')
+        $susuScheme = $this->susuSchemeService->execute(
+            schemeCode: config(key: 'susubox.susu_schemes.biz_susu_code')
         );
 
         // Execute the FrequencyService and return the resource
         $frequency = $this->frequencyService->execute(
-            frequency_code: $dto->frequency
+            frequency_code: $requestDTO->frequency
         );
 
         // Execute the BizSusuCreateService and return the resource
-        $biz_susu = $this->bizSusuCreateService->execute(
+        $bizSusu = $this->bizSusuCreateService->execute(
             customer: $customer,
-            susu_scheme: $susu_scheme,
+            susuScheme: $susuScheme,
             frequency: $frequency,
-            wallet: $linked_wallet,
-            dto: $dto->toArray()
+            wallet: $wallet,
+            requestDTO: $requestDTO->toArray()
         );
 
         // Build and return the JsonResponse
@@ -89,7 +95,7 @@ final class BizSusuCreateAction
             message: 'Request successful.',
             description: 'The biz susu account is created successfully. Approval required.',
             data: new BizSusuResource(
-                resource: $biz_susu->refresh()
+                resource: $bizSusu->refresh()
             ),
         );
     }

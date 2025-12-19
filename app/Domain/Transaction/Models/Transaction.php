@@ -91,11 +91,17 @@ final class Transaction extends Model
         'extra_data',
     ];
 
+    /**
+     * @return string
+     */
     public function getRouteKeyName(
     ): string {
         return 'resource_id';
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function category(
     ): BelongsTo {
         return $this->belongsTo(
@@ -104,6 +110,9 @@ final class Transaction extends Model
         );
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function account(
     ): BelongsTo {
         return $this->belongsTo(
@@ -112,6 +121,9 @@ final class Transaction extends Model
         );
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function wallet(
     ): BelongsTo {
         return $this->belongsTo(
@@ -120,6 +132,9 @@ final class Transaction extends Model
         );
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function payment(
     ): BelongsTo {
         return $this->belongsTo(
@@ -128,6 +143,14 @@ final class Transaction extends Model
         );
     }
 
+    /**
+     * @param TransactionCategory|string $category
+     * @param float $amount
+     * @param string $account_number
+     * @param string $wallet
+     * @param string $date
+     * @return string
+     */
     public static function narration(
         TransactionCategory|string $category,
         float $amount,
@@ -160,6 +183,9 @@ final class Transaction extends Model
         );
     }
 
+    /**
+     * @return array
+     */
     public function getMetadata(
     ): array {
         return $this->extra_data ?? [];

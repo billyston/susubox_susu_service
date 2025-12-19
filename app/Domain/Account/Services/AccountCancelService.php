@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\Account\Services;
 
-use \App\Domain\Shared\Enums\Statuses;
 use App\Domain\Account\Models\Account;
 use App\Domain\Shared\Exceptions\CancellationNotAllowedException;
 use App\Domain\Shared\Exceptions\SystemFailureException;
@@ -17,20 +16,15 @@ use Throwable;
 final class AccountCancelService
 {
     /**
-     * @throws SystemFailureException
+     * @param Account $account
+     * @return bool
      * @throws CancellationNotAllowedException
+     * @throws SystemFailureException
      */
     public static function execute(
         Account $account,
     ): bool {
         try {
-            // Guard clause: ensure account is cancellable
-            if (in_array($account->status, [Statuses::ACTIVE->value, Statuses::CLOSED->value])) {
-                throw new CancellationNotAllowedException(
-                    'This account cannot be cancelled in its current state.'
-                );
-            }
-
             // Guard: prevent deleting if transactions already exist
             if ($account->transactions()->exists()) {
                 throw new CancellationNotAllowedException(

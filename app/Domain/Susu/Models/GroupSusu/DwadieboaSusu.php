@@ -23,11 +23,17 @@ final class DwadieboaSusu extends Model
         'resource_id',
     ];
 
+    /**
+     * @return string
+     */
     public function getRouteKeyName(
     ): string {
         return 'resource_id';
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function account(
     ): BelongsTo {
         return $this->belongsTo(
@@ -36,6 +42,9 @@ final class DwadieboaSusu extends Model
         );
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function frequency(
     ): BelongsTo {
         return $this->belongsTo(

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Interface\Controllers\V1\Susu\IndividualSusu\DailySusu;
 
 use App\Application\Susu\Actions\DailySusu\DailySusuCreateAction;
-use App\Domain\Customer\Exceptions\LinkedWalletNotFoundException;
+use App\Domain\Customer\Exceptions\WalletNotFoundException;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\FrequencyNotFoundException;
 use App\Domain\Shared\Exceptions\SusuSchemeNotFoundException;
@@ -23,7 +23,7 @@ final class DailySusuCreateController extends Controller
      * @param DailySusuCreateAction $dailySusuCreateAction
      * @return JsonResponse
      * @throws FrequencyNotFoundException
-     * @throws LinkedWalletNotFoundException
+     * @throws WalletNotFoundException
      * @throws SusuSchemeNotFoundException
      * @throws SystemFailureException
      * @throws UnknownCurrencyException

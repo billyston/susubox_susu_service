@@ -25,7 +25,7 @@ final class TransactionCreateAction
         array $request,
     ): JsonResponse {
         // Build the TransactionCreateRequestDTO and return the DTO
-        $requestDto = TransactionCreateRequestDTO::fromArray(
+        $requestDTO = TransactionCreateRequestDTO::fromArray(
             payload: $request,
             isInitialDeposit: $paymentInstruction->account->isFirstTransaction()
         );
@@ -33,7 +33,7 @@ final class TransactionCreateAction
         // Dispatch the TransactionCreateJob
         TransactionCreateJob::dispatch(
             paymentInstructionResourceId: $paymentInstruction->resource_id,
-            requestDto: $requestDto
+            requestDto: $requestDTO
         );
 
         // Build and return the JsonResponse

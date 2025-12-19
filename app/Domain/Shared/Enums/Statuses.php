@@ -22,6 +22,9 @@ enum Statuses: string
     case CLOSED = 'closed';
     case TERMINATED = 'terminated';
 
+    /**
+     * @return array
+     */
     public static function allowed(
     ): array {
         return array_column(self::cases(), 'value');

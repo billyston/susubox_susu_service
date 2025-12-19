@@ -14,6 +14,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 final class CustomerWalletCreateController extends Controller
 {
     /**
+     * @param Customer $customer
+     * @param Request $request
+     * @param CustomerWalletCreateAction $customerWalletCreateAction
+     * @return JsonResponse
      * @throws SystemFailureException
      */
     public function __invoke(

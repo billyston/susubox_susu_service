@@ -11,13 +11,17 @@ use Throwable;
 
 final class CustomerWalletByNumberService
 {
+    /**
+     * @param string $walletNumber
+     * @return Wallet|null
+     */
     public function execute(
-        string $wallet_number
+        string $walletNumber
     ): ?Wallet {
         try {
             // Normalize the wallet number
             $normalized = $this->normalizeWalletNumber(
-                $wallet_number
+                $walletNumber
             );
 
             return Wallet::query()
@@ -29,7 +33,7 @@ final class CustomerWalletByNumberService
             ModelNotFoundException $exception
         ) {
             Log::warning('Linked wallet not found', [
-                'wallet_number' => $wallet_number,
+                'wallet_number' => $walletNumber,
                 'exception' => [
                     'message' => $exception->getMessage(),
                     'file' => $exception->getFile(),
@@ -43,7 +47,7 @@ final class CustomerWalletByNumberService
         ) {
             // Log system-level exceptions for audit and monitoring
             Log::error('System error in CustomerWalletByNumberService', [
-                'wallet_number' => $wallet_number,
+                'wallet_number' => $walletNumber,
                 'message' => $throwable->getMessage(),
                 'file' => $throwable->getFile(),
                 'line' => $throwable->getLine(),

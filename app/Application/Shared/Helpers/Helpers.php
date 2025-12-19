@@ -9,6 +9,12 @@ use Carbon\Carbon;
 
 final class Helpers
 {
+    /**
+     * @param float $amount
+     * @param string $frequency
+     * @param string $duration
+     * @return float
+     */
     public static function calculateDebit(
         float $amount,
         string $frequency,
@@ -24,6 +30,10 @@ final class Helpers
         };
     }
 
+    /**
+     * @param string $date
+     * @return string
+     */
     public static function calculateDate(
         string $date
     ): string {
@@ -38,6 +48,9 @@ final class Helpers
         };
     }
 
+    /**
+     * @return Carbon
+     */
     public static function getEndCollectionDate(
     ): Carbon {
         $currentDate = Carbon::now();
@@ -45,12 +58,21 @@ final class Helpers
         return $currentDate->addYears(value: 50);
     }
 
+    /**
+     * @param string $date
+     * @return Duration
+     */
     public static function getDaysInDuration(
         string $date
     ): Duration {
         return Duration::where('code', '=', $date)->first();
     }
 
+    /**
+     * @param Carbon $date
+     * @param int $days
+     * @return string
+     */
     public static function getDateWithOffset(
         Carbon $date,
         int $days

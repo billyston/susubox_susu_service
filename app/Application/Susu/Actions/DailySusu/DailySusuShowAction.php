@@ -18,6 +18,9 @@ final class DailySusuShowAction
 {
     private DailySusuShowService $dailySusuShowService;
 
+    /**
+     * @param DailySusuShowService $dailySusuShowService
+     */
     public function __construct(
         DailySusuShowService $dailySusuShowService
     ) {
@@ -25,27 +28,28 @@ final class DailySusuShowAction
     }
 
     /**
+     * @param Customer $customer
+     * @param DailySusu $dailySusu
+     * @return JsonResponse
      * @throws SystemFailureException
      * @throws UnauthorisedAccessException
      */
     public function execute(
         Customer $customer,
-        DailySusu $daily_susu,
+        DailySusu $dailySusu,
     ): JsonResponse {
         // Execute the DailySusuShowService and return the resource
-        $daily_susu = $this->dailySusuShowService->execute(
+        $dailySusu = $this->dailySusuShowService->execute(
             customer: $customer,
-            daily_susu: $daily_susu
+            dailySusu: $dailySusu
         );
-
-        logger()->info([$daily_susu]);
 
         // Build and return the JsonResponse
         return ApiResponseBuilder::success(
             code: Response::HTTP_OK,
             message: 'Request successful.',
             data: new DailySusuResource(
-                resource: $daily_susu
+                resource: $dailySusu
             ),
         );
     }

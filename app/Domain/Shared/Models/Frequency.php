@@ -59,11 +59,17 @@ final class Frequency extends Model
         'is_allowed',
     ];
 
+    /**
+     * @return string
+     */
     public function getRouteKeyName(
     ): string {
         return 'resource_id';
     }
 
+    /**
+     * @return HasMany
+     */
     public function dailySusu(
     ): HasMany {
         return $this->hasMany(
@@ -72,6 +78,9 @@ final class Frequency extends Model
         );
     }
 
+    /**
+     * @return HasMany
+     */
     public function bizSusu(
     ): HasMany {
         return $this->hasMany(
@@ -80,6 +89,9 @@ final class Frequency extends Model
         );
     }
 
+    /**
+     * @return HasMany
+     */
     public function goalGetterSusu(
     ): HasMany {
         return $this->hasMany(
@@ -88,6 +100,9 @@ final class Frequency extends Model
         );
     }
 
+    /**
+     * @return HasMany
+     */
     public function driveToOwnSusu(
     ): HasMany {
         return $this->hasMany(

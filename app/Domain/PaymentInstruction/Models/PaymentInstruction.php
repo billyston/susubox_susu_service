@@ -42,6 +42,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property string $transaction_type
  * @property string $accepted_terms
  * @property string $approval_status
+ * @property string $approved_at
  * @property string $status
  *
  * Extra data:
@@ -94,25 +95,38 @@ final class PaymentInstruction extends Model
         'transaction_type',
         'accepted_terms',
         'approval_status',
+        'approved_at',
         'status',
         'extra_data',
     ];
 
+    /**
+     * @return string
+     */
     public function getRouteKeyName(
     ): string {
         return 'resource_id';
     }
 
+    /**
+     * @return MorphTo
+     */
     public function for(
     ): MorphTo {
         return $this->morphTo(name: 'for');
     }
 
+    /**
+     * @return MorphTo
+     */
     public function initiator(
     ): MorphTo {
         return $this->morphTo(name: 'initiated_by');
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function account(
     ): BelongsTo {
         return $this->belongsTo(
@@ -121,6 +135,9 @@ final class PaymentInstruction extends Model
         );
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function wallet(
     ): BelongsTo {
         return $this->belongsTo(
@@ -129,6 +146,9 @@ final class PaymentInstruction extends Model
         );
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function transactionCategory(
     ): BelongsTo {
         return $this->belongsTo(
@@ -137,6 +157,9 @@ final class PaymentInstruction extends Model
         );
     }
 
+    /**
+     * @return HasMany
+     */
     public function transactions(
     ): HasMany {
         return $this->hasMany(
@@ -145,11 +168,17 @@ final class PaymentInstruction extends Model
         );
     }
 
+    /**
+     * @return array
+     */
     public function getMetadata(
     ): array {
         return $this->extra_data ?? [];
     }
 
+    /**
+     * @return mixed|null
+     */
     public function susu(
     ) {
         if (! $this->account) {

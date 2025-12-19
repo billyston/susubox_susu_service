@@ -53,11 +53,17 @@ final class AccountBalance extends Model
         'last_reconciled_at',
     ];
 
+    /**
+     * @return string
+     */
     public function getRouteKeyName(
     ): string {
         return 'resource_id';
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function account(
     ): BelongsTo {
         return $this->belongsTo(

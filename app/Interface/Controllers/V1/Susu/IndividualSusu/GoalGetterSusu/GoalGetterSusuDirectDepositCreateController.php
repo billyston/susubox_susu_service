@@ -18,7 +18,7 @@ final class GoalGetterSusuDirectDepositCreateController extends Controller
 {
     /**
      * @param Customer $customer
-     * @param GoalGetterSusu $goal_getter_susu
+     * @param GoalGetterSusu $goalGetterSusu
      * @param GoalGetterSusuDirectDepositCreateRequest $goalGetterSusuDirectDepositCreateRequest
      * @param GoalGetterSusuDirectDepositCreateAction $goalGetterSusuDirectDepositCreateAction
      * @return JsonResponse
@@ -28,14 +28,14 @@ final class GoalGetterSusuDirectDepositCreateController extends Controller
      */
     public function __invoke(
         Customer $customer,
-        GoalGetterSusu $goal_getter_susu,
+        GoalGetterSusu $goalGetterSusu,
         GoalGetterSusuDirectDepositCreateRequest $goalGetterSusuDirectDepositCreateRequest,
         GoalGetterSusuDirectDepositCreateAction $goalGetterSusuDirectDepositCreateAction
     ): JsonResponse {
         // Execute the GoalGetterSusuDirectDepositCreateAction and return the JsonResponse
         return $goalGetterSusuDirectDepositCreateAction->execute(
             customer: $customer,
-            goalGetterSusu: $goal_getter_susu,
+            goalGetterSusu: $goalGetterSusu,
             request: $goalGetterSusuDirectDepositCreateRequest->validated()
         );
     }

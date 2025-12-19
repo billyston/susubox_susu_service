@@ -16,6 +16,9 @@ final class DurationsAction
 {
     private DurationsService $durationsService;
 
+    /**
+     * @param DurationsService $durationsService
+     */
     public function __construct(
         DurationsService $durationsService
     ) {
@@ -23,12 +26,15 @@ final class DurationsAction
     }
 
     /**
+     * @param Request $request
+     * @return JsonResponse
      * @throws SystemFailureException
      */
     public function execute(
         Request $request,
     ): JsonResponse {
-        $linked_wallets = $this->durationsService->execute();
+        // Execute the DurationsService and return the Collection
+        $durations = $this->durationsService->execute();
 
         // Build and return the JsonResponse
         return ApiResponseBuilder::success(
@@ -36,7 +42,7 @@ final class DurationsAction
             message: 'Request successful',
             description: '',
             data: DurationResource::collection(
-                resource: $linked_wallets,
+                resource: $durations,
             ),
         );
     }

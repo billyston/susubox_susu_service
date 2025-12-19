@@ -16,6 +16,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 final class FlexySusuDirectDepositCancelController extends Controller
 {
     /**
+     * @param Customer $customer
+     * @param FlexySusu $flexySusu
+     * @param PaymentInstruction $paymentInstruction
+     * @param FlexySusuDirectDepositCancelRequest $flexySusuDirectDepositCancelRequest
+     * @param FlexySusuDirectDepositCancelAction $flexySusuDirectDepositCancelAction
+     * @return JsonResponse
      * @throws SystemFailureException
      */
     public function __invoke(

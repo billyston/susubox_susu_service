@@ -17,21 +17,24 @@ use Throwable;
 final class TransactionCreateDebitService
 {
     /**
+     * @param PaymentInstruction $paymentInstruction
+     * @param TransactionCreateRequestDTO $requestDTO
+     * @return Transaction
      * @throws SystemFailureException
      */
     public function execute(
         PaymentInstruction $paymentInstruction,
-        TransactionCreateRequestDTO $requestDto
+        TransactionCreateRequestDTO $requestDTO
     ): Transaction {
         try {
             // Execute the database transaction
             return DB::transaction(function () use (
                 $paymentInstruction,
-                $requestDto
+                $requestDTO
             ) {
                 // Find Transaction (if its already exist)
                 $existingTransaction = Transaction::query()
-                    ->where('reference_number', $requestDto->reference)
+                    ->where('reference_number', $requestDTO->reference)
                     ->lockForUpdate()
                     ->first();
 
@@ -42,32 +45,32 @@ final class TransactionCreateDebitService
 
                 // Create the new Transaction
                 $transaction = Transaction::create([
-                    'resource_id' => $requestDto->resource_id,
+                    'resource_id' => $requestDTO->resourceID,
                     'account_id' => $paymentInstruction->account_id,
                     'payment_instruction_id' => $paymentInstruction->id,
                     'transaction_category_id' => $paymentInstruction->transaction_category_id,
                     'wallet_id' => $paymentInstruction->wallet->id,
                     'transaction_type' => $paymentInstruction->transaction_type,
-                    'reference_number' => $requestDto->reference,
-                    'amount' => $requestDto->amount,
-                    'charge' => $requestDto->charges,
-                    'total' => $requestDto->total,
-                    'description' => $requestDto->description,
+                    'reference_number' => $requestDTO->reference,
+                    'amount' => $requestDTO->amount,
+                    'charge' => $requestDTO->charges,
+                    'total' => $requestDTO->total,
+                    'description' => $requestDTO->description,
                     'narration' => Transaction::narration(
                         category: $paymentInstruction->transactionCategory->name,
-                        amount: $requestDto->amount->getAmount()->toFloat(),
+                        amount: $requestDTO->amount->getAmount()->toFloat(),
                         account_number: $paymentInstruction->account->account_number,
                         wallet: $paymentInstruction->wallet->wallet_number,
-                        date: $requestDto->date,
+                        date: $requestDTO->date,
                     ),
-                    'date' => $requestDto->date,
-                    'status_code' => $requestDto->code,
-                    'status' => $requestDto->status,
-                    'extra_data' => $requestDto->toArray(),
+                    'date' => $requestDTO->date,
+                    'status_code' => $requestDTO->code,
+                    'status' => $requestDTO->status,
+                    'extra_data' => $requestDTO->toArray(),
                 ]);
 
                 // Return the Transaction if new transaction status is not (success)
-                if ($transaction->status !== $requestDto->status) {
+                if ($transaction->status !== $requestDTO->status) {
                     return $transaction;
                 }
 
@@ -99,7 +102,7 @@ final class TransactionCreateDebitService
             // Log the full exception with context
             Log::error('Exception in TransactionCreateDebitService', [
                 'payment_instruction' => $paymentInstruction,
-                'dto' => $requestDto,
+                'dto' => $requestDTO,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),

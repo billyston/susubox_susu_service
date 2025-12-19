@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Interface\Controllers\V1\Susu\IndividualSusu\FlexySusu;
 
 use App\Application\Susu\Actions\FlexySusu\FlexySusuCreateAction;
-use App\Domain\Customer\Exceptions\LinkedWalletNotFoundException;
+use App\Domain\Customer\Exceptions\WalletNotFoundException;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SusuSchemeNotFoundException;
 use App\Domain\Shared\Exceptions\SystemFailureException;
@@ -21,7 +21,7 @@ final class FlexySusuCreateController extends Controller
      * @param FlexySusuCreateRequest $flexySusuCreateRequest
      * @param FlexySusuCreateAction $flexySusuCreateAction
      * @return JsonResponse
-     * @throws LinkedWalletNotFoundException
+     * @throws WalletNotFoundException
      * @throws SusuSchemeNotFoundException
      * @throws SystemFailureException
      * @throws UnknownCurrencyException

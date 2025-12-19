@@ -14,7 +14,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Throwable;
 
 final class TransactionNotificationJob implements ShouldQueue
 {
@@ -24,6 +23,10 @@ final class TransactionNotificationJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    /**
+     * @param string $transactionResource
+     * @param bool $isInitialDeposit
+     */
     public function __construct(
         public readonly string $transactionResource,
         public readonly bool $isInitialDeposit,
@@ -32,7 +35,9 @@ final class TransactionNotificationJob implements ShouldQueue
     }
 
     /**
-     * @throws Throwable
+     * @param TransactionByResourceIdService $transactionByResourceIdService
+     * @param TransactionCreatedRequestHandler $dispatcher
+     * @return void
      * @throws SystemFailureException
      */
     public function handle(
@@ -41,11 +46,11 @@ final class TransactionNotificationJob implements ShouldQueue
     ): void {
         // Execute the TransactionByResourceIdService and return the resource
         $transaction = $transactionByResourceIdService->execute(
-            resource_id: $this->transactionResource,
+            resourceID: $this->transactionResource,
         );
 
         // Build the TransactionCreateResponseDTO
-        $responseDto = TransactionCreateResponseDTO::fromDomain(
+        $responseDTO = TransactionCreateResponseDTO::fromDomain(
             transaction: $transaction,
             isInitialDeposit: $this->isInitialDeposit
         );
@@ -53,7 +58,7 @@ final class TransactionNotificationJob implements ShouldQueue
         // Dispatch the TransactionCreateResponseDTO to SusuBox services
         $dispatcher->sendToSusuBoxService(
             service: config('susubox.notification.name'),
-            data: $responseDto->toArray(),
+            data: $responseDTO->toArray(),
         );
     }
 }

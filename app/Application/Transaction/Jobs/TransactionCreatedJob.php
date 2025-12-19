@@ -26,6 +26,10 @@ final class TransactionCreatedJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    /**
+     * @param Transaction $transaction
+     * @param bool $isInitialDeposit
+     */
     public function __construct(
         public readonly Transaction $transaction,
         public readonly bool $isInitialDeposit,
@@ -34,8 +38,9 @@ final class TransactionCreatedJob implements ShouldQueue
     }
 
     /**
-     * @throws Throwable
+     * @return void
      * @throws SystemFailureException
+     * @throws Throwable
      */
     public function handle(
     ): void {
@@ -49,10 +54,14 @@ final class TransactionCreatedJob implements ShouldQueue
         $action = $this->resolveAction($this->transaction->status);
         $action->execute(
             transaction: $this->transaction,
-            responseDto: $response_dto->toArray()
+            responseDTO: $response_dto->toArray()
         );
     }
 
+    /**
+     * @param string $status
+     * @return object
+     */
     private function resolveAction(
         string $status
     ): object {

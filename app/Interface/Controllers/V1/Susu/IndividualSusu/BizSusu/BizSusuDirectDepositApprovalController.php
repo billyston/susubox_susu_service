@@ -16,6 +16,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 final class BizSusuDirectDepositApprovalController extends Controller
 {
     /**
+     * @param Customer $customer
+     * @param BizSusu $bizSusu
+     * @param PaymentInstruction $paymentInstruction
+     * @param BizSusuDirectDepositApprovalRequest $bizSusuDirectDepositApprovalRequest
+     * @param BizSusuDirectDepositApprovalAction $bizSusuDirectDepositApprovalAction
+     * @return JsonResponse
      * @throws SystemFailureException
      */
     public function __invoke(

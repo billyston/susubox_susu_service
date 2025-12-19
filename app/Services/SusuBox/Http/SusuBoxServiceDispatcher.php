@@ -9,12 +9,19 @@ use InvalidArgumentException;
 
 final class SusuBoxServiceDispatcher
 {
+    /**
+     * @param string $service
+     * @param string $endpoint
+     * @param array $payload
+     * @param string $method
+     * @return array
+     */
     public function send(
         string $service,
         string $endpoint,
         array $payload = [],
         string $method = 'POST'
-    ) {
+    ): array {
         // Map service names to their configured base URLs
         $baseUrls = [
             'authentication' => config('susubox.authentication.base_url'),

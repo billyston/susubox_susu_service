@@ -11,6 +11,10 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 final class BizSusuResource extends JsonResource
 {
+    /**
+     * @param Request $request
+     * @return array
+     */
     public function toArray(
         Request $request
     ): array {

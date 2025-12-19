@@ -11,6 +11,13 @@ use App\Domain\Transaction\Models\Transaction;
 
 final readonly class TransactionCreateResponseDTO
 {
+    /**
+     * @param Transaction $transaction
+     * @param Account $account
+     * @param Customer $customer
+     * @param Wallet $wallet
+     * @param bool $isInitialDeposit
+     */
     public function __construct(
         public Transaction $transaction,
         public Account $account,
@@ -21,6 +28,11 @@ final readonly class TransactionCreateResponseDTO
         // ..
     }
 
+    /**
+     * @param Transaction $transaction
+     * @param bool $isInitialDeposit
+     * @return self
+     */
     public static function fromDomain(
         Transaction $transaction,
         bool $isInitialDeposit
@@ -34,6 +46,9 @@ final readonly class TransactionCreateResponseDTO
         );
     }
 
+    /**
+     * @return array[]
+     */
     public function toArray(
     ): array {
         return [

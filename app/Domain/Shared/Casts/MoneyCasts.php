@@ -4,12 +4,21 @@ declare(strict_types=1);
 
 namespace App\Domain\Shared\Casts;
 
+use Brick\Money\Exception\UnknownCurrencyException;
 use Brick\Money\Money;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 
 class MoneyCasts implements CastsAttributes
 {
+    /**
+     * @param Model $model
+     * @param string $key
+     * @param mixed $value
+     * @param array $attributes
+     * @return Money
+     * @throws UnknownCurrencyException
+     */
     public function get(
         Model $model,
         string $key,
@@ -22,6 +31,13 @@ class MoneyCasts implements CastsAttributes
         );
     }
 
+    /**
+     * @param Model $model
+     * @param string $key
+     * @param mixed $value
+     * @param array $attributes
+     * @return array|null
+     */
     public function set(
         Model $model,
         string $key,

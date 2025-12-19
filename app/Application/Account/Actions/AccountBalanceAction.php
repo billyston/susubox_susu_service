@@ -17,6 +17,9 @@ final class AccountBalanceAction
 {
     private AccountBalanceService $accountBalanceService;
 
+    /**
+     * @param AccountBalanceService $accountBalanceService
+     */
     public function __construct(
         AccountBalanceService $accountBalanceService
     ) {
@@ -24,6 +27,10 @@ final class AccountBalanceAction
     }
 
     /**
+     * @param Customer $customer
+     * @param Account $account
+     * @param array $request
+     * @return JsonResponse
      * @throws SystemFailureException
      */
     public function execute(

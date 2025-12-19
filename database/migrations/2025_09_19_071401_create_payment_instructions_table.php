@@ -51,6 +51,7 @@ return new class extends Migration
                     Statuses::APPROVED->value,
                     Statuses::CANCELLED->value,
                 ])->default(value: Statuses::PENDING->value);
+                $table->dateTime(column: 'approved_at')->nullable();
                 $table->enum(column: 'status', allowed: [
                     Statuses::PENDING->value,
                     Statuses::ACTIVE->value,

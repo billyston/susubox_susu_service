@@ -11,6 +11,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class PingController extends Controller
 {
+    /**
+     * @param Request $request
+     * @param PingAction $pingAction
+     * @return JsonResponse
+     */
     public function __invoke(
         Request $request,
         PingAction $pingAction

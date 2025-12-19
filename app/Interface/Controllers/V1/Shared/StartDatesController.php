@@ -13,6 +13,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 final class StartDatesController extends Controller
 {
     /**
+     * @param Request $request
+     * @param StartDatesAction $startDatesAction
+     * @return JsonResponse
      * @throws SystemFailureException
      */
     public function __invoke(

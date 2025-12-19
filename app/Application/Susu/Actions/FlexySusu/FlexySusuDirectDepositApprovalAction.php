@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\FlexySusu;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Transaction\DTOs\DirectDebitApprovalResponseDTO;
+use App\Application\Transaction\DTOs\DirectDepositApprovalResponseDTO;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\PaymentInstruction\Models\PaymentInstruction;
 use App\Domain\PaymentInstruction\Services\PaymentInstructionApprovalStatusUpdateService;
@@ -13,24 +13,33 @@ use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
 use App\Interface\Resources\V1\PaymentInstruction\DirectDepositResource;
-use App\Services\SusuBox\Http\Requests\DirectDebitApprovalRequestHandler;
+use App\Services\SusuBox\Http\Requests\DirectDepositApprovalRequestHandler;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class FlexySusuDirectDepositApprovalAction
 {
     private PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService;
-    private DirectDebitApprovalRequestHandler $dispatcher;
+    private DirectDepositApprovalRequestHandler $dispatcher;
 
+    /**
+     * @param PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService
+     * @param DirectDepositApprovalRequestHandler $dispatcher
+     */
     public function __construct(
         PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService,
-        DirectDebitApprovalRequestHandler $dispatcher
+        DirectDepositApprovalRequestHandler $dispatcher
     ) {
         $this->paymentInstructionApprovalStatusUpdateService = $paymentInstructionApprovalStatusUpdateService;
         $this->dispatcher = $dispatcher;
     }
 
     /**
+     * @param Customer $customer
+     * @param FlexySusu $flexySusu
+     * @param PaymentInstruction $paymentInstruction
+     * @param array $request
+     * @return JsonResponse
      * @throws SystemFailureException
      */
     public function execute(
@@ -45,8 +54,8 @@ final class FlexySusuDirectDepositApprovalAction
             status: Statuses::APPROVED->value,
         );
 
-        // Build the DirectDebitApprovalResponseDTO
-        $responseDto = DirectDebitApprovalResponseDTO::fromDomain(
+        // Build the DirectDepositApprovalResponseDTO
+        $responseDTO = DirectDepositApprovalResponseDTO::fromDomain(
             paymentInstruction: $paymentInstruction,
             wallet: $paymentInstruction->wallet,
             product: $flexySusu,
@@ -55,7 +64,7 @@ final class FlexySusuDirectDepositApprovalAction
         // Dispatch to SusuBox Service (Payment Service)
         $this->dispatcher->sendToSusuBoxService(
             service: config('susubox.payment.name'),
-            data: $responseDto->toArray(),
+            data: $responseDTO->toArray(),
         );
 
         // Build and return the JsonResponse

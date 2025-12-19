@@ -12,60 +12,73 @@ use Brick\Money\Money;
 
 final readonly class RecurringDepositValueObject
 {
+    /**
+     * @param Money $initialDeposit
+     * @param Money $susuAmount
+     * @param Money $amount
+     * @param Money $charge
+     * @param Money $total
+     * @param string $startDate
+     * @param string $endDate
+     * @param string $frequency
+     * @param bool $rolloverEnabled
+     */
     public function __construct(
-        public Money $initial_deposit,
-        public Money $susu_amount,
+        public Money $initialDeposit,
+        public Money $susuAmount,
         public Money $amount,
         public Money $charge,
         public Money $total,
-        public string $start_date,
-        public string $end_date,
+        public string $startDate,
+        public string $endDate,
         public string $frequency,
-        public bool $rollover_enabled,
+        public bool $rolloverEnabled,
     ) {
         // ..
     }
 
     /**
-     * @param Money $initial_deposit
-     * @param Money $susu_amount
-     * @param ?Money $charge
-     * @param string $start_date
-     * @param string $end_date
+     * @param Money $initialDeposit
+     * @param Money $susuAmount
+     * @param string $startDate
+     * @param string $endDate
      * @param string $frequency
-     * @param bool $rollover_enabled
-     * @return RecurringDepositValueObject
+     * @param bool $rolloverEnabled
+     * @return self
      * @throws MoneyMismatchException
      * @throws UnknownCurrencyException
      */
     public static function create(
-        Money $initial_deposit,
-        Money $susu_amount,
-        string $start_date,
-        string $end_date,
+        Money $initialDeposit,
+        Money $susuAmount,
+        string $startDate,
+        string $endDate,
         string $frequency,
-        bool $rollover_enabled,
+        bool $rolloverEnabled,
     ): self {
         // Get the charge
         $charge = $charge ?? Money::of(0.00, 'GHS');
 
         return new self(
-            initial_deposit: $initial_deposit,
-            susu_amount: $susu_amount,
-            amount: $initial_deposit,
+            initialDeposit: $initialDeposit,
+            susuAmount: $susuAmount,
+            amount: $initialDeposit,
             charge: $charge,
-            total: $initial_deposit->plus($charge),
-            start_date: $start_date,
-            end_date: $end_date,
+            total: $initialDeposit->plus($charge),
+            startDate: $startDate,
+            endDate: $endDate,
             frequency: $frequency,
-            rollover_enabled: $rollover_enabled,
+            rolloverEnabled: $rolloverEnabled,
         );
     }
 
+    /**
+     * @return array
+     */
     public function toArray(
     ): array {
         return [
-            'amount' => $this->initial_deposit,
+            'amount' => $this->initialDeposit,
             'charge' => $this->charge,
             'total' => $this->total,
             'approval_status' => Statuses::APPROVED->value,
@@ -74,12 +87,12 @@ final readonly class RecurringDepositValueObject
 
             'extra_data' => [
                 'is_initial_deposit' => true,
-                'initial_deposit' => $this->initial_deposit,
-                'recurring_amount' => $this->susu_amount,
-                'start_date' => $this->start_date,
-                'end_date' => $this->end_date,
+                'initial_deposit' => $this->initialDeposit,
+                'recurring_amount' => $this->susuAmount,
+                'start_date' => $this->startDate,
+                'end_date' => $this->endDate,
                 'frequency' => $this->frequency,
-                'rollover_enabled' => $this->rollover_enabled,
+                'rollover_enabled' => $this->rolloverEnabled,
             ],
         ];
     }

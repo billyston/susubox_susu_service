@@ -16,8 +16,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 final class FlexySusuCancelController extends Controller
 {
     /**
-     * @throws SystemFailureException
+     * @param Customer $customer
+     * @param FlexySusu $flexy_susu
+     * @param FlexySusuCancelRequest $flexySusuCancelRequest
+     * @param FlexySusuCancelAction $flexySusuCancelAction
+     * @return JsonResponse
      * @throws CancellationNotAllowedException
+     * @throws SystemFailureException
      */
     public function __invoke(
         Customer $customer,
@@ -28,7 +33,7 @@ final class FlexySusuCancelController extends Controller
         // Execute the FlexySusuCancelAction and return the JsonResponse
         return $flexySusuCancelAction->execute(
             customer: $customer,
-            flexy_susu: $flexy_susu,
+            flexySusu: $flexy_susu,
             request: $flexySusuCancelRequest->validated()
         );
     }

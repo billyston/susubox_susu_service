@@ -8,4 +8,12 @@ enum TransactionCategoryCode: string
     case DIRECT_DEBIT_CODE = 'TXN-02';
     case SETTLEMENT_CODE = 'TXN-03';
     case WITHDRAWAL_CODE = 'TXN-04';
+
+    /**
+     * @return array
+     */
+    public static function allowed(
+    ): array {
+        return array_column(self::cases(), 'value');
+    }
 }

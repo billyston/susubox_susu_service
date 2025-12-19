@@ -13,6 +13,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 final class CustomerCreateController extends Controller
 {
     /**
+     * @param Request $request
+     * @param CustomerCreateAction $customerCreateAction
+     * @return JsonResponse
      * @throws SystemFailureException
      */
     public function __invoke(

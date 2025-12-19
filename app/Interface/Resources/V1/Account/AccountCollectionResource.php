@@ -10,6 +10,10 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 final class AccountCollectionResource extends JsonResource
 {
+    /**
+     * @param Request $request
+     * @return array
+     */
     public function toArray(
         Request $request
     ): array {
@@ -17,10 +21,10 @@ final class AccountCollectionResource extends JsonResource
         return [
             // Resource type and id
             'type' => 'Account',
-            'resource_id' => $this->resource->resource_id,
 
             // Resource exposed attributes
             'attributes' => [
+                'resource_id' => $this->resource->resource_id,
                 'account_name' => $this->resource->account_name,
                 'account_number' => $this->resource->account_number,
                 'purpose' => $this->resource->purpose,

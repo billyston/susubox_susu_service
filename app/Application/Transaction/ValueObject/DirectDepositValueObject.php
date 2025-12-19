@@ -7,16 +7,21 @@ namespace App\Application\Transaction\ValueObject;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Transaction\Enums\DepositType;
 use App\Domain\Transaction\Enums\TransactionType;
-use Brick\Math\Exception\NumberFormatException;
-use Brick\Math\Exception\RoundingNecessaryException;
 use Brick\Money\Exception\MoneyMismatchException;
 use Brick\Money\Exception\UnknownCurrencyException;
 use Brick\Money\Money;
 
 final readonly class DirectDepositValueObject
 {
+    /**
+     * @param string $depositType
+     * @param int|null $frequencies
+     * @param Money|null $amount
+     * @param Money|null $charge
+     * @param Money $total
+     */
     public function __construct(
-        public string $deposit_type,
+        public string $depositType,
         public ?int $frequencies,
         public ?Money $amount,
         public ?Money $charge,
@@ -26,10 +31,12 @@ final readonly class DirectDepositValueObject
     }
 
     /**
-     * @throws UnknownCurrencyException
-     * @throws RoundingNecessaryException
-     * @throws NumberFormatException
+     * @param array $payload
+     * @param Money|null $susuAmount
+     * @param Money|null $charge
+     * @return self
      * @throws MoneyMismatchException
+     * @throws UnknownCurrencyException
      */
     public static function create(
         array $payload,
@@ -53,7 +60,7 @@ final readonly class DirectDepositValueObject
         $charge = $charge ?? Money::of(0.00, 'GHS');
 
         return new self(
-            deposit_type: $depositType,
+            depositType: $depositType,
             frequencies: $frequencies,
             amount: $amount,
             charge: $charge,
@@ -61,6 +68,9 @@ final readonly class DirectDepositValueObject
         );
     }
 
+    /**
+     * @return array
+     */
     public function toArray(
     ): array {
         return [
@@ -72,7 +82,7 @@ final readonly class DirectDepositValueObject
             'accepted_terms' => true,
 
             'extra_data' => [
-                'deposit_type' => $this->deposit_type,
+                'deposit_type' => $this->depositType,
                 'frequencies' => $this->frequencies,
             ],
         ];

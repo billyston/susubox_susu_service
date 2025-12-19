@@ -14,18 +14,20 @@ use Throwable;
 final class TransactionCategoryByCodeService
 {
     /**
+     * @param string $categoryCode
+     * @return TransactionCategory
      * @throws SystemFailureException
      */
     public function execute(
-        string $category_code
+        string $categoryCode
     ): TransactionCategory {
         try {
             // Execute the database transaction
             return DB::transaction(function () use (
-                $category_code,
+                $categoryCode,
             ) {
                 return TransactionCategory::where([
-                    ['code', '=', $category_code],
+                    ['code', '=', $categoryCode],
                 ])->firstOrFail();
             });
         } catch (
@@ -39,7 +41,7 @@ final class TransactionCategoryByCodeService
         ) {
             // Log the full exception with context
             Log::error('Exception in TransactionCategoryByCodeService', [
-                'category' => $category_code,
+                'category_code' => $categoryCode,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),

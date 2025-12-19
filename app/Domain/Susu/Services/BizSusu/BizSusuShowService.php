@@ -14,26 +14,29 @@ use Throwable;
 final class BizSusuShowService
 {
     /**
+     * @param Customer $customer
+     * @param BizSusu $bizSusu
+     * @return BizSusu
      * @throws SystemFailureException
      * @throws UnauthorisedAccessException
      */
     public static function execute(
         Customer $customer,
-        BizSusu $biz_susu,
+        BizSusu $bizSusu,
     ): BizSusu {
         try {
             // Ensure account belongs to this customer
-            if ($biz_susu->account->customer_id !== $customer->id) {
+            if ($bizSusu->account->customer_id !== $customer->id) {
                 throw new UnauthorisedAccessException;
             }
 
             // Ensure the account is for a Daily Susu scheme
-            if ($biz_susu->account->scheme->code !== config(key: 'susubox.susu_schemes.biz_susu_code')) {
+            if ($bizSusu->account->scheme->code !== config(key: 'susubox.susu_schemes.biz_susu_code')) {
                 throw new UnauthorisedAccessException;
             }
 
             // Return the BizSusu resource
-            return $biz_susu->account->biz;
+            return $bizSusu->account->biz;
         } catch (
             UnauthorisedAccessException $unauthorisedAccessException
         ) {
@@ -44,7 +47,7 @@ final class BizSusuShowService
             // Log the full exception with context
             Log::error('Exception in BizSusuShowService', [
                 'customer' => $customer,
-                'biz_susu' => $biz_susu,
+                'biz_susu' => $bizSusu,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),

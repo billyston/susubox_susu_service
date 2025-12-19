@@ -15,6 +15,8 @@ use Throwable;
 final class CustomerWalletIndexService
 {
     /**
+     * @param Customer $customer
+     * @return Collection
      * @throws SystemFailureException
      */
     public function execute(
@@ -36,7 +38,7 @@ final class CustomerWalletIndexService
             Throwable $throwable
         ) {
             // Log the full exception with context
-            Log::error('Exception in CustomerLinkedWalletsService', [
+            Log::error('Exception in CustomerWalletIndexService', [
                 'customer' => $customer,
                 'exception' => [
                     'message' => $throwable->getMessage(),
@@ -47,7 +49,7 @@ final class CustomerWalletIndexService
 
             // Throw the SystemFailureException
             throw new SystemFailureException(
-                message: 'There was an error while trying to fetch the linked wallets.',
+                message: 'There was an error while trying to fetch the wallets.',
             );
         }
     }

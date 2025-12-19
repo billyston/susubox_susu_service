@@ -16,6 +16,9 @@ use Throwable;
 final class AccountStatusUpdateService
 {
     /**
+     * @param Account $account
+     * @param string $status
+     * @return Account
      * @throws SystemFailureException
      */
     public static function execute(

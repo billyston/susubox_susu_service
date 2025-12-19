@@ -32,11 +32,17 @@ final class NkabomNhyiraSusuMember extends Model
         'status',
     ];
 
+    /**
+     * @return string
+     */
     public function getRouteKeyName(
     ): string {
         return 'resource_id';
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function nkabomNhyiraSusu(
     ): BelongsTo {
         return $this->belongsTo(
@@ -45,6 +51,9 @@ final class NkabomNhyiraSusuMember extends Model
         );
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function customer(
     ): BelongsTo {
         return $this->belongsTo(
@@ -53,6 +62,9 @@ final class NkabomNhyiraSusuMember extends Model
         );
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function wallet(
     ): BelongsTo {
         return $this->belongsTo(

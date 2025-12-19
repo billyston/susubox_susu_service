@@ -20,6 +20,10 @@ final class DailySusuIndexAction
     private DailySusuIndexService $dailySusuIndexService;
     private SusuSchemeService $susuSchemeService;
 
+    /**
+     * @param DailySusuIndexService $dailySusuIndexService
+     * @param SusuSchemeService $susuSchemeService
+     */
     public function __construct(
         DailySusuIndexService $dailySusuIndexService,
         SusuSchemeService $susuSchemeService
@@ -29,22 +33,24 @@ final class DailySusuIndexAction
     }
 
     /**
+     * @param Customer $customer
+     * @return JsonResponse
+     * @throws SusuSchemeNotFoundException
      * @throws SystemFailureException
      * @throws UnauthorisedAccessException
-     * @throws SusuSchemeNotFoundException
      */
     public function execute(
         Customer $customer,
     ): JsonResponse {
         // Execute the SusuSchemeService and return the resource
-        $susu_scheme = $this->susuSchemeService->execute(
-            scheme_code: config(key: 'susubox.susu_schemes.daily_susu_code')
+        $susuScheme = $this->susuSchemeService->execute(
+            schemeCode: config(key: 'susubox.susu_schemes.daily_susu_code')
         );
 
         // Execute the DailySusuIndexService and return the resource
-        $daily_susus = $this->dailySusuIndexService->execute(
+        $dailySusus = $this->dailySusuIndexService->execute(
             customer: $customer,
-            susu_scheme: $susu_scheme
+            susuScheme: $susuScheme
         );
 
         // Build and return the JsonResponse
@@ -52,7 +58,7 @@ final class DailySusuIndexAction
             code: Response::HTTP_OK,
             message: 'Request successful.',
             data: DailySusuCollectionResource::collection(
-                resource: $daily_susus
+                resource: $dailySusus
             ),
         );
     }

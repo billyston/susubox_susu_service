@@ -48,11 +48,17 @@ final class Duration extends Model
         'status',
     ];
 
+    /**
+     * @return string
+     */
     public function getRouteKeyName(
     ): string {
         return 'resource_id';
     }
 
+    /**
+     * @return HasMany
+     */
     public function goal(
     ): HasMany {
         return $this->hasMany(

@@ -18,20 +18,23 @@ use Throwable;
 final class FlexySusuIndexService
 {
     /**
+     * @param Customer $customer
+     * @param SusuScheme $susuScheme
+     * @return Collection
      * @throws SystemFailureException
      * @throws UnauthorisedAccessException
      */
     public static function execute(
         Customer $customer,
-        SusuScheme $susu_scheme,
+        SusuScheme $susuScheme,
     ): Collection {
         try {
             return DB::transaction(function () use (
                 $customer,
-                $susu_scheme
+                $susuScheme
             ) {
                 // Ensure this is specifically a Daily Susu scheme
-                if ($susu_scheme->code !== config(key: 'susubox.susu_schemes.flexy_susu_code')) {
+                if ($susuScheme->code !== config(key: 'susubox.susu_schemes.flexy_susu_code')) {
                     throw new UnauthorisedAccessException(
                         message: 'The provided scheme is not a flexy Susu scheme.'
                     );
@@ -39,7 +42,7 @@ final class FlexySusuIndexService
 
                 // Fetch all daily susu accounts for the customer
                 $accounts = Account::query()->where('customer_id', $customer->id)
-                    ->where('susu_scheme_id', $susu_scheme->id)
+                    ->where('susu_scheme_id', $susuScheme->id)
                     ->with('flexy')
                     ->orderBy('created_at', 'desc')
                     ->get();
@@ -63,7 +66,7 @@ final class FlexySusuIndexService
             // Log the full exception with context
             Log::error('Exception in FlexySusuIndexService', [
                 'customer' => $customer,
-                'susu_scheme' => $susu_scheme,
+                'susu_scheme' => $susuScheme,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),

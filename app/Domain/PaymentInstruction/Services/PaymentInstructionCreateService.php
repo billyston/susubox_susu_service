@@ -19,10 +19,16 @@ use Throwable;
 final class PaymentInstructionCreateService
 {
     /**
+     * @param TransactionCategory $transactionCategory
+     * @param Account $account
+     * @param Wallet $wallet
+     * @param Customer $customer
+     * @param array $data
+     * @return PaymentInstruction
      * @throws SystemFailureException
      */
     public function execute(
-        TransactionCategory $transaction_category,
+        TransactionCategory $transactionCategory,
         Account $account,
         Wallet $wallet,
         Customer $customer,
@@ -31,7 +37,7 @@ final class PaymentInstructionCreateService
         try {
             // Execute the database transaction
             return DB::transaction(function () use (
-                $transaction_category,
+                $transactionCategory,
                 $account,
                 $wallet,
                 $customer,
@@ -43,7 +49,7 @@ final class PaymentInstructionCreateService
                     'for_id' => $account->id,
                     'initiated_by_type' => Customer::class,
                     'initiated_by_id' => $customer->id,
-                    'transaction_category_id' => $transaction_category->id,
+                    'transaction_category_id' => $transactionCategory->id,
                     'account_id' => $account->id,
                     'wallet_id' => $wallet->id,
                     'amount' => $data['amount'],

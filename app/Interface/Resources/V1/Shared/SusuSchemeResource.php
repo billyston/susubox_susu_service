@@ -9,9 +9,14 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 final class SusuSchemeResource extends JsonResource
 {
+    /**
+     * @param Request $request
+     * @return array
+     */
     public function toArray(
         Request $request
     ): array {
+        // Return the resource array
         return [
             // Resource type and id
             'type' => 'SusuScheme',

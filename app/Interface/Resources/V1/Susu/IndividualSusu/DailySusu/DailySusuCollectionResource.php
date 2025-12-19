@@ -13,6 +13,10 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 final class DailySusuCollectionResource extends JsonResource
 {
+    /**
+     * @param Request $request
+     * @return array
+     */
     public function toArray(
         Request $request
     ): array {
@@ -20,10 +24,10 @@ final class DailySusuCollectionResource extends JsonResource
         return [
             // Resource type and id
             'type' => 'DailySusu',
-            'resource_id' => $this->resource->resource_id,
 
             // Resource exposed attributes
             'attributes' => [
+                'resource_id' => $this->resource->resource_id,
                 'rollover_enabled' => $this->resource->rollover_enabled,
                 'is_collateralized' => $this->resource->is_collateralized,
                 'auto_settlement' => $this->resource->auto_settlement,

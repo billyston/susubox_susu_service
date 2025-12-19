@@ -17,6 +17,9 @@ final class BizSusuCancelAction
 {
     private AccountCancelService $accountCancelService;
 
+    /**
+     * @param AccountCancelService $accountCancelService
+     */
     public function __construct(
         AccountCancelService $accountCancelService
     ) {
@@ -24,17 +27,21 @@ final class BizSusuCancelAction
     }
 
     /**
-     * @throws SystemFailureException
+     * @param Customer $customer
+     * @param BizSusu $bizSusu
+     * @param array $request
+     * @return JsonResponse
      * @throws CancellationNotAllowedException
+     * @throws SystemFailureException
      */
     public function execute(
         Customer $customer,
-        BizSusu $biz_susu,
+        BizSusu $bizSusu,
         array $request,
     ): JsonResponse {
         // Execute the AccountCancelService
         $this->accountCancelService->execute(
-            account: $biz_susu->account,
+            account: $bizSusu->account,
         );
 
         // Build and return the JsonResponse

@@ -8,11 +8,20 @@ use App\Domain\Shared\Models\RateLimiter;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 final class RateLimiterService
 {
     private string $key;
 
+    /**
+     * @param int $maxAttempts
+     * @param int $decaySeconds
+     * @param string $group
+     * @param bool $ipBased
+     * @param bool $userBased
+     * @param bool $apiKeyBased
+     */
     public function __construct(
         private readonly int $maxAttempts = 60,
         private readonly int $decaySeconds = 60,
@@ -23,6 +32,10 @@ final class RateLimiterService
     ) {
     }
 
+    /**
+     * @param Request $request
+     * @return $this
+     */
     public function forRequest(
         Request $request
     ): self {
@@ -42,6 +55,10 @@ final class RateLimiterService
         return $this;
     }
 
+    /**
+     * @return bool
+     * @throws Throwable
+     */
     public function attempt(
     ): bool {
         return DB::transaction(function (): bool {
@@ -69,6 +86,9 @@ final class RateLimiterService
         });
     }
 
+    /**
+     * @return int
+     */
     public function remainingAttempts(
     ): int {
         $rateLimit = RateLimiter::where('key', $this->key)
@@ -82,6 +102,9 @@ final class RateLimiterService
         return max(0, $this->maxAttempts - $rateLimit->attempts);
     }
 
+    /**
+     * @return Carbon|null
+     */
     public function resetTime(
     ): ?Carbon {
         $rateLimit = RateLimiter::where('key', $this->key)
@@ -91,6 +114,9 @@ final class RateLimiterService
         return $rateLimit?->reset_at;
     }
 
+    /**
+     * @return string[]
+     */
     public function getHeaders(
     ): array {
         return [

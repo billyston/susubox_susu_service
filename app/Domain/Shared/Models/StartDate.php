@@ -42,6 +42,9 @@ final class StartDate extends Model
         'description',
     ];
 
+    /**
+     * @return string
+     */
     public function getRouteKeyName(
     ): string {
         return 'resource_id';

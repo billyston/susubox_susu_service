@@ -14,6 +14,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 final class AccountIndexController extends Controller
 {
     /**
+     * @param Request $request
+     * @param Customer $customer
+     * @param AccountIndexAction $accountIndexAction
+     * @return JsonResponse
      * @throws SystemFailureException
      */
     public function __invoke(

@@ -18,6 +18,9 @@ final class FlexySusuShowAction
 {
     private FlexySusuShowService $flexySusuShowService;
 
+    /**
+     * @param FlexySusuShowService $flexySusuShowService
+     */
     public function __construct(
         FlexySusuShowService $flexySusuShowService
     ) {
@@ -25,17 +28,20 @@ final class FlexySusuShowAction
     }
 
     /**
+     * @param Customer $customer
+     * @param FlexySusu $flexySusu
+     * @return JsonResponse
      * @throws SystemFailureException
      * @throws UnauthorisedAccessException
      */
     public function execute(
         Customer $customer,
-        FlexySusu $flexy_susu,
+        FlexySusu $flexySusu,
     ): JsonResponse {
         // Execute the FlexySusuShowService and return the resource
-        $flexy_susu = $this->flexySusuShowService->execute(
+        $flexySusu = $this->flexySusuShowService->execute(
             customer: $customer,
-            account: $flexy_susu->account
+            account: $flexySusu->account
         );
 
         // Build and return the JsonResponse
@@ -43,7 +49,7 @@ final class FlexySusuShowAction
             code: Response::HTTP_OK,
             message: 'Request successful.',
             data: new FlexySusuResource(
-                resource: $flexy_susu
+                resource: $flexySusu
             ),
         );
     }

@@ -16,6 +16,9 @@ final class CorporativeSusu extends Model
         'resource_id',
     ];
 
+    /**
+     * @return string
+     */
     public function getRouteKeyName(
     ): string {
         return 'resource_id';

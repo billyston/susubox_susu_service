@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Customer\Services;
 
-use App\Domain\Customer\Exceptions\LinkedWalletNotFoundException;
+use App\Domain\Customer\Exceptions\WalletNotFoundException;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Models\Wallet;
 use App\Domain\Shared\Exceptions\SystemFailureException;
@@ -15,23 +15,26 @@ use Throwable;
 final class CustomerWalletService
 {
     /**
+     * @param Customer $customer
+     * @param string $walletResourceID
+     * @return Wallet
      * @throws SystemFailureException
-     * @throws LinkedWalletNotFoundException
+     * @throws WalletNotFoundException
      */
     public function execute(
         Customer $customer,
-        string $wallet_resource_id,
+        string $walletResourceID,
     ): Wallet {
         try {
             return Wallet::where([
-                ['resource_id', '=', $wallet_resource_id],
+                ['resource_id', '=', $walletResourceID],
                 ['customer_id', '=', $customer->id],
                 ['status', '=', 'active'],
             ])->firstOrFail();
         } catch (
             ModelNotFoundException $modelNotFoundException
         ) {
-            throw new LinkedWalletNotFoundException(
+            throw new WalletNotFoundException(
                 message: 'The wallet provided was not found.'
             );
         } catch (
@@ -40,7 +43,7 @@ final class CustomerWalletService
             // Log the full exception with context
             Log::error('Exception in CustomerWalletService', [
                 'customer' => $customer,
-                'wallet_resource_id' => $wallet_resource_id,
+                'wallet_resource_id' => $walletResourceID,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),

@@ -15,18 +15,22 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 final class GoalGetterSusuShowController extends Controller
 {
     /**
+     * @param Customer $customer
+     * @param GoalGetterSusu $goalGetterSusu
+     * @param GoalGetterSusuShowAction $goalGetterSusuShowAction
+     * @return JsonResponse
      * @throws SystemFailureException
      * @throws UnauthorisedAccessException
      */
     public function __invoke(
         Customer $customer,
-        GoalGetterSusu $goal_getter_susu,
+        GoalGetterSusu $goalGetterSusu,
         GoalGetterSusuShowAction $goalGetterSusuShowAction
     ): JsonResponse {
         // Execute the GoalGetterSusuShowAction and return the JsonResponse
         return $goalGetterSusuShowAction->execute(
             customer: $customer,
-            goal_getter_susu: $goal_getter_susu,
+            goalGetterSusu: $goalGetterSusu,
         );
     }
 }

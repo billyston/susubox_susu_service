@@ -4,16 +4,30 @@ declare(strict_types=1);
 
 namespace App\Application\Transaction\DTOs;
 
-use Brick\Math\Exception\NumberFormatException;
-use Brick\Math\Exception\RoundingNecessaryException;
 use Brick\Money\Exception\UnknownCurrencyException;
 use Brick\Money\Money;
 use Illuminate\Support\Str;
 
 final readonly class TransactionCreateRequestDTO
 {
+    /**
+     * @param string $resourceID
+     * @param string $code
+     * @param string $status
+     * @param string $reference
+     * @param bool $isInitialDeposit
+     * @param Money $amount
+     * @param Money $charges
+     * @param Money $total
+     * @param string $mobileNumber
+     * @param string $date
+     * @param string $description
+     * @param string $service
+     * @param string $serviceCode
+     * @param string $serviceCategory
+     */
     public function __construct(
-        public string $resource_id,
+        public string $resourceID,
         public string $code,
         public string $status,
         public string $reference,
@@ -21,20 +35,21 @@ final readonly class TransactionCreateRequestDTO
         public Money $amount,
         public Money $charges,
         public Money $total,
-        public string $mobile_number,
+        public string $mobileNumber,
         public string $date,
         public string $description,
         public string $service,
-        public string $service_code,
-        public string $service_category,
+        public string $serviceCode,
+        public string $serviceCategory,
     ) {
         // ..
     }
 
     /**
+     * @param array $payload
+     * @param bool $isInitialDeposit
+     * @return self
      * @throws UnknownCurrencyException
-     * @throws RoundingNecessaryException
-     * @throws NumberFormatException
      */
     public static function fromArray(
         array $payload,
@@ -54,7 +69,7 @@ final readonly class TransactionCreateRequestDTO
         $total = Money::of($transaction['total'] ?? 0, 'GHS');
 
         return new self(
-            resource_id: Str::uuid()->toString(),
+            resourceID: Str::uuid()->toString(),
             code: $transaction['code'],
             status: $transaction['status'],
             reference: $transaction['reference'],
@@ -62,15 +77,18 @@ final readonly class TransactionCreateRequestDTO
             amount: $amount,
             charges: $charges,
             total: $total,
-            mobile_number: $transaction['mobile_number'],
+            mobileNumber: $transaction['mobile_number'],
             date: $transaction['date'],
             description: $transaction['description'],
             service: $service['service'],
-            service_code: $service['service_code'],
-            service_category: $service['service_category'],
+            serviceCode: $service['service_code'],
+            serviceCategory: $service['service_category'],
         );
     }
 
+    /**
+     * @return bool[]
+     */
     public function toArray(
     ): array {
         return [

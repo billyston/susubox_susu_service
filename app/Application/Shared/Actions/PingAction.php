@@ -15,8 +15,11 @@ final class PingAction
         //..
     }
 
-    public function execute(): JsonResponse
-    {
+    /**
+     * @return JsonResponse
+     */
+    public function execute(
+    ): JsonResponse {
         // Build and return the JsonResponse
         return ApiResponseBuilder::ping(
             status: true,

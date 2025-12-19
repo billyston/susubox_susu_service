@@ -15,6 +15,9 @@ final class DailySusuDirectDepositCreateRequest extends FormRequest
         return true;
     }
 
+    /**
+     * @return array
+     */
     public function rules(
     ): array {
         return [
@@ -40,6 +43,9 @@ final class DailySusuDirectDepositCreateRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return string[]
+     */
     public function messages(
     ): array {
         return [

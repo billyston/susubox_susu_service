@@ -7,8 +7,7 @@ namespace App\Application\Susu\Actions\FlexySusu;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\PaymentInstruction\Models\PaymentInstruction;
-use App\Domain\PaymentInstruction\Services\PaymentInstructionStatusUpdateService;
-use App\Domain\Shared\Enums\Statuses;
+use App\Domain\PaymentInstruction\Services\PaymentInstructionCancelService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,15 +15,23 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class FlexySusuDirectDepositCancelAction
 {
-    private PaymentInstructionStatusUpdateService $paymentInstructionStatusUpdateService;
+    private PaymentInstructionCancelService $paymentInstructionCancelService;
 
+    /**
+     * @param PaymentInstructionCancelService $paymentInstructionCancelService
+     */
     public function __construct(
-        PaymentInstructionStatusUpdateService $paymentInstructionStatusUpdateService
+        PaymentInstructionCancelService $paymentInstructionCancelService,
     ) {
-        $this->paymentInstructionStatusUpdateService = $paymentInstructionStatusUpdateService;
+        $this->paymentInstructionCancelService = $paymentInstructionCancelService;
     }
 
     /**
+     * @param Customer $customer
+     * @param FlexySusu $flexySusu
+     * @param PaymentInstruction $paymentInstruction
+     * @param array $request
+     * @return JsonResponse
      * @throws SystemFailureException
      */
     public function execute(
@@ -33,10 +40,9 @@ final class FlexySusuDirectDepositCancelAction
         PaymentInstruction $paymentInstruction,
         array $request
     ): JsonResponse {
-        // Execute the PaymentInstructionStatusUpdateService and return the resource
-        $this->paymentInstructionStatusUpdateService->execute(
+        // Execute the PaymentInstructionCancelService and return the resource
+        $this->paymentInstructionCancelService->execute(
             paymentInstruction: $paymentInstruction,
-            status: Statuses::CANCELLED->value,
         );
 
         // Build and return the JsonResponse

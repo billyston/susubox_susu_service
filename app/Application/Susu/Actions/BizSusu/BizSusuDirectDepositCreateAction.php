@@ -23,6 +23,10 @@ final class BizSusuDirectDepositCreateAction
     private TransactionCategoryByCodeService $transactionCategoryByCodeGetService;
     private PaymentInstructionCreateService $paymentInstructionCreateService;
 
+    /**
+     * @param TransactionCategoryByCodeService $transactionCategoryByCodeGetService
+     * @param PaymentInstructionCreateService $paymentInstructionCreateService
+     */
     public function __construct(
         TransactionCategoryByCodeService $transactionCategoryByCodeGetService,
         PaymentInstructionCreateService $paymentInstructionCreateService
@@ -33,12 +37,12 @@ final class BizSusuDirectDepositCreateAction
 
     /**
      * @param Customer $customer
-     * @param BizSusu $biz_susu
+     * @param BizSusu $bizSusu
      * @param array $request
      * @return JsonResponse
+     * @throws MoneyMismatchException
      * @throws SystemFailureException
      * @throws UnknownCurrencyException
-     * @throws MoneyMismatchException
      */
     public function execute(
         Customer $customer,
@@ -46,7 +50,7 @@ final class BizSusuDirectDepositCreateAction
         array $request,
     ): JsonResponse {
         // Build the DirectDepositCreateRequestDTO
-        $requestDto = DirectDepositValueObject::create(
+        $requestDTO = DirectDepositValueObject::create(
             payload: $request,
             susuAmount: $bizSusu->susu_amount
         );
@@ -58,11 +62,11 @@ final class BizSusuDirectDepositCreateAction
 
         // Execute the PaymentInstructionCreateService and return the payment instruction resource
         $paymentInstruction = $this->paymentInstructionCreateService->execute(
-            transaction_category: $transactionCategory,
+            transactionCategory: $transactionCategory,
             account: $bizSusu->account,
             wallet: $bizSusu->wallet,
             customer: $customer,
-            data: $requestDto->toArray()
+            data: $requestDTO->toArray()
         );
 
         // Build and return the JsonResponse

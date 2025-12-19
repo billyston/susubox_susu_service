@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\GoalGetterSusu;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Transaction\DTOs\RecurringDebitApprovalResponseDTO;
+use App\Application\Transaction\DTOs\RecurringDepositApprovalResponseDTO;
 use App\Application\Transaction\ValueObject\RecurringDepositValueObject;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\PaymentInstruction\Services\PaymentInstructionCreateService;
@@ -14,7 +14,7 @@ use App\Domain\Susu\Models\IndividualSusu\GoalGetterSusu;
 use App\Domain\Transaction\Enums\TransactionCategoryCode;
 use App\Domain\Transaction\Services\TransactionCategoryByCodeService;
 use App\Interface\Resources\V1\Susu\IndividualSusu\GoalGetterSusu\GoalGetterSusuResource;
-use App\Services\SusuBox\Http\Requests\RecurringDebitApprovalRequestHandler;
+use App\Services\SusuBox\Http\Requests\RecurringDepositApprovalRequestHandler;
 use Brick\Money\Exception\MoneyMismatchException;
 use Brick\Money\Exception\UnknownCurrencyException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,12 +24,17 @@ final class GoalGetterSusuApprovalAction
 {
     private PaymentInstructionCreateService $paymentInstructionCreateService;
     private TransactionCategoryByCodeService $transactionCategoryByCodeGetService;
-    private RecurringDebitApprovalRequestHandler $dispatcher;
+    private RecurringDepositApprovalRequestHandler $dispatcher;
 
+    /**
+     * @param PaymentInstructionCreateService $paymentInstructionCreateService
+     * @param TransactionCategoryByCodeService $transactionCategoryByCodeGetService
+     * @param RecurringDepositApprovalRequestHandler $dispatcher
+     */
     public function __construct(
         PaymentInstructionCreateService $paymentInstructionCreateService,
         TransactionCategoryByCodeService $transactionCategoryByCodeGetService,
-        RecurringDebitApprovalRequestHandler $dispatcher
+        RecurringDepositApprovalRequestHandler $dispatcher
     ) {
         $this->paymentInstructionCreateService = $paymentInstructionCreateService;
         $this->transactionCategoryByCodeGetService = $transactionCategoryByCodeGetService;
@@ -55,32 +60,32 @@ final class GoalGetterSusuApprovalAction
 
         // Build the RecurringDepositValueObject
         $debitValues = RecurringDepositValueObject::create(
-            initial_deposit: $goalGetterSusu->initial_deposit,
-            susu_amount: $goalGetterSusu->susu_amount,
-            start_date: $goalGetterSusu->start_date,
-            end_date: $goalGetterSusu->end_date,
+            initialDeposit: $goalGetterSusu->initial_deposit,
+            susuAmount: $goalGetterSusu->susu_amount,
+            startDate: $goalGetterSusu->start_date,
+            endDate: $goalGetterSusu->end_date,
             frequency: $goalGetterSusu->frequency->code,
-            rollover_enabled: $goalGetterSusu->rollover_enabled
+            rolloverEnabled: $goalGetterSusu->rollover_enabled
         );
 
         // Execute the PaymentInstructionCreateService and return the payment instruction resource
         $paymentInstruction = $this->paymentInstructionCreateService->execute(
-            transaction_category: $transactionCategory,
+            transactionCategory: $transactionCategory,
             account: $goalGetterSusu->account,
             wallet: $goalGetterSusu->wallet,
             customer: $customer,
             data: $debitValues->toArray()
         );
 
-        // Build the RecurringDebitApprovalResponseDTO
-        $response_dto = RecurringDebitApprovalResponseDTO::fromDomain(
-            payment_instruction: $paymentInstruction,
+        // Build the RecurringDepositApprovalResponseDTO
+        $responseDTO = RecurringDepositApprovalResponseDTO::fromDomain(
+            paymentInstruction: $paymentInstruction,
         );
 
         // Dispatch to SusuBox Service (Payment Service)
         $this->dispatcher->sendToSusuBoxService(
             service: config('susubox.payment.name'),
-            data: $response_dto->toArray(),
+            data: $responseDTO->toArray(),
         );
 
         // Build and return the JsonResponse

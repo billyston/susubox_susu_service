@@ -16,19 +16,24 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 final class BizSusuCancelController extends Controller
 {
     /**
-     * @throws SystemFailureException
+     * @param Customer $customer
+     * @param BizSusu $bizSusu
+     * @param BizSusuCancelRequest $bizSusuCancelRequest
+     * @param BizSusuCancelAction $bizSusuCancelAction
+     * @return JsonResponse
      * @throws CancellationNotAllowedException
+     * @throws SystemFailureException
      */
     public function __invoke(
         Customer $customer,
-        BizSusu $biz_susu,
+        BizSusu $bizSusu,
         BizSusuCancelRequest $bizSusuCancelRequest,
         BizSusuCancelAction $bizSusuCancelAction
     ): JsonResponse {
         // Execute the BizSusuCancelAction
         return $bizSusuCancelAction->execute(
             customer: $customer,
-            biz_susu: $biz_susu,
+            bizSusu: $bizSusu,
             request: $bizSusuCancelRequest->validated()
         );
     }

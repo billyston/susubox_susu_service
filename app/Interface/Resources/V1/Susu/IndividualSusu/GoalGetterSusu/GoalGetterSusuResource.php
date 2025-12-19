@@ -12,6 +12,10 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 final class GoalGetterSusuResource extends JsonResource
 {
+    /**
+     * @param Request $request
+     * @return array
+     */
     public function toArray(
         Request $request
     ): array {
@@ -19,10 +23,10 @@ final class GoalGetterSusuResource extends JsonResource
         return [
             // Resource type and id
             'type' => 'GoalGetterSusu',
-            'resource_id' => $this->resource->resource_id,
 
             // Resource exposed attributes
             'attributes' => [
+                'resource_id' => $this->resource->resource_id,
                 'target_amount' => $this->resource->target_amount->getAmount()->__toString(),
                 'susu_amount' => $this->resource->susu_amount->getAmount()->__toString(),
                 'initial_deposit' => $this->resource->initial_deposit->getAmount()->__toString(),

@@ -17,6 +17,9 @@ final class AccountIndexAction
 {
     private AccountIndexService $accountIndexService;
 
+    /**
+     * @param AccountIndexService $accountIndexService
+     */
     public function __construct(
         AccountIndexService $accountIndexService
     ) {
@@ -24,6 +27,9 @@ final class AccountIndexAction
     }
 
     /**
+     * @param Customer $customer
+     * @param Request $request
+     * @return JsonResponse
      * @throws SystemFailureException
      */
     public function execute(
@@ -31,7 +37,7 @@ final class AccountIndexAction
         Request $request,
     ): JsonResponse {
         // Execute the AccountIndexService and return the collection
-        $customer_accounts = $this->accountIndexService->execute(
+        $customerAccounts = $this->accountIndexService->execute(
             customer: $customer,
         );
 
@@ -40,7 +46,7 @@ final class AccountIndexAction
             code: Response::HTTP_OK,
             message: 'Request successful.',
             data: AccountResource::collection(
-                resource: $customer_accounts
+                resource: $customerAccounts
             ),
         );
     }

@@ -19,34 +19,39 @@ use Throwable;
 final class FlexySusuCreateService
 {
     /**
+     * @param Customer $customer
+     * @param SusuScheme $susuScheme
+     * @param Wallet $wallet
+     * @param array $requestDTO
+     * @return FlexySusu
      * @throws SystemFailureException
      */
     public static function execute(
         Customer $customer,
-        SusuScheme $susu_scheme,
+        SusuScheme $susuScheme,
         Wallet $wallet,
-        array $dto
+        array $requestDTO
     ): FlexySusu {
         try {
             // Execute the database transaction
             return DB::transaction(function () use (
                 $customer,
-                $susu_scheme,
+                $susuScheme,
                 $wallet,
-                $dto
+                $requestDTO
             ) {
                 // Create Financial Account
                 $account = Account::create([
                     'accountable_type' => IndividualAccount::class,
-                    'account_name' => $dto['account_name'],
+                    'account_name' => $requestDTO['account_name'],
                     'account_number' => Account::generateAccountNumber(),
-                    'accepted_terms' => $dto['accepted_terms'],
+                    'accepted_terms' => $requestDTO['accepted_terms'],
                 ]);
 
                 // Create IndividualAccount (polymorphic bridge)
                 $individualAccount = IndividualAccount::create([
                     'customer_id' => $customer->id,
-                    'susu_scheme_id' => $susu_scheme->id,
+                    'susu_scheme_id' => $susuScheme->id,
                 ]);
 
                 // Link Account to IndividualAccount (Update polymorphic fields)
@@ -63,7 +68,7 @@ final class FlexySusuCreateService
                 return FlexySusu::create([
                     'individual_account_id' => $individualAccount->id,
                     'wallet_id' => $wallet->id,
-                    'initial_deposit' => $dto['initial_deposit'],
+                    'initial_deposit' => $requestDTO['initial_deposit'],
                 ]);
             });
         } catch (
@@ -72,9 +77,9 @@ final class FlexySusuCreateService
             // Log the full exception with context
             Log::error('Exception in FlexySusuCreateService', [
                 'customer' => $customer,
-                'susu_scheme' => $susu_scheme,
+                'susu_scheme' => $susuScheme,
                 'linked_wallet' => $wallet,
-                'dto' => $dto,
+                'dto' => $requestDTO,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),

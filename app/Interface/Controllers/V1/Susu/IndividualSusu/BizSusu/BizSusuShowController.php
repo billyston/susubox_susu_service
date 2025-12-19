@@ -15,18 +15,22 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 final class BizSusuShowController extends Controller
 {
     /**
+     * @param Customer $customer
+     * @param BizSusu $bizSusu
+     * @param BizSusuShowAction $bizSusuShowAction
+     * @return JsonResponse
      * @throws SystemFailureException
      * @throws UnauthorisedAccessException
      */
     public function __invoke(
         Customer $customer,
-        BizSusu $biz_susu,
+        BizSusu $bizSusu,
         BizSusuShowAction $bizSusuShowAction
     ): JsonResponse {
         // Execute the BizSusuShowAction and return the JsonResponse
         return $bizSusuShowAction->execute(
             customer: $customer,
-            biz_susu: $biz_susu,
+            bizSusu: $bizSusu,
         );
     }
 }

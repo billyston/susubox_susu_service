@@ -20,6 +20,10 @@ final class FlexySusuIndexAction
     private FlexySusuIndexService $flexySusuIndexService;
     private SusuSchemeService $susuSchemeService;
 
+    /**
+     * @param FlexySusuIndexService $flexySusuIndexService
+     * @param SusuSchemeService $susuSchemeService
+     */
     public function __construct(
         FlexySusuIndexService $flexySusuIndexService,
         SusuSchemeService $susuSchemeService
@@ -29,22 +33,24 @@ final class FlexySusuIndexAction
     }
 
     /**
+     * @param Customer $customer
+     * @return JsonResponse
+     * @throws SusuSchemeNotFoundException
      * @throws SystemFailureException
      * @throws UnauthorisedAccessException
-     * @throws SusuSchemeNotFoundException
      */
     public function execute(
         Customer $customer,
     ): JsonResponse {
         // Execute the SusuSchemeService and return the resource
-        $susu_scheme = $this->susuSchemeService->execute(
-            scheme_code: config(key: 'susubox.susu_schemes.flexy_susu_code')
+        $susuScheme = $this->susuSchemeService->execute(
+            schemeCode: config(key: 'susubox.susu_schemes.flexy_susu_code')
         );
 
         // Execute the FlexySusuIndexService and return the resource
-        $flexy_susus = $this->flexySusuIndexService->execute(
+        $flexySusus = $this->flexySusuIndexService->execute(
             customer: $customer,
-            susu_scheme: $susu_scheme
+            susuScheme: $susuScheme
         );
 
         // Build and return the JsonResponse
@@ -52,7 +58,7 @@ final class FlexySusuIndexAction
             code: Response::HTTP_OK,
             message: 'Request successful.',
             data: FlexySusuCollectionResource::collection(
-                resource: $flexy_susus
+                resource: $flexySusus
             ),
         );
     }

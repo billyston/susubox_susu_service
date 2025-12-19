@@ -22,36 +22,42 @@ use Throwable;
 final class GoalGetterSusuCreateService
 {
     /**
+     * @param Customer $customer
+     * @param SusuScheme $susuScheme
+     * @param Frequency $frequency
+     * @param Wallet $wallet
+     * @param array $requestDTO
+     * @return GoalGetterSusu
      * @throws SystemFailureException
      */
     public static function execute(
         Customer $customer,
-        SusuScheme $susu_scheme,
+        SusuScheme $susuScheme,
         Frequency $frequency,
         Wallet $wallet,
-        array $dto
+        array $requestDTO
     ): GoalGetterSusu {
         try {
             // Execute the database transaction
             return DB::transaction(function () use (
                 $customer,
-                $susu_scheme,
+                $susuScheme,
                 $frequency,
                 $wallet,
-                $dto
+                $requestDTO
             ) {
                 // Create Financial Account
                 $account = Account::create([
                     'accountable_type' => IndividualAccount::class,
-                    'account_name' => $dto['account_name'],
+                    'account_name' => $requestDTO['account_name'],
                     'account_number' => Account::generateAccountNumber(),
-                    'accepted_terms' => $dto['accepted_terms'],
+                    'accepted_terms' => $requestDTO['accepted_terms'],
                 ]);
 
                 // Create IndividualAccount (polymorphic bridge)
                 $individualAccount = IndividualAccount::create([
                     'customer_id' => $customer->id,
-                    'susu_scheme_id' => $susu_scheme->id,
+                    'susu_scheme_id' => $susuScheme->id,
                 ]);
 
                 // Link Account to IndividualAccount (Update polymorphic fields)
@@ -69,12 +75,12 @@ final class GoalGetterSusuCreateService
                     'individual_account_id' => $individualAccount->id,
                     'wallet_id' => $wallet->id,
                     'frequency_id' => $frequency->id,
-                    'duration_id' => $dto['duration']['id'],
-                    'target_amount' => $dto['target_amount'],
-                    'susu_amount' => $dto['susu_amount'],
-                    'initial_deposit' => $dto['initial_deposit'],
-                    'start_date' => $dto['start_date'],
-                    'end_date' => Helpers::getDateWithOffset(Carbon::parse($dto['start_date']), days: $dto['duration']['days']),
+                    'duration_id' => $requestDTO['duration']['id'],
+                    'target_amount' => $requestDTO['target_amount'],
+                    'susu_amount' => $requestDTO['susu_amount'],
+                    'initial_deposit' => $requestDTO['initial_deposit'],
+                    'start_date' => $requestDTO['start_date'],
+                    'end_date' => Helpers::getDateWithOffset(Carbon::parse($requestDTO['start_date']), days: $requestDTO['duration']['days']),
                 ]);
             });
         } catch (
@@ -83,10 +89,10 @@ final class GoalGetterSusuCreateService
             // Log the full exception with context
             Log::error('Exception in GoalGetterSusuCreateService', [
                 'customer' => $customer,
-                'susu_scheme' => $susu_scheme,
+                'susu_scheme' => $susuScheme,
                 'frequency' => $frequency,
                 'linked_wallet' => $wallet,
-                'dto' => $dto,
+                'dto' => $requestDTO,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),

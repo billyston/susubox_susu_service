@@ -9,16 +9,21 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 final class CustomerWalletResource extends JsonResource
 {
+    /**
+     * @param Request $request
+     * @return array
+     */
     public function toArray(
         Request $request
     ): array {
+        // Return the resource array
         return [
             // Resource type and id
             'type' => 'Wallet',
-            'resource_id' => $this->resource->resource_id,
 
             // Resource exposed attributes
             'attributes' => [
+                'resource_id' => $this->resource->resource_id,
                 'wallet_name' => $this->resource->wallet_name,
                 'wallet_number' => $this->resource->wallet_number,
                 'wallet_network' => $this->resource->network_code,

@@ -15,6 +15,9 @@ use Throwable;
 final class GoalGetterSusuShowService
 {
     /**
+     * @param Customer $customer
+     * @param Account $account
+     * @return GoalGetterSusu
      * @throws SystemFailureException
      * @throws UnauthorisedAccessException
      */

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Customer\Actions;
 
-use App\Application\Customer\DTOs\CustomerCreateDTO;
+use App\Application\Customer\DTOs\CustomerCreateRequestDTO;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Domain\Customer\Services\CustomerCreateService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
@@ -17,6 +17,9 @@ final class CustomerCreateAction
 {
     private CustomerCreateService $customerCreateService;
 
+    /**
+     * @param CustomerCreateService $customerCreateService
+     */
     public function __construct(
         CustomerCreateService $customerCreateService
     ) {
@@ -24,19 +27,21 @@ final class CustomerCreateAction
     }
 
     /**
+     * @param Request $request
+     * @return JsonResponse
      * @throws SystemFailureException
      */
     public function execute(
         Request $request,
     ): JsonResponse {
         // Build the CustomerCreateDTO
-        $dto = CustomerCreateDTO::fromArray(
+        $requestDTO = CustomerCreateRequestDTO::fromPayload(
             payload: $request->all()
         );
 
         // Execute the CustomerCreateService
         $customer = $this->customerCreateService->execute(
-            data: $dto,
+            requestDTO: $requestDTO,
         );
 
         // Build and return the JsonResponse

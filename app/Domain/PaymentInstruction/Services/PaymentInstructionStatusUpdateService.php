@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace App\Domain\PaymentInstruction\Services;
 
 use App\Domain\PaymentInstruction\Models\PaymentInstruction;
-use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use InvalidArgumentException;
 use Throwable;
 
 final class PaymentInstructionStatusUpdateService
 {
     /**
+     * @param PaymentInstruction $paymentInstruction
+     * @param string $status
+     * @return PaymentInstruction
      * @throws SystemFailureException
      */
     public static function execute(
@@ -28,11 +29,6 @@ final class PaymentInstructionStatusUpdateService
                     $paymentInstruction,
                     $status
                 ) {
-                    // Validate status
-                    if (! in_array($status, Statuses::allowed(), true)) {
-                        throw new InvalidArgumentException("Invalid account status: {$status}");
-                    }
-
                     // Execute the update query
                     $paymentInstruction->update(['status' => $status]);
 

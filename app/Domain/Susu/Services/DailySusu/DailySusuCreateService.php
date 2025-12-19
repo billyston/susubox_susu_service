@@ -21,36 +21,42 @@ use Throwable;
 final class DailySusuCreateService
 {
     /**
+     * @param Customer $customer
+     * @param SusuScheme $susuScheme
+     * @param Frequency $frequency
+     * @param Wallet $wallet
+     * @param array $requestDTO
+     * @return DailySusu
      * @throws SystemFailureException
      */
     public static function execute(
         Customer $customer,
-        SusuScheme $susu_scheme,
+        SusuScheme $susuScheme,
         Frequency $frequency,
         Wallet $wallet,
-        array $dto
+        array $requestDTO
     ): DailySusu {
         try {
             // Execute the database transaction
             return DB::transaction(function () use (
                 $customer,
-                $susu_scheme,
+                $susuScheme,
                 $frequency,
                 $wallet,
-                $dto
+                $requestDTO
             ) {
                 // Create Financial Account
                 $account = Account::create([
                     'accountable_type' => IndividualAccount::class,
-                    'account_name' => $dto['account_name'],
+                    'account_name' => $requestDTO['account_name'],
                     'account_number' => Account::generateAccountNumber(),
-                    'accepted_terms' => $dto['accepted_terms'],
+                    'accepted_terms' => $requestDTO['accepted_terms'],
                 ]);
 
                 // Create IndividualAccount (polymorphic bridge)
                 $individualAccount = IndividualAccount::create([
                     'customer_id' => $customer->id,
-                    'susu_scheme_id' => $susu_scheme->id,
+                    'susu_scheme_id' => $susuScheme->id,
                 ]);
 
                 // Link Account to IndividualAccount (Update polymorphic fields)
@@ -68,9 +74,9 @@ final class DailySusuCreateService
                     'individual_account_id' => $individualAccount->id,
                     'wallet_id' => $wallet->id,
                     'frequency_id' => $frequency->id,
-                    'susu_amount' => $dto['susu_amount'],
-                    'initial_deposit' => $dto['initial_deposit'],
-                    'rollover_enabled' => $dto['rollover_enabled'],
+                    'susu_amount' => $requestDTO['susu_amount'],
+                    'initial_deposit' => $requestDTO['initial_deposit'],
+                    'rollover_enabled' => $requestDTO['rollover_enabled'],
                     'recurring_debit_status' => Statuses::PENDING->value,
                 ]);
             });
@@ -79,10 +85,10 @@ final class DailySusuCreateService
         ) {
             Log::error('Exception in BizSusuCreateService', [
                 'customer' => $customer,
-                'susu_scheme' => $susu_scheme,
+                'susu_scheme' => $susuScheme,
                 'frequency' => $frequency,
                 'wallet' => $wallet,
-                'dto' => $dto,
+                'dto' => $requestDTO,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),

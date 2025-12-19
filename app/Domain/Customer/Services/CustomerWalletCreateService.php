@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Customer\Services;
 
-use App\Application\Customer\DTOs\CustomerWalletDTO;
+use App\Application\Customer\DTOs\CustomerWalletCreateRequestDTO;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Models\Wallet;
 use App\Domain\Shared\Exceptions\SystemFailureException;
@@ -15,34 +15,37 @@ use Throwable;
 final class CustomerWalletCreateService
 {
     /**
+     * @param Customer $customer
+     * @param CustomerWalletCreateRequestDTO $requestDTO
+     * @return Wallet
      * @throws SystemFailureException
      */
     public static function execute(
         Customer $customer,
-        CustomerWalletDTO $data
+        CustomerWalletCreateRequestDTO $requestDTO
     ): Wallet {
         try {
             // Execute the database transaction
             return DB::transaction(
                 function () use (
                     $customer,
-                    $data
+                    $requestDTO
                 ) {
                     // Get the WalletData for the Customer (if it exists)
                     $linked_wallet = Wallet::query()->firstOrNew([
-                        'wallet_number' => $data->wallet_number,
+                        'wallet_number' => $requestDTO->walletNumber,
                         'customer_id' => $customer->id,
                     ]);
 
                     return Wallet::updateOrCreate([
-                        'wallet_number' => $data->wallet_number,
+                        'wallet_number' => $requestDTO->walletNumber,
                         'customer_id' => $customer->id,
                     ], [
-                        'resource_id' => $data->resource_id,
+                        'resource_id' => $requestDTO->resourceID,
                         'customer_id' => $customer->id,
-                        'wallet_name' => $data->wallet_name ?? $linked_wallet->wallet_name,
-                        'wallet_number' => $data->wallet_number ?? $linked_wallet->wallet_number,
-                        'network_code' => $data->network_code ?? $linked_wallet->network_code,
+                        'wallet_name' => $requestDTO->walletName ?? $linked_wallet->wallet_name,
+                        'wallet_number' => $requestDTO->walletNumber ?? $linked_wallet->wallet_number,
+                        'network_code' => $requestDTO->networkCode ?? $linked_wallet->network_code,
                     ])->refresh();
                 }
             );
@@ -52,7 +55,7 @@ final class CustomerWalletCreateService
             // Log the full exception with context
             Log::error('Exception in CustomerWalletCreateService', [
                 'customer' => $customer,
-                'data' => $data,
+                'data' => $requestDTO,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),

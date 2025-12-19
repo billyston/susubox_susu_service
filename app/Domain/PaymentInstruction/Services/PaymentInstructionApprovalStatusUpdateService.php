@@ -15,6 +15,9 @@ use Throwable;
 final class PaymentInstructionApprovalStatusUpdateService
 {
     /**
+     * @param PaymentInstruction $paymentInstruction
+     * @param string $status
+     * @return PaymentInstruction
      * @throws SystemFailureException
      */
     public static function execute(
@@ -34,7 +37,10 @@ final class PaymentInstructionApprovalStatusUpdateService
                     }
 
                     // Execute the update query
-                    $paymentInstruction->update(['approval_status' => $status]);
+                    $paymentInstruction->update([
+                        'approval_status' => $status,
+                        'approved_at' => now(),
+                    ]);
 
                     // Return the account resource
                     return $paymentInstruction->refresh();

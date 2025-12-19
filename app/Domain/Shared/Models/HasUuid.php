@@ -9,6 +9,9 @@ use Illuminate\Support\Str;
 
 trait HasUuid
 {
+    /**
+     * @return void
+     */
     public static function bootHasUuid(): void
     {
         /** @phpstan-ignore-next-line */

@@ -16,6 +16,9 @@ final class DwadieboaMember extends Model
         'resource_id',
     ];
 
+    /**
+     * @return string
+     */
     public function getRouteKeyName(
     ): string {
         return 'resource_id';

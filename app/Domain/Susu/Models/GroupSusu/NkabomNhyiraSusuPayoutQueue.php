@@ -17,6 +17,9 @@ final class NkabomNhyiraSusuPayoutQueue extends Model
         'resource_id',
     ];
 
+    /**
+     * @return BelongsTo
+     */
     public function nkabomNhyiraSusu(
     ): BelongsTo {
         return $this->belongsTo(
@@ -25,6 +28,9 @@ final class NkabomNhyiraSusuPayoutQueue extends Model
         );
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function member(
     ): BelongsTo {
         return $this->belongsTo(

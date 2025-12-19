@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\DailySusu;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Susu\DTOs\DailySusu\DailySusuCreateDTO;
-use App\Domain\Customer\Exceptions\LinkedWalletNotFoundException;
+use App\Application\Susu\DTOs\DailySusu\DailySusuCreateRequestDTO;
+use App\Domain\Customer\Exceptions\WalletNotFoundException;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Services\CustomerWalletService;
 use App\Domain\Shared\Exceptions\FrequencyNotFoundException;
@@ -27,6 +27,12 @@ final class DailySusuCreateAction
     private FrequencyService $frequencyService;
     private DailySusuCreateService $dailySusuCreateService;
 
+    /**
+     * @param CustomerWalletService $customerWalletService
+     * @param SusuSchemeService $susuSchemeService
+     * @param FrequencyService $frequencyService
+     * @param DailySusuCreateService $dailySusuCreateService
+     */
     public function __construct(
         CustomerWalletService $customerWalletService,
         SusuSchemeService $susuSchemeService,
@@ -44,7 +50,7 @@ final class DailySusuCreateAction
      * @param array $request
      * @return JsonResponse
      * @throws FrequencyNotFoundException
-     * @throws LinkedWalletNotFoundException
+     * @throws WalletNotFoundException
      * @throws SusuSchemeNotFoundException
      * @throws SystemFailureException
      * @throws UnknownCurrencyException
@@ -54,19 +60,19 @@ final class DailySusuCreateAction
         array $request
     ): JsonResponse {
         // Build the DailySusuCreateDTO and return the DTO
-        $dto = DailySusuCreateDTO::fromArray(
+        $requestDTO = DailySusuCreateRequestDTO::fromPayload(
             payload: $request
         );
 
         // Execute the CustomerWalletService and return the resource
-        $linked_wallet = $this->customerWalletService->execute(
+        $wallet = $this->customerWalletService->execute(
             customer: $customer,
-            wallet_resource_id: $dto->wallet_id,
+            walletResourceID: $requestDTO->walletResourceID,
         );
 
         // Execute the SusuSchemeService and return the resource
-        $susu_scheme = $this->susuSchemeService->execute(
-            scheme_code: config(key: 'susubox.susu_schemes.daily_susu_code')
+        $susuScheme = $this->susuSchemeService->execute(
+            schemeCode: config(key: 'susubox.susu_schemes.daily_susu_code')
         );
 
         // Execute the FrequencyService and return the resource
@@ -75,12 +81,12 @@ final class DailySusuCreateAction
         );
 
         // Execute the DailySusuCreateService and return the resource
-        $daily_susu = $this->dailySusuCreateService->execute(
+        $dailySusu = $this->dailySusuCreateService->execute(
             customer: $customer,
-            susu_scheme: $susu_scheme,
+            susuScheme: $susuScheme,
             frequency: $frequency,
-            wallet: $linked_wallet,
-            dto: $dto->toArray()
+            wallet: $wallet,
+            requestDTO: $requestDTO->toArray()
         );
 
         // Build and return the JsonResponse
@@ -89,7 +95,7 @@ final class DailySusuCreateAction
             message: 'Request successful.',
             description: 'The daily susu account is created successfully. Approval required.',
             data: new DailySusuResource(
-                resource: $daily_susu->refresh()
+                resource: $dailySusu->refresh()
             ),
         );
     }

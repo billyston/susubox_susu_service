@@ -20,6 +20,10 @@ final class BizSusuIndexAction
     private BizSusuIndexService $bizSusuIndexService;
     private SusuSchemeService $susuSchemeService;
 
+    /**
+     * @param BizSusuIndexService $bizSusuIndexService
+     * @param SusuSchemeService $susuSchemeService
+     */
     public function __construct(
         BizSusuIndexService $bizSusuIndexService,
         SusuSchemeService $susuSchemeService
@@ -29,22 +33,24 @@ final class BizSusuIndexAction
     }
 
     /**
+     * @param Customer $customer
+     * @return JsonResponse
+     * @throws SusuSchemeNotFoundException
      * @throws SystemFailureException
      * @throws UnauthorisedAccessException
-     * @throws SusuSchemeNotFoundException
      */
     public function execute(
         Customer $customer,
     ): JsonResponse {
         // Execute the SusuSchemeService and return the resource
-        $susu_scheme = $this->susuSchemeService->execute(
-            scheme_code: config(key: 'susubox.susu_schemes.biz_susu_code')
+        $susuScheme = $this->susuSchemeService->execute(
+            schemeCode: config(key: 'susubox.susu_schemes.biz_susu_code')
         );
 
         // Execute the BizSusuIndexService and return the resource
-        $biz_susus = $this->bizSusuIndexService->execute(
+        $bizSusus = $this->bizSusuIndexService->execute(
             customer: $customer,
-            susu_scheme: $susu_scheme
+            susuScheme: $susuScheme
         );
 
         // Build and return the JsonResponse
@@ -52,7 +58,7 @@ final class BizSusuIndexAction
             code: Response::HTTP_OK,
             message: 'Request successful.',
             data: BizSusuCollectionResource::collection(
-                resource: $biz_susus
+                resource: $bizSusus
             ),
         );
     }

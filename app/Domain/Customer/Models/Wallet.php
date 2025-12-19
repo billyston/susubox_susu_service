@@ -68,11 +68,17 @@ final class Wallet extends Model
         'status',
     ];
 
+    /**
+     * @return string
+     */
     public function getRouteKeyName(
     ): string {
         return 'resource_id';
     }
 
+    /**
+     * @return HasMany
+     */
     public function dailySusu(
     ): HasMany {
         return $this->hasMany(
@@ -81,6 +87,9 @@ final class Wallet extends Model
         );
     }
 
+    /**
+     * @return HasMany
+     */
     public function bizSusu(
     ): HasMany {
         return $this->hasMany(
@@ -89,6 +98,9 @@ final class Wallet extends Model
         );
     }
 
+    /**
+     * @return HasMany
+     */
     public function goalGetterSusu(
     ): HasMany {
         return $this->hasMany(
@@ -97,6 +109,9 @@ final class Wallet extends Model
         );
     }
 
+    /**
+     * @return HasMany
+     */
     public function flexySusu(
     ): HasMany {
         return $this->hasMany(
@@ -113,6 +128,9 @@ final class Wallet extends Model
         );
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function customer(
     ): BelongsTo {
         return $this->belongsTo(
@@ -121,6 +139,9 @@ final class Wallet extends Model
         );
     }
 
+    /**
+     * @return HasMany
+     */
     public function transactions(
     ): HasMany {
         return $this->hasMany(
@@ -129,6 +150,9 @@ final class Wallet extends Model
         );
     }
 
+    /**
+     * @return HasMany
+     */
     public function paymentInstruments(
     ): HasMany {
         return $this->hasMany(

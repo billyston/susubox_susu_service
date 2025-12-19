@@ -56,11 +56,17 @@ final class Customer extends Model
         'phone_number',
     ];
 
+    /**
+     * @return string
+     */
     public function getRouteKeyName(
     ): string {
         return 'resource_id';
     }
 
+    /**
+     * @return HasMany
+     */
     public function wallets(
     ): HasMany {
         return $this->hasMany(
@@ -69,6 +75,9 @@ final class Customer extends Model
         );
     }
 
+    /**
+     * @return HasMany
+     */
     public function dailySusu(
     ): HasMany {
         return $this->hasMany(
@@ -77,6 +86,9 @@ final class Customer extends Model
         );
     }
 
+    /**
+     * @return HasMany
+     */
     public function bizSusu(
     ): HasMany {
         return $this->hasMany(
@@ -85,6 +97,9 @@ final class Customer extends Model
         );
     }
 
+    /**
+     * @return HasMany
+     */
     public function goalGetterSusu(
     ): HasMany {
         return $this->hasMany(
@@ -93,6 +108,9 @@ final class Customer extends Model
         );
     }
 
+    /**
+     * @return HasMany
+     */
     public function driveToOwn(
     ): HasMany {
         return $this->hasMany(

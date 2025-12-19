@@ -15,9 +15,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 final class GoalGetterSusuIndexController extends Controller
 {
     /**
+     * @param Customer $customer
+     * @param GoalGetterSusuIndexAction $goalGetterSusuIndexAction
+     * @return JsonResponse
+     * @throws SusuSchemeNotFoundException
      * @throws SystemFailureException
      * @throws UnauthorisedAccessException
-     * @throws SusuSchemeNotFoundException
      */
     public function __invoke(
         Customer $customer,

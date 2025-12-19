@@ -18,6 +18,9 @@ final class GoalGetterSusuShowAction
 {
     private GoalGetterSusuShowService $goalGetterSusuShowService;
 
+    /**
+     * @param GoalGetterSusuShowService $goalGetterSusuShowService
+     */
     public function __construct(
         GoalGetterSusuShowService $goalGetterSusuShowService
     ) {
@@ -25,17 +28,20 @@ final class GoalGetterSusuShowAction
     }
 
     /**
+     * @param Customer $customer
+     * @param GoalGetterSusu $goalGetterSusu
+     * @return JsonResponse
      * @throws SystemFailureException
      * @throws UnauthorisedAccessException
      */
     public function execute(
         Customer $customer,
-        GoalGetterSusu $goal_getter_susu,
+        GoalGetterSusu $goalGetterSusu,
     ): JsonResponse {
         // Execute the GoalGetterSusuShowService and return the resource
-        $goal_getter_susu = $this->goalGetterSusuShowService->execute(
+        $goalGetterSusu = $this->goalGetterSusuShowService->execute(
             customer: $customer,
-            account: $goal_getter_susu->account
+            account: $goalGetterSusu->account
         );
 
         // Build and return the JsonResponse
@@ -43,7 +49,7 @@ final class GoalGetterSusuShowAction
             code: Response::HTTP_OK,
             message: 'Request successful.',
             data: new GoalGetterSusuResource(
-                resource: $goal_getter_susu
+                resource: $goalGetterSusu
             ),
         );
     }

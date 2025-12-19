@@ -84,9 +84,10 @@ return [
         'app/Domain/Shared/Exceptions/SusuSchemeNotFoundException.php',
         'app/Domain/Shared/Exceptions/SystemFailureException.php',
         'app/Domain/Shared/Exceptions/UnauthorisedAccessException.php',
-        'app/Domain/Customer/Exceptions/LinkedWalletNotFoundException.php',
         'app/Domain/Shared/Exceptions/CancellationNotAllowedException.php',
         'app/Domain/Shared/Exceptions/FrequencyNotFoundException.php',
+        'app/Domain/Customer/Exceptions/WalletNotFoundException.php',
+        'app/Domain/Transaction/Exceptions/InsufficientBalanceException.php',
     ],
 
     'add' => [

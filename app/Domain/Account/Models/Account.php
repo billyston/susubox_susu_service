@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Carbon;
+use Random\RandomException;
 
 /**
  * Class Account
@@ -66,16 +67,25 @@ final class Account extends Model
         'status',
     ];
 
+    /**
+     * @return string
+     */
     public function getRouteKeyName(
     ): string {
         return 'resource_id';
     }
 
+    /**
+     * @return MorphTo
+     */
     public function accountable(
     ): MorphTo {
         return $this->morphTo();
     }
 
+    /**
+     * @return HasMany
+     */
     public function transactions(
     ): HasMany {
         return $this->hasMany(
@@ -84,6 +94,9 @@ final class Account extends Model
         );
     }
 
+    /**
+     * @return HasOne
+     */
     public function accountBalance(
     ): HasOne {
         return $this->hasOne(
@@ -92,8 +105,11 @@ final class Account extends Model
         );
     }
 
+    /**
+     * @return mixed|null
+     */
     public function getSusuScheme(
-    ) {
+    ): mixed {
         if (! $this->accountable) {
             return null;
         }
@@ -101,11 +117,18 @@ final class Account extends Model
         return $this->accountable->susuScheme;
     }
 
+    /**
+     * @return bool
+     */
     public function isFirstTransaction(
     ): bool {
         return ! $this->transactions()->exists();
     }
 
+    /**
+     * @return string
+     * @throws RandomException
+     */
     public static function generateAccountNumber(
     ): string {
         do {

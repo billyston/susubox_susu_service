@@ -14,6 +14,7 @@ use Throwable;
 final class StartDatesService
 {
     /**
+     * @return Collection
      * @throws SystemFailureException
      */
     public function execute(

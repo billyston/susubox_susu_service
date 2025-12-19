@@ -23,6 +23,10 @@ final class DailySusuDirectDepositCreateAction
     private TransactionCategoryByCodeService $transactionCategoryByCodeGetService;
     private PaymentInstructionCreateService $paymentInstructionCreateService;
 
+    /**
+     * @param TransactionCategoryByCodeService $transactionCategoryByCodeGetService
+     * @param PaymentInstructionCreateService $paymentInstructionCreateService
+     */
     public function __construct(
         TransactionCategoryByCodeService $transactionCategoryByCodeGetService,
         PaymentInstructionCreateService $paymentInstructionCreateService
@@ -46,7 +50,7 @@ final class DailySusuDirectDepositCreateAction
         array $request
     ): JsonResponse {
         // Build the DirectDepositCreateRequestDTO
-        $requestDto = DirectDepositValueObject::create(
+        $requestDTO = DirectDepositValueObject::create(
             payload: $request,
             susuAmount: $dailySusu->susu_amount
         );
@@ -58,11 +62,11 @@ final class DailySusuDirectDepositCreateAction
 
         // Execute the PaymentInstructionCreateService and return the payment instruction resource
         $paymentInstruction = $this->paymentInstructionCreateService->execute(
-            transaction_category: $transactionCategory,
+            transactionCategory: $transactionCategory,
             account: $dailySusu->account,
             wallet: $dailySusu->wallet,
             customer: $customer,
-            data: $requestDto->toArray()
+            data: $requestDTO->toArray()
         );
 
         // Build and return the JsonResponse

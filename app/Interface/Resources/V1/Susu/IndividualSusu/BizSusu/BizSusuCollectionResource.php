@@ -13,6 +13,10 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 final class BizSusuCollectionResource extends JsonResource
 {
+    /**
+     * @param Request $request
+     * @return array
+     */
     public function toArray(
         Request $request
     ): array {
@@ -20,10 +24,10 @@ final class BizSusuCollectionResource extends JsonResource
         return [
             // Resource type and id
             'type' => 'BizSusu',
-            'resource_id' => $this->resource->resource_id,
 
             // Resource exposed attributes
             'attributes' => [
+                'resource_id' => $this->resource->resource_id,
                 'rollover_enabled' => $this->resource->rollover_enabled,
                 'is_collateralized' => $this->resource->is_collateralized,
                 'withdrawal_status' => $this->resource->withdrawal_status,

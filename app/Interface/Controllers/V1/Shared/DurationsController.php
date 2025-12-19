@@ -13,6 +13,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 final class DurationsController extends Controller
 {
     /**
+     * @param Request $request
+     * @param DurationsAction $durationsAction
+     * @return JsonResponse
      * @throws SystemFailureException
      */
     public function __invoke(

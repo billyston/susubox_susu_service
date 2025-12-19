@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\GoalGetterSusu;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Susu\DTOs\GoalGetterSusu\GoalGetterSusuCreateDTO;
-use App\Domain\Customer\Exceptions\LinkedWalletNotFoundException;
+use App\Application\Susu\DTOs\GoalGetterSusu\GoalGetterSusuCreateRequestDTO;
+use App\Domain\Customer\Exceptions\WalletNotFoundException;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Services\CustomerWalletService;
 use App\Domain\Shared\Exceptions\FrequencyNotFoundException;
@@ -27,6 +27,12 @@ final class GoalGetterSusuCreateAction
     private FrequencyService $frequencyService;
     private GoalGetterSusuCreateService $goalGetterSusuCreateService;
 
+    /**
+     * @param CustomerWalletService $customerLinkedWalletService
+     * @param SusuSchemeService $susuSchemeService
+     * @param FrequencyService $frequencyService
+     * @param GoalGetterSusuCreateService $goalGetterSusuCreateService
+     */
     public function __construct(
         CustomerWalletService $customerLinkedWalletService,
         SusuSchemeService $susuSchemeService,
@@ -44,7 +50,7 @@ final class GoalGetterSusuCreateAction
      * @param array $request
      * @return JsonResponse
      * @throws FrequencyNotFoundException
-     * @throws LinkedWalletNotFoundException
+     * @throws WalletNotFoundException
      * @throws SusuSchemeNotFoundException
      * @throws SystemFailureException
      * @throws UnknownCurrencyException
@@ -53,34 +59,34 @@ final class GoalGetterSusuCreateAction
         Customer $customer,
         array $request
     ): JsonResponse {
-        // Build the GoalGetterSusuCreateDTO and return the DTO
-        $dto = GoalGetterSusuCreateDTO::fromArray(
+        // Build the GoalGetterSusuCreateRequestDTO and return the DTO
+        $requestDTO = GoalGetterSusuCreateRequestDTO::fromPayload(
             payload: $request
         );
 
         // Execute the CustomerWalletService and return the resource
-        $linked_wallet = $this->customerLinkedWalletService->execute(
+        $wallet = $this->customerLinkedWalletService->execute(
             customer: $customer,
-            wallet_resource_id: $dto->wallet_id,
+            walletResourceID: $requestDTO->wallet_id,
         );
 
         // Execute the SusuSchemeService and return the resource
-        $susu_scheme = $this->susuSchemeService->execute(
-            scheme_code: config(key: 'susubox.susu_schemes.goal_getter_susu_code')
+        $susuScheme = $this->susuSchemeService->execute(
+            schemeCode: config(key: 'susubox.susu_schemes.goal_getter_susu_code')
         );
 
         // Execute the FrequencyService and return the resource
         $frequency = $this->frequencyService->execute(
-            frequency_code: $dto->frequency
+            frequency_code: $requestDTO->frequency
         );
 
         // Execute the GoalGetterSusuCreateService and return the resource
-        $goal_getter_susu = $this->goalGetterSusuCreateService->execute(
+        $goalGetterSusu = $this->goalGetterSusuCreateService->execute(
             customer: $customer,
-            susu_scheme: $susu_scheme,
+            susuScheme: $susuScheme,
             frequency: $frequency,
-            wallet: $linked_wallet,
-            dto: $dto->toArray()
+            wallet: $wallet,
+            requestDTO: $requestDTO->toArray()
         );
 
         // Build and return the JsonResponse
@@ -89,7 +95,7 @@ final class GoalGetterSusuCreateAction
             message: 'Request successful.',
             description: 'The goal getter susu account is created successfully. Approval required.',
             data: new GoalGetterSusuResource(
-                resource: $goal_getter_susu->refresh()
+                resource: $goalGetterSusu->refresh()
             ),
         );
     }

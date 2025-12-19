@@ -45,11 +45,17 @@ final class TransactionCategory extends Model
         'code',
     ];
 
+    /**
+     * @return string
+     */
     public function getRouteKeyName(
     ): string {
         return 'resource_id';
     }
 
+    /**
+     * @return HasMany
+     */
     public function paymentInstructions(
     ): HasMany {
         return $this->hasMany(

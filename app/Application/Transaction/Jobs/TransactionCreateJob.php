@@ -16,7 +16,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Throwable;
 
 final class TransactionCreateJob implements ShouldQueue
 {
@@ -26,15 +25,22 @@ final class TransactionCreateJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    /**
+     * @param string $paymentInstructionResourceId
+     * @param TransactionCreateRequestDTO $requestDTO
+     */
     public function __construct(
         public readonly string $paymentInstructionResourceId,
-        public readonly TransactionCreateRequestDTO $requestDto,
+        public readonly TransactionCreateRequestDTO $requestDTO,
     ) {
         // ...
     }
 
     /**
-     * @throws Throwable
+     * @param PaymentInstructionByResourceIdService $paymentInstructionByResource
+     * @param TransactionCreateCreditService $transactionCreateCreditService
+     * @param TransactionCreateDebitService $transactionCreateDebitService
+     * @return void
      * @throws SystemFailureException
      */
     public function handle(
@@ -42,33 +48,33 @@ final class TransactionCreateJob implements ShouldQueue
         TransactionCreateCreditService $transactionCreateCreditService,
         TransactionCreateDebitService $transactionCreateDebitService,
     ): void {
-        // // Execute the PaymentInstructionByResourceIdService and return the resource
+        // Execute the PaymentInstructionByResourceIdService and return the resource
         $paymentInstruction = $paymentInstructionByResource->execute(
             $this->paymentInstructionResourceId
         );
 
-        // // Determine the transaction_type and execute and return the resource
+        // Determine the transaction_type and execute and return the resource
         $transaction = match ($paymentInstruction->transaction_type) {
             TransactionType::CREDIT->value => $transactionCreateCreditService->execute(
                 paymentInstruction: $paymentInstruction,
-                requestDto: $this->requestDto,
+                requestDTO: $this->requestDTO,
             ),
             TransactionType::DEBIT->value => $transactionCreateDebitService->execute(
                 paymentInstruction: $paymentInstruction,
-                requestDto: $this->requestDto
+                requestDTO: $this->requestDTO
             ),
         };
 
         // Dispatch the TransactionPostProcessJob
         TransactionPostProcessJob::dispatch(
             transactionResource: $transaction->resource_id,
-            isInitialDeposit: $this->requestDto->isInitialDeposit
+            isInitialDeposit: $this->requestDTO->isInitialDeposit
         );
 
         // Dispatch the TransactionNotificationJob
         TransactionNotificationJob::dispatch(
             transactionResource: $transaction->resource_id,
-            isInitialDeposit: $this->requestDto->isInitialDeposit
+            isInitialDeposit: $this->requestDTO->isInitialDeposit
         );
     }
 }

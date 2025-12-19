@@ -29,16 +29,25 @@ final class User extends Authenticatable implements JWTSubject
         'resource_id',
     ];
 
+    /**
+     * @return string
+     */
     public function getRouteKeyName(
     ): string {
         return 'resource_id';
     }
 
+    /**
+     * @return mixed
+     */
     public function getJWTIdentifier(
     ): mixed {
         return $this->getKey();
     }
 
+    /**
+     * @return array
+     */
     public function getJWTCustomClaims(
     ): array {
         return [];

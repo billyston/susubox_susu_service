@@ -15,9 +15,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 final class DailySusuIndexController extends Controller
 {
     /**
+     * @param Customer $customer
+     * @param DailySusuIndexAction $dailySusuIndexAction
+     * @return JsonResponse
+     * @throws SusuSchemeNotFoundException
      * @throws SystemFailureException
      * @throws UnauthorisedAccessException
-     * @throws SusuSchemeNotFoundException
      */
     public function __invoke(
         Customer $customer,

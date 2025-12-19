@@ -13,6 +13,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 final class SusuSchemesController extends Controller
 {
     /**
+     * @param Request $request
+     * @param SusuSchemesAction $susuSchemesAction
+     * @return JsonResponse
      * @throws SystemFailureException
      */
     public function __invoke(

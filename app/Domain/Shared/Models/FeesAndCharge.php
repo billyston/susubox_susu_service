@@ -55,11 +55,17 @@ final class FeesAndCharge extends Model
         'fee',
     ];
 
+    /**
+     * @return string
+     */
     public function getRouteKeyName(
     ): string {
         return 'resource_id';
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function susuScheme(
     ): BelongsTo {
         return $this->belongsTo(

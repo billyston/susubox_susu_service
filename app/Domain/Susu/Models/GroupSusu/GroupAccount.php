@@ -22,11 +22,17 @@ final class GroupAccount extends Model
         'susu_scheme_id',
     ];
 
+    /**
+     * @return string
+     */
     public function getRouteKeyName(
     ): string {
         return 'resource_id';
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function susuScheme(
     ): BelongsTo {
         return $this->belongsTo(
@@ -35,6 +41,9 @@ final class GroupAccount extends Model
         );
     }
 
+    /**
+     * @return MorphOne
+     */
     public function account(
     ): MorphOne {
         return $this->morphOne(
@@ -43,21 +52,33 @@ final class GroupAccount extends Model
         );
     }
 
+    /**
+     * @return MorphTo
+     */
     public function susuable(
     ): MorphTo {
         return $this->morphTo();
     }
 
+    /**
+     * @return NkabomNhyiraSusu|null
+     */
     public function nkabomNhyiraSusu(
     ): ?NkabomNhyiraSusu {
         return $this->susuable_type === NkabomNhyiraSusu::class ? $this->susuable : null;
     }
 
+    /**
+     * @return DwadieboaSusu|null
+     */
     public function dwadieboaSusu(
     ): ?DwadieboaSusu {
         return $this->susuable_type === DwadieboaSusu::class ? $this->susuable : null;
     }
 
+    /**
+     * @return CorporativeSusu|null
+     */
     public function corporativeSusu(
     ): ?CorporativeSusu {
         return $this->susuable_type === CorporativeSusu::class ? $this->susuable : null;

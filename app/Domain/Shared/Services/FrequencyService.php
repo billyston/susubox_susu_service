@@ -14,8 +14,10 @@ use Throwable;
 final class FrequencyService
 {
     /**
-     * @throws SystemFailureException
+     * @param string $frequency_code
+     * @return Frequency
      * @throws FrequencyNotFoundException
+     * @throws SystemFailureException
      */
     public function execute(
         string $frequency_code

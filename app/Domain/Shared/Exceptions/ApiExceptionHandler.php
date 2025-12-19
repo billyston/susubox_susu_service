@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Shared\Exceptions;
 
-use App\Domain\Customer\Exceptions\LinkedWalletNotFoundException;
+use App\Domain\Customer\Exceptions\WalletNotFoundException;
+use App\Domain\Transaction\Exceptions\InsufficientBalanceException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -33,16 +34,22 @@ final class ApiExceptionHandler extends ExceptionHandler
         'password_confirmation',
     ];
 
+    /**
+     * @param $request
+     * @param Throwable $e
+     * @return JsonResponse
+     */
     public function render(
         $request,
         Throwable $e
     ): JsonResponse {
         $exceptions = [
             UnauthorisedAccessException::class => [Response::HTTP_FORBIDDEN, 'Request forbidden.', 'You are forbidden to perform this action.'],
-            LinkedWalletNotFoundException::class => [Response::HTTP_NOT_FOUND, 'Resource not found.', 'The wallet was not found.'],
+            WalletNotFoundException::class => [Response::HTTP_NOT_FOUND, 'Resource not found.', 'The wallet was not found.'],
             CancellationNotAllowedException::class => [Response::HTTP_NOT_FOUND, 'Request unprocessable.', 'You are not allowed to perform this action.'],
             SusuSchemeNotFoundException::class => [Response::HTTP_NOT_FOUND, 'Resource not found.', 'The susu scheme was not found.'],
             FrequencyNotFoundException::class => [Response::HTTP_NOT_FOUND, 'Resource not found.', 'The frequency was not found.'],
+            InsufficientBalanceException::class => [Response::HTTP_PAYMENT_REQUIRED, 'Insufficient balance.', 'There is insufficient available balance to perform this action.'],
             ThrottleRequestsException::class => [Response::HTTP_TOO_MANY_REQUESTS, 'Too many requests.', 'You have made too many requests.'],
             ModelNotFoundException::class => [Response::HTTP_NOT_FOUND, 'Resource not found.', 'The requested resource does not exist.'],
             NotFoundHttpException::class => [Response::HTTP_NOT_FOUND, 'Endpoint not found.', 'The requested endpoint does not exist.'],
@@ -71,6 +78,9 @@ final class ApiExceptionHandler extends ExceptionHandler
         );
     }
 
+    /**
+     * @return void
+     */
     public function register(): void
     {
         $this->reportable(
@@ -82,6 +92,13 @@ final class ApiExceptionHandler extends ExceptionHandler
         );
     }
 
+    /**
+     * @param int $code
+     * @param string $message
+     * @param string $description
+     * @param array $errors
+     * @return JsonResponse
+     */
     private function formatErrorResponse(
         int $code,
         string $message,
@@ -101,38 +118,31 @@ final class ApiExceptionHandler extends ExceptionHandler
         );
     }
 
+    /**
+     * @param Throwable $e
+     * @return array
+     */
     private function extractErrorDetails(
         Throwable $e
     ): array {
-        if ($e instanceof ValidationException) {
-            return collect($e->errors())->flatten()->values()->all();
-        }
+        return match (true) {
+            $e instanceof ValidationException =>
+            collect($e->errors())->flatten()->values()->all(),
 
-        if ($e instanceof NotFoundHttpException && $e->getPrevious() instanceof ModelNotFoundException) {
-            return [$e->getPrevious()->getMessage()];
-        }
+            $e instanceof NotFoundHttpException
+            && $e->getPrevious() instanceof ModelNotFoundException =>
+            [$e->getPrevious()->getMessage()],
 
-        // Handle your custom exception
-        if ($e instanceof LinkedWalletNotFoundException) {
-            return [$e->getMessage()];
-        }
+            $e instanceof WalletNotFoundException,
+                $e instanceof SusuSchemeNotFoundException,
+                $e instanceof FrequencyNotFoundException,
+                $e instanceof UnauthorisedAccessException,
+                $e instanceof CancellationNotAllowedException,
+                $e instanceof InsufficientBalanceException =>
+            [$e->getMessage()],
 
-        if ($e instanceof SusuSchemeNotFoundException) {
-            return [$e->getMessage()];
-        }
-
-        if ($e instanceof FrequencyNotFoundException) {
-            return [$e->getMessage()];
-        }
-
-        if ($e instanceof UnauthorisedAccessException) {
-            return [$e->getMessage()];
-        }
-
-        if ($e instanceof CancellationNotAllowedException) {
-            return [$e->getMessage()];
-        }
-
-        return [$e->getMessage()];
+            default => [$e->getMessage()],
+        };
     }
+
 }

@@ -25,6 +25,9 @@ final class RateLimiter extends Model
         'expires_at',
     ];
 
+    /**
+     * @return string
+     */
     public function getRouteKeyName(
     ): string {
         return 'resource_id';

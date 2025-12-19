@@ -14,16 +14,18 @@ use Throwable;
 final class SusuSchemeService
 {
     /**
-     * @throws SystemFailureException
+     * @param string $schemeCode
+     * @return SusuScheme
      * @throws SusuSchemeNotFoundException
+     * @throws SystemFailureException
      */
     public function execute(
-        string $scheme_code
+        string $schemeCode
     ): SusuScheme {
         try {
             // Execute the DB transaction and return the Transaction
             return SusuScheme::query()->where([
-                ['code', '=', $scheme_code],
+                ['code', '=', $schemeCode],
                 ['status', '=', 'active'],
             ])->firstOrFail();
         } catch (
@@ -37,7 +39,7 @@ final class SusuSchemeService
         ) {
             // Log the full exception with context
             Log::error('Exception in SusuSchemeService', [
-                'scheme_code' => $scheme_code,
+                'scheme_code' => $schemeCode,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),

@@ -177,7 +177,7 @@ The SusuBox susu service API.
 - [ ] Handle TransactionCreatedFailureAction
 
 
-## Others
+## General
 - [ ] Move all jobs that publishes job into the services / shared folder
 - [ ] Do not hard code 'service_category' in approval DTOs
 - [ ] When payment_instruction is cancelled, approval_status->cancelled, status->terminated
@@ -186,3 +186,8 @@ The SusuBox susu service API.
 - [ ] Transaction notification (SMS / Email) should have balance updates
 - [ ] Rebuild all the Resource files (AccountBalanceResource as an example)
 - [ ] Provide descriptions for all api responses
+
+- [ ] Review all the exceptions and give proper messaging
+- [ ] Review all the response messages
+- [ ] All $variable, function and method names should follow CamelCase
+- [ ] All APIResource, ResponseDTO toArray and DB fields names must follow snake_case 

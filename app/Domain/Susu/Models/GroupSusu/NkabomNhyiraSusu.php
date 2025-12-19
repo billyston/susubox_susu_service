@@ -35,11 +35,17 @@ final class NkabomNhyiraSusu extends Model
         'extra_data',
     ];
 
+    /**
+     * @return string
+     */
     public function getRouteKeyName(
     ): string {
         return 'resource_id';
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function groupAccount(
     ): BelongsTo {
         return $this->belongsTo(
@@ -48,6 +54,9 @@ final class NkabomNhyiraSusu extends Model
         );
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function frequency(
     ): BelongsTo {
         return $this->belongsTo(
@@ -56,6 +65,9 @@ final class NkabomNhyiraSusu extends Model
         );
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function cycleDuration(
     ): BelongsTo {
         return $this->belongsTo(
@@ -64,6 +76,9 @@ final class NkabomNhyiraSusu extends Model
         );
     }
 
+    /**
+     * @return HasMany
+     */
     public function members(
     ): HasMany {
         return $this->hasMany(

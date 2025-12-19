@@ -15,6 +15,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 final class AccountBalanceController extends Controller
 {
     /**
+     * @param Customer $customer
+     * @param Account $account
+     * @param Request $request
+     * @param AccountBalanceAction $accountBalanceAction
+     * @return JsonResponse
      * @throws SystemFailureException
      */
     public function __invoke(

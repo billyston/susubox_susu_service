@@ -16,6 +16,9 @@ final class SusuSchemesAction
 {
     private SusuSchemesService $susuSchemesService;
 
+    /**
+     * @param SusuSchemesService $susuSchemesService
+     */
     public function __construct(
         SusuSchemesService $susuSchemesService
     ) {
@@ -28,7 +31,8 @@ final class SusuSchemesAction
     public function execute(
         Request $request,
     ): JsonResponse {
-        $linked_wallets = $this->susuSchemesService->execute();
+        // Execute the SusuSchemesService and return the Collection
+        $susuSchemes = $this->susuSchemesService->execute();
 
         // Build and return the JsonResponse
         return ApiResponseBuilder::success(
@@ -36,7 +40,7 @@ final class SusuSchemesAction
             message: 'Request successful',
             description: '',
             data: SusuSchemeResource::collection(
-                resource: $linked_wallets,
+                resource: $susuSchemes,
             ),
         );
     }

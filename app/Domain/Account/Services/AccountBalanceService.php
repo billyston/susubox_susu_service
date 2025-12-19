@@ -13,6 +13,8 @@ use Throwable;
 final class AccountBalanceService
 {
     /**
+     * @param Account $account
+     * @return AccountBalance
      * @throws SystemFailureException
      */
     public static function execute(

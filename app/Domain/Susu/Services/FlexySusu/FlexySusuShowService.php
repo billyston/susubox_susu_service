@@ -15,6 +15,9 @@ use Throwable;
 final class FlexySusuShowService
 {
     /**
+     * @param Customer $customer
+     * @param Account $account
+     * @return FlexySusu
      * @throws SystemFailureException
      * @throws UnauthorisedAccessException
      */

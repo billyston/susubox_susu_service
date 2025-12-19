@@ -18,6 +18,9 @@ final class BizSusuShowAction
 {
     private BizSusuShowService $bizSusuShowService;
 
+    /**
+     * @param BizSusuShowService $bizSusuShowService
+     */
     public function __construct(
         BizSusuShowService $bizSusuShowService
     ) {
@@ -25,17 +28,20 @@ final class BizSusuShowAction
     }
 
     /**
+     * @param Customer $customer
+     * @param BizSusu $bizSusu
+     * @return JsonResponse
      * @throws SystemFailureException
      * @throws UnauthorisedAccessException
      */
     public function execute(
         Customer $customer,
-        BizSusu $biz_susu,
+        BizSusu $bizSusu,
     ): JsonResponse {
         // Execute the BizSusuShowService and return the resource
-        $biz_susu = $this->bizSusuShowService->execute(
+        $bizSusu = $this->bizSusuShowService->execute(
             customer: $customer,
-            biz_susu: $biz_susu
+            bizSusu: $bizSusu
         );
 
         // Build and return the JsonResponse
@@ -43,7 +49,7 @@ final class BizSusuShowAction
             code: Response::HTTP_OK,
             message: 'Request successful.',
             data: new BizSusuResource(
-                resource: $biz_susu
+                resource: $bizSusu
             ),
         );
     }

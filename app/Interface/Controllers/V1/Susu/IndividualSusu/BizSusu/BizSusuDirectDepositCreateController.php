@@ -22,9 +22,9 @@ final class BizSusuDirectDepositCreateController extends Controller
      * @param BizSusuDirectDepositCreateRequest $bizSusuDirectDepositCreateRequest
      * @param BizSusuDirectDepositCreateAction $bizSusuDirectDepositCreateAction
      * @return JsonResponse
+     * @throws MoneyMismatchException
      * @throws SystemFailureException
      * @throws UnknownCurrencyException
-     * @throws MoneyMismatchException
      */
     public function __invoke(
         Customer $customer,

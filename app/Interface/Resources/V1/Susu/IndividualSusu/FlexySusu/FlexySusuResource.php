@@ -11,6 +11,10 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 final class FlexySusuResource extends JsonResource
 {
+    /**
+     * @param Request $request
+     * @return array
+     */
     public function toArray(
         Request $request
     ): array {
@@ -18,10 +22,10 @@ final class FlexySusuResource extends JsonResource
         return [
             // Resource type and id
             'type' => 'FlexySusu',
-            'resource_id' => $this->resource->resource_id,
 
             // Resource exposed attributes
             'attributes' => [
+                'resource_id' => $this->resource->resource_id,
                 'is_collateralized' => $this->resource->is_collateralized,
                 'withdrawal_status' => $this->resource->withdrawal_status,
             ],

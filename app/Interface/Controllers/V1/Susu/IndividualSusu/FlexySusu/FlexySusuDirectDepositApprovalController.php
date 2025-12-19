@@ -16,6 +16,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 final class FlexySusuDirectDepositApprovalController extends Controller
 {
     /**
+     * @param Customer $customer
+     * @param FlexySusu $flexySusu
+     * @param PaymentInstruction $paymentInstruction
+     * @param FlexySusuDirectDepositApprovalRequest $flexySusuDirectDepositApprovalRequest
+     * @param FlexySusuDirectDepositApprovalAction $flexySusuDirectDepositApprovalAction
+     * @return JsonResponse
      * @throws SystemFailureException
      */
     public function __invoke(

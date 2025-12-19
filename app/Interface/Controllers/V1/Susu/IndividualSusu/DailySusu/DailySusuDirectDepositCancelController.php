@@ -16,6 +16,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 final class DailySusuDirectDepositCancelController extends Controller
 {
     /**
+     * @param Customer $customer
+     * @param DailySusu $dailySusu
+     * @param PaymentInstruction $paymentInstruction
+     * @param DailySusuDirectDepositCancelRequest $dailySusuDirectDepositCancelRequest
+     * @param DailySusuDirectDepositCancelAction $dailySusuDirectDepositCancelAction
+     * @return JsonResponse
      * @throws SystemFailureException
      */
     public function __invoke(

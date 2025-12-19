@@ -8,11 +8,17 @@ use Illuminate\Foundation\Http\FormRequest;
 
 final class GoalGetterSusuApprovalRequest extends FormRequest
 {
+    /**
+     * @return bool
+     */
     public function authorize(
     ): bool {
         return true;
     }
 
+    /**
+     * @return array[]
+     */
     public function rules(
     ): array {
         return [
@@ -28,6 +34,9 @@ final class GoalGetterSusuApprovalRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return string[]
+     */
     public function messages(
     ): array {
         return [

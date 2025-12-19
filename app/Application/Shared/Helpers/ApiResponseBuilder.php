@@ -8,6 +8,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class ApiResponseBuilder
 {
+    /**
+     * @param bool $status
+     * @param int $code
+     * @param string $message
+     * @param string|null $description
+     * @return JsonResponse
+     */
     public static function ping(
         bool $status,
         int $code,
@@ -23,6 +30,13 @@ final class ApiResponseBuilder
         ]);
     }
 
+    /**
+     * @param int $code
+     * @param string|null $message
+     * @param string|null $description
+     * @param mixed|null $data
+     * @return JsonResponse
+     */
     public static function success(
         int $code,
         string $message = null,
@@ -54,6 +68,12 @@ final class ApiResponseBuilder
         return response()->json($response);
     }
 
+    /**
+     * @param int $code
+     * @param string $message
+     * @param string|null $description
+     * @return JsonResponse
+     */
     public static function error(
         int $code,
         string $message,
@@ -68,6 +88,14 @@ final class ApiResponseBuilder
         ]);
     }
 
+    /**
+     * @param bool $status
+     * @param int $code
+     * @param string $message
+     * @param string|null $description
+     * @param mixed|null $data
+     * @return JsonResponse
+     */
     public static function paginated(
         bool $status,
         int $code,
@@ -86,6 +114,14 @@ final class ApiResponseBuilder
         ]);
     }
 
+    /**
+     * @param bool $status
+     * @param int $code
+     * @param string $message
+     * @param string|null $description
+     * @param mixed|null $data
+     * @return JsonResponse
+     */
     public static function collection(
         bool $status,
         int $code,
@@ -104,6 +140,14 @@ final class ApiResponseBuilder
         ]);
     }
 
+    /**
+     * @param bool $status
+     * @param int $code
+     * @param string $message
+     * @param string|null $description
+     * @param mixed|null $error
+     * @return JsonResponse
+     */
     public static function unprocessable(
         bool $status,
         int $code,
@@ -121,6 +165,14 @@ final class ApiResponseBuilder
         ]);
     }
 
+    /**
+     * @param bool $status
+     * @param int $code
+     * @param string $message
+     * @param mixed|null $token
+     * @param mixed|null $user
+     * @return JsonResponse
+     */
     public static function token(
         bool $status,
         int $code,

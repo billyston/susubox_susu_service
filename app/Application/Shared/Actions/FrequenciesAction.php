@@ -16,6 +16,9 @@ final class FrequenciesAction
 {
     private FrequenciesService $frequenciesService;
 
+    /**
+     * @param FrequenciesService $frequenciesService
+     */
     public function __construct(
         FrequenciesService $frequenciesService
     ) {
@@ -23,12 +26,15 @@ final class FrequenciesAction
     }
 
     /**
+     * @param Request $request
+     * @return JsonResponse
      * @throws SystemFailureException
      */
     public function execute(
         Request $request,
     ): JsonResponse {
-        $linked_wallets = $this->frequenciesService->execute();
+        // Execute the FrequenciesService and return the Collection
+        $frequencies = $this->frequenciesService->execute();
 
         // Build and return the JsonResponse
         return ApiResponseBuilder::success(
@@ -36,7 +42,7 @@ final class FrequenciesAction
             message: 'Request successful',
             description: '',
             data: FrequencyResource::collection(
-                resource: $linked_wallets,
+                resource: $frequencies,
             ),
         );
     }

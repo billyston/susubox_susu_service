@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\FlexySusu;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Susu\DTOs\FlexySusu\FlexySusuCreateDTO;
-use App\Domain\Customer\Exceptions\LinkedWalletNotFoundException;
+use App\Application\Susu\DTOs\FlexySusu\FlexySusuCreateRequestDTO;
+use App\Domain\Customer\Exceptions\WalletNotFoundException;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Services\CustomerWalletService;
 use App\Domain\Shared\Exceptions\SusuSchemeNotFoundException;
@@ -24,6 +24,11 @@ final class FlexySusuCreateAction
     private SusuSchemeService $susuSchemeService;
     private FlexySusuCreateService $flexySusuCreateService;
 
+    /**
+     * @param CustomerWalletService $customerLinkedWalletService
+     * @param SusuSchemeService $susuSchemeService
+     * @param FlexySusuCreateService $flexySusuCreateService
+     */
     public function __construct(
         CustomerWalletService $customerLinkedWalletService,
         SusuSchemeService $susuSchemeService,
@@ -38,7 +43,7 @@ final class FlexySusuCreateAction
      * @param Customer $customer
      * @param array $request
      * @return JsonResponse
-     * @throws LinkedWalletNotFoundException
+     * @throws WalletNotFoundException
      * @throws SusuSchemeNotFoundException
      * @throws SystemFailureException
      * @throws UnknownCurrencyException
@@ -47,28 +52,28 @@ final class FlexySusuCreateAction
         Customer $customer,
         array $request
     ): JsonResponse {
-        // Build the FlexySusuCreateDTO and return the DTO
-        $dto = FlexySusuCreateDTO::fromArray(
+        // Build the FlexySusuCreateRequestDTO and return the DTO
+        $requestDTO = FlexySusuCreateRequestDTO::fromPayload(
             payload: $request
         );
 
         // Execute the CustomerWalletService and return the resource
-        $linked_wallet = $this->customerLinkedWalletService->execute(
+        $wallet = $this->customerLinkedWalletService->execute(
             customer: $customer,
-            wallet_resource_id: $dto->wallet_id,
+            walletResourceID: $requestDTO->walletResourceID,
         );
 
         // Execute the SusuSchemeService and return the resource
-        $susu_scheme = $this->susuSchemeService->execute(
-            scheme_code: config(key: 'susubox.susu_schemes.flexy_susu_code')
+        $susuScheme = $this->susuSchemeService->execute(
+            schemeCode: config(key: 'susubox.susu_schemes.flexy_susu_code')
         );
 
         // Execute the FlexySusuCreateService and return the resource
-        $flexy_susu = $this->flexySusuCreateService->execute(
+        $flexySusu = $this->flexySusuCreateService->execute(
             customer: $customer,
-            susu_scheme: $susu_scheme,
-            wallet: $linked_wallet,
-            dto: $dto->toArray()
+            susuScheme: $susuScheme,
+            wallet: $wallet,
+            requestDTO: $requestDTO->toArray()
         );
 
         // Build and return the JsonResponse
@@ -77,7 +82,7 @@ final class FlexySusuCreateAction
             message: 'Request successful.',
             description: 'The flexy susu account is created successfully. Approval required.',
             data: new FlexySusuResource(
-                resource: $flexy_susu->refresh()
+                resource: $flexySusu->refresh()
             ),
         );
     }

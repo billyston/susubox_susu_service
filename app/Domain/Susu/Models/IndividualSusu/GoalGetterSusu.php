@@ -92,11 +92,17 @@ final class GoalGetterSusu extends Model
         'extra_data',
     ];
 
+    /**
+     * @return string
+     */
     public function getRouteKeyName(
     ): string {
         return 'resource_id';
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function individual(
     ): BelongsTo {
         return $this->belongsTo(
@@ -105,6 +111,9 @@ final class GoalGetterSusu extends Model
         );
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function customer(
     ): BelongsTo {
         return $this->belongsTo(
@@ -113,6 +122,9 @@ final class GoalGetterSusu extends Model
         );
     }
 
+    /**
+     * @return HasOneThrough
+     */
     public function account(
     ): HasOneThrough {
         return $this->hasOneThrough(
@@ -128,6 +140,9 @@ final class GoalGetterSusu extends Model
         );
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function wallet(
     ): BelongsTo {
         return $this->belongsTo(
@@ -136,6 +151,9 @@ final class GoalGetterSusu extends Model
         );
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function frequency(
     ): BelongsTo {
         return $this->belongsTo(
@@ -144,6 +162,9 @@ final class GoalGetterSusu extends Model
         );
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function duration(
     ): BelongsTo {
         return $this->belongsTo(

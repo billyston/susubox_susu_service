@@ -26,6 +26,10 @@ final class TransactionPostProcessJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    /**
+     * @param string $transactionResource
+     * @param bool $isInitialDeposit
+     */
     public function __construct(
         public readonly string $transactionResource,
         public readonly bool $isInitialDeposit,
@@ -34,8 +38,12 @@ final class TransactionPostProcessJob implements ShouldQueue
     }
 
     /**
-     * @throws Throwable
+     * @param TransactionByResourceIdService $transactionByResourceIdService
+     * @param TransactionCreatedSuccessAction $transactionCreatedSuccessAction
+     * @param TransactionCreatedFailureAction $transactionCreatedFailureAction
+     * @return void
      * @throws SystemFailureException
+     * @throws Throwable
      */
     public function handle(
         TransactionByResourceIdService $transactionByResourceIdService,
@@ -44,11 +52,11 @@ final class TransactionPostProcessJob implements ShouldQueue
     ): void {
         // Execute the TransactionByResourceIdService and return the resource
         $transaction = $transactionByResourceIdService->execute(
-            resource_id: $this->transactionResource,
+            resourceID: $this->transactionResource,
         );
 
         // Build the TransactionCreateResponseDTO
-        $responseDto = TransactionCreateResponseDTO::fromDomain(
+        $responseDTO = TransactionCreateResponseDTO::fromDomain(
             transaction: $transaction,
             isInitialDeposit: $this->isInitialDeposit
         );
@@ -57,11 +65,11 @@ final class TransactionPostProcessJob implements ShouldQueue
         match ($transaction->status) {
             Statuses::SUCCESS->value => $transactionCreatedSuccessAction->execute(
                 transaction: $transaction,
-                responseDto: $responseDto->toArray()
+                responseDTO: $responseDTO->toArray()
             ),
             Statuses::FAILED->value => $transactionCreatedFailureAction->execute(
                 transaction: $transaction,
-                responseDto: $responseDto->toArray()
+                responseDTO: $responseDTO->toArray()
             ),
         };
     }

@@ -60,11 +60,17 @@ final class IndividualAccount extends Model
         'susu_scheme_id',
     ];
 
+    /**
+     * @return string
+     */
     public function getRouteKeyName(
     ): string {
         return 'resource_id';
     }
 
+    /**
+     * @return MorphOne
+     */
     public function account(
     ): MorphOne {
         return $this->morphOne(
@@ -73,6 +79,9 @@ final class IndividualAccount extends Model
         );
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function customer(
     ): BelongsTo {
         return $this->belongsTo(
@@ -81,6 +90,9 @@ final class IndividualAccount extends Model
         );
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function susuScheme(
     ): BelongsTo {
         return $this->belongsTo(
@@ -89,6 +101,9 @@ final class IndividualAccount extends Model
         );
     }
 
+    /**
+     * @return HasOne
+     */
     public function dailySusu(
     ): HasOne {
         return $this->hasOne(
@@ -97,6 +112,9 @@ final class IndividualAccount extends Model
         );
     }
 
+    /**
+     * @return HasOne
+     */
     public function bizSusu(
     ): HasOne {
         return $this->hasOne(
@@ -105,6 +123,9 @@ final class IndividualAccount extends Model
         );
     }
 
+    /**
+     * @return HasOne
+     */
     public function goalGetterSusu(
     ): HasOne {
         return $this->hasOne(
@@ -113,6 +134,9 @@ final class IndividualAccount extends Model
         );
     }
 
+    /**
+     * @return HasOne
+     */
     public function flexySusu(
     ): HasOne {
         return $this->hasOne(
@@ -121,6 +145,9 @@ final class IndividualAccount extends Model
         );
     }
 
+    /**
+     * @return HasOne
+     */
     public function driveToOwnSusu(
     ): HasOne {
         return $this->hasOne(
@@ -129,8 +156,11 @@ final class IndividualAccount extends Model
         );
     }
 
+    /**
+     * @return BizSusu|DailySusu|DriveToOwnSusu|FlexySusu|GoalGetterSusu|mixed|null
+     */
     public function susu(
-    ) {
+    ): mixed {
         return $this->dailySusu
             ?? $this->bizSusu
             ?? $this->goalGetterSusu

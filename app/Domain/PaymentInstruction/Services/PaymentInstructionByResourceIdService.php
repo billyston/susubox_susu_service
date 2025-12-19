@@ -13,32 +13,34 @@ use Throwable;
 final class PaymentInstructionByResourceIdService
 {
     /**
+     * @param string $resourceID
+     * @return PaymentInstruction
      * @throws SystemFailureException
      */
     public static function execute(
-        string $resource_id,
+        string $resourceID,
     ): PaymentInstruction {
         try {
             // Run the query inside a database transaction
-            $payment_instruction = DB::transaction(
+            $paymentInstruction = DB::transaction(
                 fn () => PaymentInstruction::query()
-                    ->where('resource_id', $resource_id)
+                    ->where('resource_id', $resourceID)
                     ->first()
             );
 
             // Throw exception if no record is found
-            if (! $payment_instruction) {
-                throw new SystemFailureException("There is no payment instruction record found for resource id: {$resource_id}.");
+            if (! $paymentInstruction) {
+                throw new SystemFailureException("There is no payment instruction record found for resource id: {$resourceID}.");
             }
 
             // Return the record if found
-            return $payment_instruction;
+            return $paymentInstruction;
         } catch (
             Throwable $throwable
         ) {
             // Log the full exception with context
             Log::error('Exception in PaymentInstructionByResourceIdService', [
-                'resource_id' => $resource_id,
+                'resource_id' => $resourceID,
                 'error_message' => $throwable->getMessage(),
                 'file' => $throwable->getFile(),
                 'line' => $throwable->getLine(),

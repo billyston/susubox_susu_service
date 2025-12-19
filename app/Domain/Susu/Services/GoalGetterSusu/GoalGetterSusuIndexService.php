@@ -18,20 +18,23 @@ use Throwable;
 final class GoalGetterSusuIndexService
 {
     /**
+     * @param Customer $customer
+     * @param SusuScheme $susuScheme
+     * @return Collection
      * @throws SystemFailureException
      * @throws UnauthorisedAccessException
      */
     public static function execute(
         Customer $customer,
-        SusuScheme $susu_scheme,
+        SusuScheme $susuScheme,
     ): Collection {
         try {
             return DB::transaction(function () use (
                 $customer,
-                $susu_scheme
+                $susuScheme
             ) {
                 // Ensure this is specifically a Daily Susu scheme
-                if ($susu_scheme->code !== config(key: 'susubox.susu_schemes.goal_getter_susu_code')) {
+                if ($susuScheme->code !== config(key: 'susubox.susu_schemes.goal_getter_susu_code')) {
                     throw new UnauthorisedAccessException(
                         message: 'The provided scheme is not a Goal Getter Susu scheme.'
                     );
@@ -39,7 +42,7 @@ final class GoalGetterSusuIndexService
 
                 // Fetch all daily susu accounts for the customer
                 $accounts = Account::query()->where('customer_id', $customer->id)
-                    ->where('susu_scheme_id', $susu_scheme->id)
+                    ->where('susu_scheme_id', $susuScheme->id)
                     ->with('goal')
                     ->orderBy('created_at', 'desc')
                     ->get();
@@ -63,7 +66,7 @@ final class GoalGetterSusuIndexService
             // Log the full exception with context
             Log::error('Exception in DailySusuIndexService', [
                 'customer' => $customer,
-                'susu_scheme' => $susu_scheme,
+                'susu_scheme' => $susuScheme,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),

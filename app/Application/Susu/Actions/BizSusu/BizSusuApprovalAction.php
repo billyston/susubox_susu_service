@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\BizSusu;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Transaction\DTOs\RecurringDebitApprovalResponseDTO;
+use App\Application\Transaction\DTOs\RecurringDepositApprovalResponseDTO;
 use App\Application\Transaction\ValueObject\RecurringDepositValueObject;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\PaymentInstruction\Services\PaymentInstructionCreateService;
@@ -14,7 +14,7 @@ use App\Domain\Susu\Models\IndividualSusu\BizSusu;
 use App\Domain\Transaction\Enums\TransactionCategoryCode;
 use App\Domain\Transaction\Services\TransactionCategoryByCodeService;
 use App\Interface\Resources\V1\Susu\IndividualSusu\BizSusu\BizSusuResource;
-use App\Services\SusuBox\Http\Requests\RecurringDebitApprovalRequestHandler;
+use App\Services\SusuBox\Http\Requests\RecurringDepositApprovalRequestHandler;
 use Brick\Money\Exception\MoneyMismatchException;
 use Brick\Money\Exception\UnknownCurrencyException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,12 +24,17 @@ final class BizSusuApprovalAction
 {
     private PaymentInstructionCreateService $paymentInstructionCreateService;
     private TransactionCategoryByCodeService $transactionCategoryByCodeGetService;
-    private RecurringDebitApprovalRequestHandler $dispatcher;
+    private RecurringDepositApprovalRequestHandler $dispatcher;
 
+    /**
+     * @param PaymentInstructionCreateService $paymentInstructionCreateService
+     * @param TransactionCategoryByCodeService $transactionCategoryByCodeGetService
+     * @param RecurringDepositApprovalRequestHandler $dispatcher
+     */
     public function __construct(
         PaymentInstructionCreateService $paymentInstructionCreateService,
         TransactionCategoryByCodeService $transactionCategoryByCodeGetService,
-        RecurringDebitApprovalRequestHandler $dispatcher
+        RecurringDepositApprovalRequestHandler $dispatcher
     ) {
         $this->paymentInstructionCreateService = $paymentInstructionCreateService;
         $this->transactionCategoryByCodeGetService = $transactionCategoryByCodeGetService;
@@ -55,26 +60,26 @@ final class BizSusuApprovalAction
 
         // Build the RecurringDepositValueObject
         $debitValues = RecurringDepositValueObject::create(
-            initial_deposit: $bizSusu->initial_deposit,
-            susu_amount: $bizSusu->susu_amount,
-            start_date: $bizSusu->start_date,
-            end_date: $bizSusu->end_date,
+            initialDeposit: $bizSusu->initial_deposit,
+            susuAmount: $bizSusu->susu_amount,
+            startDate: $bizSusu->start_date,
+            endDate: $bizSusu->end_date,
             frequency: $bizSusu->frequency->code,
-            rollover_enabled: $bizSusu->rollover_enabled
+            rolloverEnabled: $bizSusu->rollover_enabled
         );
 
         // Execute the PaymentInstructionCreateService and return the payment instruction resource
         $paymentInstruction = $this->paymentInstructionCreateService->execute(
-            transaction_category: $transactionCategory,
+            transactionCategory: $transactionCategory,
             account: $bizSusu->account,
             wallet: $bizSusu->wallet,
             customer: $customer,
             data: $debitValues->toArray()
         );
 
-        // Build the RecurringDebitApprovalResponseDTO
-        $response_dto = RecurringDebitApprovalResponseDTO::fromDomain(
-            payment_instruction: $paymentInstruction,
+        // Build the RecurringDepositApprovalResponseDTO
+        $response_dto = RecurringDepositApprovalResponseDTO::fromDomain(
+            paymentInstruction: $paymentInstruction,
         );
 
         // Dispatch to SusuBox Service (Payment Service)

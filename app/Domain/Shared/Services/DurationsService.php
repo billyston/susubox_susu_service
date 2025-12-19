@@ -14,6 +14,7 @@ use Throwable;
 final class DurationsService
 {
     /**
+     * @return Collection
      * @throws SystemFailureException
      */
     public function execute(

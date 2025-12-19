@@ -20,6 +20,10 @@ final class GoalGetterSusuIndexAction
     private GoalGetterSusuIndexService $goalGetterSusuIndexService;
     private SusuSchemeService $susuSchemeService;
 
+    /**
+     * @param GoalGetterSusuIndexService $goalGetterSusuIndexService
+     * @param SusuSchemeService $susuSchemeService
+     */
     public function __construct(
         GoalGetterSusuIndexService $goalGetterSusuIndexService,
         SusuSchemeService $susuSchemeService
@@ -29,22 +33,24 @@ final class GoalGetterSusuIndexAction
     }
 
     /**
+     * @param Customer $customer
+     * @return JsonResponse
+     * @throws SusuSchemeNotFoundException
      * @throws SystemFailureException
      * @throws UnauthorisedAccessException
-     * @throws SusuSchemeNotFoundException
      */
     public function execute(
         Customer $customer,
     ): JsonResponse {
         // Execute the SusuSchemeService and return the resource
-        $susu_scheme = $this->susuSchemeService->execute(
-            scheme_code: config(key: 'susubox.susu_schemes.goal_getter_susu_code')
+        $susuScheme = $this->susuSchemeService->execute(
+            schemeCode: config(key: 'susubox.susu_schemes.goal_getter_susu_code')
         );
 
         // Execute the GoalGetterSusuIndexService and return the resource
-        $goal_getter_susus = $this->goalGetterSusuIndexService->execute(
+        $goalGetterSusus = $this->goalGetterSusuIndexService->execute(
             customer: $customer,
-            susu_scheme: $susu_scheme
+            susuScheme: $susuScheme
         );
 
         // Build and return the JsonResponse
@@ -52,7 +58,7 @@ final class GoalGetterSusuIndexAction
             code: Response::HTTP_OK,
             message: 'Request successful.',
             data: GoalGetterSusuCollectionResource::collection(
-                resource: $goal_getter_susus
+                resource: $goalGetterSusus
             ),
         );
     }

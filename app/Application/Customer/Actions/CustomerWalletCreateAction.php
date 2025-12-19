@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Customer\Actions;
 
-use App\Application\Customer\DTOs\CustomerWalletDTO;
+use App\Application\Customer\DTOs\CustomerWalletCreateRequestDTO;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Services\CustomerWalletCreateService;
@@ -32,14 +32,14 @@ final class CustomerWalletCreateAction
         Request $request,
     ): JsonResponse {
         // Build the CustomerWalletDTO
-        $dto = CustomerWalletDTO::fromArray(
+        $requestDTO = CustomerWalletCreateRequestDTO::fromPayload(
             payload: $request->all()
         );
 
         // Execute the CustomerWalletCreateService
         $wallet = $this->customerWalletCreateService->execute(
             customer: $customer,
-            data: $dto,
+            requestDTO: $requestDTO,
         );
 
         // Build and return the JsonResponse

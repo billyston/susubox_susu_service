@@ -70,11 +70,17 @@ final class FlexySusu extends Model
         'extra_data',
     ];
 
+    /**
+     * @return string
+     */
     public function getRouteKeyName(
     ): string {
         return 'resource_id';
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function individual(
     ): BelongsTo {
         return $this->belongsTo(
@@ -83,6 +89,9 @@ final class FlexySusu extends Model
         );
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function customer(
     ): BelongsTo {
         return $this->belongsTo(
@@ -91,6 +100,9 @@ final class FlexySusu extends Model
         );
     }
 
+    /**
+     * @return HasOneThrough
+     */
     public function account(
     ): HasOneThrough {
         return $this->hasOneThrough(
@@ -106,6 +118,9 @@ final class FlexySusu extends Model
         );
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function wallet(
     ): BelongsTo {
         return $this->belongsTo(

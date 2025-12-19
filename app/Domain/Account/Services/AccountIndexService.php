@@ -13,6 +13,8 @@ use Throwable;
 final class AccountIndexService
 {
     /**
+     * @param Customer $customer
+     * @return Collection
      * @throws SystemFailureException
      */
     public static function execute(

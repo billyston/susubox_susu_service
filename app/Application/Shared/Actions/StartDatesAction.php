@@ -16,6 +16,9 @@ final class StartDatesAction
 {
     private StartDatesService $startDatesService;
 
+    /**
+     * @param StartDatesService $startDatesService
+     */
     public function __construct(
         StartDatesService $startDatesService
     ) {
@@ -23,12 +26,15 @@ final class StartDatesAction
     }
 
     /**
+     * @param Request $request
+     * @return JsonResponse
      * @throws SystemFailureException
      */
     public function execute(
         Request $request,
     ): JsonResponse {
-        $linked_wallets = $this->startDatesService->execute();
+        // Execute the StartDatesService and return the Collection
+        $startDates = $this->startDatesService->execute();
 
         // Build and return the JsonResponse
         return ApiResponseBuilder::success(
@@ -36,7 +42,7 @@ final class StartDatesAction
             message: 'Request successful',
             description: '',
             data: StartDateResource::collection(
-                resource: $linked_wallets,
+                resource: $startDates,
             ),
         );
     }

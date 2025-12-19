@@ -14,6 +14,10 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 final class GoalGetterSusuCollectionResource extends JsonResource
 {
+    /**
+     * @param Request $request
+     * @return array
+     */
     public function toArray(
         Request $request
     ): array {

@@ -15,9 +15,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 final class FlexySusuIndexController extends Controller
 {
     /**
+     * @param Customer $customer
+     * @param FlexySusuIndexAction $flexySusuIndexAction
+     * @return JsonResponse
+     * @throws SusuSchemeNotFoundException
      * @throws SystemFailureException
      * @throws UnauthorisedAccessException
-     * @throws SusuSchemeNotFoundException
      */
     public function __invoke(
         Customer $customer,

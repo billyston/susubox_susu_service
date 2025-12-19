@@ -13,6 +13,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 final class FrequenciesController extends Controller
 {
     /**
+     * @param Request $request
+     * @param FrequenciesAction $frequenciesAction
+     * @return JsonResponse
      * @throws SystemFailureException
      */
     public function __invoke(

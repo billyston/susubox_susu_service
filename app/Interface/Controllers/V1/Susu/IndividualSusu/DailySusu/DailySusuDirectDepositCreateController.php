@@ -17,9 +17,14 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 final class DailySusuDirectDepositCreateController extends Controller
 {
     /**
+     * @param Customer $customer
+     * @param DailySusu $dailySusu
+     * @param DailySusuDirectDepositCreateRequest $dailySusuDirectDepositCreateRequest
+     * @param DailySusuDirectDepositCreateAction $dailySusuDirectDepositCreateAction
+     * @return JsonResponse
+     * @throws MoneyMismatchException
      * @throws SystemFailureException
      * @throws UnknownCurrencyException
-     * @throws MoneyMismatchException
      */
     public function __invoke(
         Customer $customer,

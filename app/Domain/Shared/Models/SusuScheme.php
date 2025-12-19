@@ -56,11 +56,17 @@ final class SusuScheme extends Model
         'status',
     ];
 
+    /**
+     * @return string
+     */
     public function getRouteKeyName(
     ): string {
         return 'resource_id';
     }
 
+    /**
+     * @return HasOne
+     */
     public function feesAndCharges(
     ): HasOne {
         return $this->hasOne(
@@ -69,6 +75,9 @@ final class SusuScheme extends Model
         );
     }
 
+    /**
+     * @return HasMany
+     */
     public function accounts(
     ): HasMany {
         return $this->hasMany(

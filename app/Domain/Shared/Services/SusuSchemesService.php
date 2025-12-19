@@ -15,6 +15,7 @@ use Throwable;
 final class SusuSchemesService
 {
     /**
+     * @return Collection
      * @throws SystemFailureException
      */
     public function execute(
