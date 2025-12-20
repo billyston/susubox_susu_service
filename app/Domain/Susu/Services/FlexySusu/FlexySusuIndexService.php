@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Domain\Susu\Services\FlexySusu;
 
-use App\Domain\Account\Models\Account;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
 use App\Domain\Shared\Models\SusuScheme;
+use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -40,17 +40,14 @@ final class FlexySusuIndexService
                     );
                 }
 
-                // Fetch all daily susu accounts for the customer
-                $accounts = Account::query()->where('customer_id', $customer->id)
-                    ->where('susu_scheme_id', $susuScheme->id)
-                    ->with('flexy')
-                    ->orderBy('created_at', 'desc')
+                // Fetch all flexy susu accounts for the customer
+                return FlexySusu::query()
+                    ->whereHas('individual', function ($query) use ($customer, $susuScheme) {
+                        $query
+                            ->where('customer_id', $customer->id)
+                            ->where('susu_scheme_id', $susuScheme->id);
+                    })
                     ->get();
-
-                // Map to only return the related FlexySusu models
-                return $accounts->map(function ($account) {
-                    return $account->flexy;
-                })->filter();
             });
         } catch (
             UnauthorisedAccessException $unauthorisedAccessException
@@ -76,7 +73,7 @@ final class FlexySusuIndexService
 
             // Throw the SystemFailureException
             throw new SystemFailureException(
-                message: 'A system failure occurred while fetching the flexy susu accounts.'
+                message: 'There was a system failure while trying to fetch the flexy susu accounts.',
             );
         }
     }

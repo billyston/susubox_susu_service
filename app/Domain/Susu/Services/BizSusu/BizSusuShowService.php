@@ -25,18 +25,17 @@ final class BizSusuShowService
         BizSusu $bizSusu,
     ): BizSusu {
         try {
-            // Ensure account belongs to this customer
-            if ($bizSusu->account->customer_id !== $customer->id) {
-                throw new UnauthorisedAccessException;
-            }
+            return match (true) {
+                $bizSusu->individual->customer_id !== $customer->id => throw new UnauthorisedAccessException(
+                    message: 'You are not authorized to access this susu account.'
+                ),
+                $bizSusu->individual->susuScheme->code !== config('susubox.susu_schemes.biz_susu_code') => throw new UnauthorisedAccessException(
+                    message: 'You are not authorized to access this susu account.'
+                ),
 
-            // Ensure the account is for a Daily Susu scheme
-            if ($bizSusu->account->scheme->code !== config(key: 'susubox.susu_schemes.biz_susu_code')) {
-                throw new UnauthorisedAccessException;
-            }
-
-            // Return the BizSusu resource
-            return $bizSusu->account->biz;
+                // Return the BizSusu resource
+                default => $bizSusu,
+            };
         } catch (
             UnauthorisedAccessException $unauthorisedAccessException
         ) {
@@ -57,7 +56,7 @@ final class BizSusuShowService
 
             // Throw the SystemFailureException
             throw new SystemFailureException(
-                message: 'An error occurred while trying to fetch the biz susu.',
+                message: 'There was a system failure while trying to fetch the biz susu account.',
             );
         }
     }

@@ -6,6 +6,7 @@ namespace App\Interface\Resources\V1\Susu\IndividualSusu\FlexySusu;
 
 use App\Interface\Resources\V1\Account\AccountResource;
 use App\Interface\Resources\V1\Customer\CustomerWalletResource;
+use App\Interface\Resources\V1\Shared\SusuSchemeResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -26,6 +27,7 @@ final class FlexySusuResource extends JsonResource
             // Resource exposed attributes
             'attributes' => [
                 'resource_id' => $this->resource->resource_id,
+                'initial_deposit' => $this->resource->initial_deposit->getAmount()->__toString(),
                 'is_collateralized' => $this->resource->is_collateralized,
                 'withdrawal_status' => $this->resource->withdrawal_status,
             ],
@@ -34,6 +36,7 @@ final class FlexySusuResource extends JsonResource
             'included' => [
                 'account' => new AccountResource($this->resource->individual->account),
                 'wallet' => new CustomerWalletResource($this->resource->wallet),
+                'susu_scheme' => new SusuSchemeResource($this->resource->individual->susuScheme),
 
 //                'susu_scheme' => new SusuSchemeResource($this->resource->individualAccount->susuScheme),
 //                'account_lock' => $this->when(! empty($this->resource->lock), new SusuAccountLockData($this->resource)),

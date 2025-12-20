@@ -20,10 +20,10 @@ final class SusuSchemeResource extends JsonResource
         return [
             // Resource type and id
             'type' => 'SusuScheme',
-            'resource_id' => $this->resource->resource_id,
 
             // Resource exposed attributes
             'attributes' => [
+                'resource_id' => $this->resource->resource_id,
                 'name' => $this->resource->name,
                 'alias' => $this->resource->alias,
                 'code' => $this->resource->code,

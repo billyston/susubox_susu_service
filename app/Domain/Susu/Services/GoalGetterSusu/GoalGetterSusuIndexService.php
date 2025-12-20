@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Domain\Susu\Services\GoalGetterSusu;
 
-use App\Domain\Account\Models\Account;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
 use App\Domain\Shared\Models\SusuScheme;
+use App\Domain\Susu\Models\IndividualSusu\GoalGetterSusu;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -40,17 +40,14 @@ final class GoalGetterSusuIndexService
                     );
                 }
 
-                // Fetch all daily susu accounts for the customer
-                $accounts = Account::query()->where('customer_id', $customer->id)
-                    ->where('susu_scheme_id', $susuScheme->id)
-                    ->with('goal')
-                    ->orderBy('created_at', 'desc')
+                // Fetch all goal getter susu accounts for the customer
+                return GoalGetterSusu::query()
+                    ->whereHas('individual', function ($query) use ($customer, $susuScheme) {
+                        $query
+                            ->where('customer_id', $customer->id)
+                            ->where('susu_scheme_id', $susuScheme->id);
+                    })
                     ->get();
-
-                // Map to only return the related DailySusu models
-                return $accounts->map(function ($account) {
-                    return $account->goal;
-                })->filter();
             });
         } catch (
             UnauthorisedAccessException $unauthorisedAccessException
@@ -76,7 +73,7 @@ final class GoalGetterSusuIndexService
 
             // Throw the SystemFailureException
             throw new SystemFailureException(
-                message: 'A system failure occurred while fetching the goal getter susu accounts.'
+                message: 'There was a system failure while trying to fetch the goal getter susu accounts.',
             );
         }
     }

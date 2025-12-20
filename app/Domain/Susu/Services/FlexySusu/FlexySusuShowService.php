@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\Susu\Services\FlexySusu;
 
-use App\Domain\Account\Models\Account;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
@@ -16,28 +15,27 @@ final class FlexySusuShowService
 {
     /**
      * @param Customer $customer
-     * @param Account $account
+     * @param FlexySusu $flexySusu
      * @return FlexySusu
      * @throws SystemFailureException
      * @throws UnauthorisedAccessException
      */
     public static function execute(
         Customer $customer,
-        Account $account,
+        FlexySusu $flexySusu,
     ): FlexySusu {
         try {
-            // Ensure account belongs to this customer
-            if ($account->customer_id !== $customer->id) {
-                throw new UnauthorisedAccessException;
-            }
+            return match (true) {
+                $flexySusu->individual->customer_id !== $customer->id => throw new UnauthorisedAccessException(
+                    message: 'You are not authorized to access this susu account.'
+                ),
+                $flexySusu->individual->susuScheme->code !== config('susubox.susu_schemes.biz_susu_code') => throw new UnauthorisedAccessException(
+                    message: 'You are not authorized to access this susu account.'
+                ),
 
-            // Ensure the account is for a Daily Susu scheme
-            if ($account->scheme->code !== config(key: 'susubox.susu_schemes.flexy_susu_code')) {
-                throw new UnauthorisedAccessException;
-            }
-
-            // Return the FlexySusu resource
-            return $account->flexy;
+                // Return the FlexySusu resource
+                default => $flexySusu,
+            };
         } catch (
             UnauthorisedAccessException $unauthorisedAccessException
         ) {
@@ -48,7 +46,7 @@ final class FlexySusuShowService
             // Log the full exception with context
             Log::error('Exception in FlexySusuGetService', [
                 'customer' => $customer,
-                'account' => $account,
+                'flexy_susu' => $flexySusu,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),
@@ -58,7 +56,7 @@ final class FlexySusuShowService
 
             // Throw the SystemFailureException
             throw new SystemFailureException(
-                message: 'A system error occurred while retrieving flexy susu.',
+                message: 'There was a system failure while trying to fetch the flexy susu account.',
             );
         }
     }

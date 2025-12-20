@@ -27,15 +27,17 @@ final class FlexySusuCollectionResource extends JsonResource
             // Resource exposed attributes
             'attributes' => [
                 'resource_id' => $this->resource->resource_id,
+                'initial_deposit' => $this->resource->initial_deposit->getAmount()->__toString(),
+                'currency' => $this->resource->initial_deposit->getCurrency()->__toString(),
                 'is_collateralized' => $this->resource->is_collateralized,
                 'withdrawal_status' => $this->resource->withdrawal_status,
             ],
 
             // Relationships
             'relationships' => [
-                'account' => new AccountResource($this->resource->account),
-                'scheme' => new SusuSchemeResource($this->resource->account->scheme),
-                'linked_wallet' => CustomerWalletResource::collection($this->resource->account->wallets),
+                'account' => new AccountResource($this->resource->individual->account),
+                'wallet' => new CustomerWalletResource($this->resource->wallet),
+                'scheme' => new SusuSchemeResource($this->resource->individual->susuScheme),
 
 //                'account_lock' => $this->when(! empty($this->resource->lock), new SusuAccountLockData($this->resource)),
 //                'account_pause' => $this->when(! empty($this->resource->pause), new SusuAccountPauseData($this->resource)),

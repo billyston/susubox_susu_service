@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Domain\Susu\Services\BizSusu;
 
-use App\Domain\Account\Models\Account;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
 use App\Domain\Shared\Models\SusuScheme;
+use App\Domain\Susu\Models\IndividualSusu\BizSusu;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -41,16 +41,13 @@ final class BizSusuIndexService
                 }
 
                 // Fetch all biz susu accounts for the customer
-                $accounts = Account::query()->where('customer_id', $customer->id)
-                    ->where('susu_scheme_id', $susuScheme->id)
-                    ->with('biz')
-                    ->orderBy('created_at', 'desc')
+                return BizSusu::query()
+                    ->whereHas('individual', function ($query) use ($customer, $susuScheme) {
+                        $query
+                            ->where('customer_id', $customer->id)
+                            ->where('susu_scheme_id', $susuScheme->id);
+                    })
                     ->get();
-
-                // Map to only return the related BizSusu models
-                return $accounts->map(function ($account) {
-                    return $account->biz;
-                })->filter();
             });
         } catch (
             UnauthorisedAccessException $unauthorisedAccessException
@@ -76,7 +73,7 @@ final class BizSusuIndexService
 
             // Throw the SystemFailureException
             throw new SystemFailureException(
-                message: 'A system failure occurred while fetching the biz susu accounts.'
+                message: 'There was a system failure while trying to fetch the biz susu accounts.',
             );
         }
     }

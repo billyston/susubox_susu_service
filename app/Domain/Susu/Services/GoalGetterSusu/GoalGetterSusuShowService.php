@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\Susu\Services\GoalGetterSusu;
 
-use App\Domain\Account\Models\Account;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
@@ -16,28 +15,27 @@ final class GoalGetterSusuShowService
 {
     /**
      * @param Customer $customer
-     * @param Account $account
+     * @param GoalGetterSusu $goalGetterSusu
      * @return GoalGetterSusu
      * @throws SystemFailureException
      * @throws UnauthorisedAccessException
      */
     public static function execute(
         Customer $customer,
-        Account $account,
+        GoalGetterSusu $goalGetterSusu,
     ): GoalGetterSusu {
         try {
-            // Ensure account belongs to this customer
-            if ($account->customer_id !== $customer->id) {
-                throw new UnauthorisedAccessException;
-            }
+            return match (true) {
+                $goalGetterSusu->individual->customer_id !== $customer->id => throw new UnauthorisedAccessException(
+                    message: 'You are not authorized to access this susu account.'
+                ),
+                $goalGetterSusu->individual->susuScheme->code !== config('susubox.susu_schemes.biz_susu_code') => throw new UnauthorisedAccessException(
+                    message: 'You are not authorized to access this susu account.'
+                ),
 
-            // Ensure the account is for a Daily Susu scheme
-            if ($account->scheme->code !== config(key: 'susubox.susu_schemes.goal_getter_susu_code')) {
-                throw new UnauthorisedAccessException;
-            }
-
-            // Return the GoalGetterSusu resource
-            return $account->goal;
+                // Return the BizSusu resource
+                default => $goalGetterSusu,
+            };
         } catch (
             UnauthorisedAccessException $unauthorisedAccessException
         ) {
@@ -48,7 +46,7 @@ final class GoalGetterSusuShowService
             // Log the full exception with context
             Log::error('Exception in GoalGetterSusuShowService', [
                 'customer' => $customer,
-                'account' => $account,
+                'goal_getter_susu' => $goalGetterSusu,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),
@@ -58,7 +56,7 @@ final class GoalGetterSusuShowService
 
             // Throw the SystemFailureException
             throw new SystemFailureException(
-                message: 'A system error occurred while trying to fetch the goal getter susu.',
+                message: 'There was a system failure while trying to fetch the goal getter susu account.',
             );
         }
     }

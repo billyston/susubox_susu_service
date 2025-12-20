@@ -41,7 +41,7 @@ final class FlexySusuShowAction
         // Execute the FlexySusuShowService and return the resource
         $flexySusu = $this->flexySusuShowService->execute(
             customer: $customer,
-            account: $flexySusu->account
+            flexySusu: $flexySusu
         );
 
         // Build and return the JsonResponse

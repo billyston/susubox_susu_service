@@ -28,7 +28,11 @@ final class GoalGetterSusuCollectionResource extends JsonResource
 
             // Resource exposed attributes
             'attributes' => [
-                'target_amount' => number_format(num: $this->resource->target_amount->getAmount()->toFloat(), decimals: 2),
+                'resource_id' => $this->resource->resource_id,
+                'target_amount' => $this->resource->target_amount->getAmount()->__toString(),
+                'susu_amount' => $this->resource->susu_amount->getAmount()->__toString(),
+                'initial_deposit' => $this->resource->initial_deposit->getAmount()->__toString(),
+                'currency' => $this->resource->susu_amount->getCurrency()->__toString(),
                 'rollover_enabled' => $this->resource->rollover_enabled,
                 'is_collateralized' => $this->resource->is_collateralized,
                 'recurring_debit_status' => $this->resource->recurring_debit_status,
@@ -37,11 +41,14 @@ final class GoalGetterSusuCollectionResource extends JsonResource
 
             // Relationships
             'relationships' => [
-                'account' => new AccountResource($this->resource->account),
-                'linked_wallet' => CustomerWalletResource::collection($this->resource->account->wallets),
-                'frequency' => new FrequencyResource($this->resource->account->frequency),
-                'duration' => new DurationResource($this->resource->account->goal->duration),
-                'scheme' => new SusuSchemeResource($this->resource->account->scheme),
+                'account' => new AccountResource($this->resource->individual->account),
+                'wallet' => new CustomerWalletResource($this->resource->wallet),
+                'duration' => new DurationResource($this->resource->duration),
+                'frequency' => new FrequencyResource($this->resource->frequency),
+                'scheme' => new SusuSchemeResource($this->resource->individual->susuScheme),
+
+//                'account_lock' => $this->when(! empty($this->resource->lock), new SusuAccountLockData($this->resource)),
+//                'account_pause' => $this->when(! empty($this->resource->pause), new SusuAccountPauseData($this->resource)),
             ],
         ];
     }

@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Customer\Models;
 
-use App\Domain\Susu\Models\IndividualSusu\BizSusu;
-use App\Domain\Susu\Models\IndividualSusu\DailySusu;
-use App\Domain\Susu\Models\IndividualSusu\DriveToOwnSusu;
-use App\Domain\Susu\Models\IndividualSusu\GoalGetterSusu;
+use App\Domain\Susu\Models\IndividualSusu\IndividualAccount;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -26,10 +23,7 @@ use Illuminate\Support\Carbon;
  *
  * Relationships:
  * @property Collection<int, Wallet> $wallets
- * @property Collection<int, DailySusu> $dailySusu
- * @property Collection<int, BizSusu> $bizSusu
- * @property Collection<int, GoalGetterSusu> $goalGetterSusu
- * @property Collection<int, DriveToOwnSusu> $driveToOwn
+ * @property Collection<int, IndividualAccount> $individual
  *
  * @method static Builder|Customer whereResourceId($value)
  * @method static Builder|Customer wherePhoneNumber($value)
@@ -78,43 +72,10 @@ final class Customer extends Model
     /**
      * @return HasMany
      */
-    public function dailySusu(
+    public function individual(
     ): HasMany {
         return $this->hasMany(
-            related: DailySusu::class,
-            foreignKey: 'customer_id'
-        );
-    }
-
-    /**
-     * @return HasMany
-     */
-    public function bizSusu(
-    ): HasMany {
-        return $this->hasMany(
-            related: BizSusu::class,
-            foreignKey: 'customer_id'
-        );
-    }
-
-    /**
-     * @return HasMany
-     */
-    public function goalGetterSusu(
-    ): HasMany {
-        return $this->hasMany(
-            related: GoalGetterSusu::class,
-            foreignKey: 'customer_id'
-        );
-    }
-
-    /**
-     * @return HasMany
-     */
-    public function driveToOwn(
-    ): HasMany {
-        return $this->hasMany(
-            related: DriveToOwnSusu::class,
+            related: IndividualAccount::class,
             foreignKey: 'customer_id'
         );
     }

@@ -41,7 +41,7 @@ final class GoalGetterSusuShowAction
         // Execute the GoalGetterSusuShowService and return the resource
         $goalGetterSusu = $this->goalGetterSusuShowService->execute(
             customer: $customer,
-            account: $goalGetterSusu->account
+            goalGetterSusu: $goalGetterSusu
         );
 
         // Build and return the JsonResponse

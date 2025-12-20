@@ -25,63 +25,35 @@ final class DailySusuShowService
         DailySusu $dailySusu,
     ): DailySusu {
         try {
-            // Eager load relationships for efficiency
-            $dailySusu->load([
-                'individual.customer',
-                'individual.account',
-                'individual.susuScheme',
-                'wallet',
-                'frequency',
-            ]);
+            return match (true) {
+                $dailySusu->individual->customer_id !== $customer->id => throw new UnauthorisedAccessException(
+                    message: 'You are not authorized to access this susu account.'
+                ),
+                $dailySusu->individual->susuScheme->code !== config('susubox.susu_schemes.daily_susu_code') => throw new UnauthorisedAccessException(
+                    message: 'You are not authorized to access this susu account.'
+                ),
 
-            // Ensure DailySusu belongs to this customer through IndividualAccount
-            if ($dailySusu->individualAccount->customer_id !== $customer->id) {
-                throw new UnauthorisedAccessException(
-                    message: 'You are not authorized to access this Daily Susu account.',
-                );
-            }
-
-            // Ensure the account is for a Daily Susu scheme
-            $individualAccount = $dailySusu->individualAccount;
-            if (! $individualAccount->susuScheme) {
-                throw new UnauthorisedAccessException(
-                    message: 'This account is not a valid Daily Susu scheme.'
-                );
-            }
-
-            // Ensure the polymorphic relationship is correct
-            if ($individualAccount->susuable_type !== DailySusu::class) {
-                throw new UnauthorisedAccessException(
-                    message: 'Invalid account type configuration.'
-                );
-            }
-
-            // Return the DailySusu resource with all relationships
-            return $dailySusu;
+                // Return the DailySusu resource
+                default => $dailySusu,
+            };
         } catch (
             UnauthorisedAccessException $unauthorisedAccessException
         ) {
-            // Log unauthorized access attempts
-            Log::warning('Unauthorized access attempt to DailySusu', [
-                'customer_id' => $customer->id,
-                'daily_susu_id' => $dailySusu->id,
-                'individual_account_customer_id' => $dailySusu->individualAccount->customer_id ?? 'unknown',
-            ]);
-
             throw $unauthorisedAccessException;
         } catch (
             Throwable $throwable
         ) {
-            // Log the error with specific context
-            Log::error('Failed to fetch DailySusu', [
-                'customer_id' => $customer->id,
-                'daily_susu_id' => $dailySusu->id,
+            // Log the full exception with context
+            Log::error('Exception in DailySusuShowService', [
+                'customer_id' => $customer,
+                'daily_susu' => $dailySusu,
                 'error' => $throwable->getMessage(),
                 'trace' => $throwable->getTraceAsString(),
             ]);
 
+            // Throw the SystemFailureException
             throw new SystemFailureException(
-                message: 'Unable to retrieve Daily Susu account details. Please try again.',
+                message: 'There was a system failure while trying to fetch the daily susu account.',
             );
         }
     }
