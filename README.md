@@ -167,10 +167,10 @@ The SusuBox susu service API.
 - [ ] Validate approve direct deposit
 
 ###### BizSusu Withdrawal
-- [ ] Create partial withdrawal
-- [ ] Create full withdrawal
-- [ ] Cancel withdrawal process
-- [ ] Approve withdrawal
+- [x] Create partial withdrawal
+- [x] Create full withdrawal
+- [x] Cancel withdrawal process
+- [x] Approve withdrawal
 - [ ] Validate create withdrawal
 - [ ] Validate cancel withdrawal
 - [ ] Validate approve withdrawal
@@ -252,10 +252,10 @@ The SusuBox susu service API.
 - [ ] Validate and initiate goalCompleted feature
 
 ###### GoalGetterSusu Withdrawal
-- [ ] Create partial withdrawal
-- [ ] Create full withdrawal
-- [ ] Cancel withdrawal process
-- [ ] Approve withdrawal
+- [x] Create partial withdrawal
+- [x] Create full withdrawal
+- [x] Cancel withdrawal process
+- [x] Approve withdrawal
 - [ ] Validate create withdrawal
 - [ ] Validate cancel withdrawal
 - [ ] Validate approve withdrawal
@@ -333,9 +333,9 @@ The SusuBox susu service API.
 - [ ] Validate approve direct deposit
 
 ###### FlexySusu Withdrawal
-- [ ] Create partial withdrawal
-- [ ] Create full withdrawal
-- [ ] Cancel withdrawal process
+- [x] Create partial withdrawal
+- [x] Create full withdrawal
+- [x] Cancel withdrawal process
 - [ ] Approve withdrawal
 - [ ] Validate withdrawal
 
