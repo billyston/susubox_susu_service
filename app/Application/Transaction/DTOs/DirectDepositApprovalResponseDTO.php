@@ -62,9 +62,8 @@ final readonly class DirectDepositApprovalResponseDTO
                         'type' => 'PaymentInstruction',
                         'attributes' => [
                             'resource_id' => $this->paymentInstruction->resource_id,
-                            'amount' => $this->paymentInstruction->amount->getAmount()->__toString(),
                             'charges' => $this->paymentInstruction->charge->getAmount()->__toString(),
-                            'total' => $this->paymentInstruction->total->getAmount()->__toString(),
+                            'amount' => $this->paymentInstruction->total->getAmount()->__toString(),
                         ],
                     ],
                     'wallet' => [

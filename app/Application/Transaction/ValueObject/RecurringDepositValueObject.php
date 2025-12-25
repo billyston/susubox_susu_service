@@ -14,7 +14,6 @@ final readonly class RecurringDepositValueObject
 {
     /**
      * @param Money $initialDeposit
-     * @param Money $susuAmount
      * @param Money $amount
      * @param Money $charge
      * @param Money $total
@@ -62,9 +61,9 @@ final readonly class RecurringDepositValueObject
         return new self(
             initialDeposit: $initialDeposit,
             susuAmount: $susuAmount,
-            amount: $initialDeposit,
+            amount: $susuAmount,
             charge: $charge,
-            total: $initialDeposit->plus($charge),
+            total: $susuAmount->plus($charge),
             startDate: $startDate,
             endDate: $endDate,
             frequency: $frequency,
@@ -78,7 +77,7 @@ final readonly class RecurringDepositValueObject
     public function toArray(
     ): array {
         return [
-            'amount' => $this->initialDeposit,
+            'amount' => $this->susuAmount,
             'charge' => $this->charge,
             'total' => $this->total,
             'approval_status' => Statuses::APPROVED->value,

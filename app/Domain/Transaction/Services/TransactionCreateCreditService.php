@@ -32,13 +32,13 @@ final class TransactionCreateCreditService
                 $paymentInstruction,
                 $requestDTO
             ) {
-                // Find Transaction (if its already exist)
+                // Find Transaction (if its already exist: Idempotency)
                 $existingTransaction = Transaction::query()
                     ->where('reference_number', $requestDTO->reference)
                     ->lockForUpdate()
                     ->first();
 
-                // Return the Transaction if exist (abort process)
+                // Return the Transaction if exist (and abort process)
                 if ($existingTransaction) {
                     return $existingTransaction;
                 }
@@ -52,9 +52,11 @@ final class TransactionCreateCreditService
                     'wallet_id' => $paymentInstruction->wallet->id,
                     'transaction_type' => $paymentInstruction->transaction_type,
                     'reference_number' => $requestDTO->reference,
-                    'amount' => $requestDTO->amount,
-                    'charge' => $requestDTO->charges,
-                    'total' => $requestDTO->total,
+
+                    'amount' => $paymentInstruction->amount,
+                    'charge' => $paymentInstruction->charge,
+                    'total' => $paymentInstruction->total,
+
                     'description' => $requestDTO->description,
                     'narration' => Transaction::narration(
                         category: $paymentInstruction->transactionCategory->name,
@@ -81,8 +83,8 @@ final class TransactionCreateCreditService
                     ->firstOrFail();
 
                 // Set the new balance data
-                $balance->ledger_balance = $balance->ledger_balance->plus($transaction->amount);
-                $balance->available_balance = $balance->available_balance->plus($transaction->amount);
+                $balance->ledger_balance = $balance->ledger_balance->plus($paymentInstruction->amount);
+                $balance->available_balance = $balance->available_balance->plus($paymentInstruction->amount);
                 $balance->last_transaction_id = $transaction->id;
                 $balance->last_reconciled_at = now();
 

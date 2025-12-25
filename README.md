@@ -25,149 +25,355 @@ The SusuBox susu service API.
 
 ## Account
 - [x] Create and Configure Account model and migration
-- [x] Get all customer susu accounts
-- [x] Work on a unique account_number
+- [ ] Get all customer susu accounts
+- [ ] Get a susu account for customer
 - [x] Get account balance
 - [x] Update account status (active) after successful initial debit
+- [ ] Work on a unique account_number
+
+## IndividualAccount
+- [x] Create IndividualAccount model and migration
+- [x] Configure IndividualAccount relations
 
 
-## Daily Susu
-- [x] Create and configure model and migration
 
-###### Create
-- [x] Create daily susu account
-- [ ] Validate create daily susu
-- [x] Cancel create daily susu
-- [x] Approve create daily susu
-- [x] Activate create daily susu
 
-###### Update / Cancel
-- [x] Update daily susu create
-- [ ] Validate update daily susu create
-- [x] Cancel daily susu create
-- [ ] Validate cancel daily susu create
-- [x] Update recurring_debit_status
+## DailySusu
+- [x] Create DailySusu model and migration
+- [x] Configure DailySusu relations
 
-###### Get
-- [x] Get single daily susu for customer
-- [x] Get all daily susu for customer
+###### Create DailySusu
+- [x] Create account
+- [x] Cancel create account
+- [x] Approve account
+- [x] Activate account
+- [ ] Validate create account
+- [ ] Validate cancel account
+- [ ] Validate approve account
 
-###### Direct Deposit
-- [x] Create direct deposit 
+###### DailySusu Activation (initial deposit)
+- [x] Set recurring_debit_status
+- [x] Set account status
+
+###### DailySusu Re-Activation (if initial deposit failed)
+- [ ] Initiate and approve account re-activation
+- [ ] Validate the account re-activation
+
+###### Get DailySusu
+- [x] Get all accounts for customer
+- [x] Get single account for customer
+- [ ] Validate get account
+
+###### DailySusu Direct Deposit
+- [x] Create direct deposit (only in frequencies) 
 - [x] Cancel direct deposit 
 - [x] Approve direct deposit 
-- [ ] Validate direct deposit
+- [ ] Validate create direct deposit
+- [ ] Validate cancel direct deposit
+- [ ] Validate approve direct deposit
 
-###### Account Activation
-- [ ] Implement account activation (if initial_debit failed)
-- [ ] Validate account activation
+###### DailySusu Settlements
+- [ ] Create settle pending
+- [ ] Create settle all pending
+- [ ] Create zero-out settlement
+- [ ] Cancel settlement process
+- [ ] Approve settlement
+- [ ] Validate create settlement
+- [ ] Validate cancel settlement
+- [ ] Validate approve settlement
 
-###### Stats
-- [ ] Get all statistics for daily susu
+###### DailySusu Lock Account
+- [ ] Create lock account
+- [ ] Cancel lock account process
+- [ ] Approve lock account
+- [ ] Validate create lock account
+- [ ] Validate cancel lock account
+- [ ] Validate approve lock account
 
+###### DailySusu activate auto settlement
+- [ ] Initiate and approve the auto settlement
+- [ ] Validate the auto settlement
+- [ ] Initiate auto settlement (After successful deposit)
 
-## Biz Susu
-- [x] Create and configure model and migration
+###### DailySusu de-activate auto settlement
+- [ ] Initiate and approve the de-activate auto settlement
+- [ ] Validate the de-activate auto settlement
+- [ ] De-activate the auto settlement (Set status to false)
 
-###### Create
-- [x] Create biz susu account
-- [ ] Validate create biz susu
-- [x] Cancel create biz susu
-- [x] Approve create biz susu
-- [x] Activate create biz susu
+###### DailySusu pause recurring debits
+- [ ] Initiate and approve pause recurring debits
+- [ ] Validate pause recurring debits
+- [ ] Implement DailySusu pause recurring debits
 
-###### Update / Cancel
-- [x] Update biz susu create
-- [ ] Validate update biz susu create
-- [x] Cancel biz susu create
-- [ ] Validate cancel biz susu create
-- [x] Update recurring_debit_status
+###### DailySusu resume recurring debits
+- [ ] Initiate and approve resume recurring debits
+- [ ] Validate resume recurring debits
+- [ ] Implement DailySusu resume recurring debits
 
-###### Get
-- [x] Get single biz susu for customer
-- [x] Get all biz susu for customer
+###### DailySusu failed debit rollover 
+- [ ] Initiate and approve failed debit rollover feature
+- [ ] Validate the failed debit rollover action
+- [ ] Implement DailySusu failed debit rollover feature
 
-###### Direct Deposit
-- [x] Create direct deposit
-- [x] Cancel direct deposit
-- [x] Approve direct deposit 
-- [ ] Validate direct deposit
+###### DailySusu close account (In consideration)
+- [ ] Initiate and approve close DailySusu account
+- [ ] Validate the close DailySusu account
+- [ ] Implement DailySusu close DailySusu account
 
-###### Account Activation
-- [ ] Implement account activation (if initial_debit failed)
-- [ ] Validate account activation
+###### DailySusu statistics
+- [ ] Build all DailySusu statistics
+- [ ] Get all DailySusu statistics
 
-###### Stats
-- [ ] Get all statistics for biz susu
-
-
-## Goal Getter Susu
-- [x] Create and configure model and migration
-
-###### Create
-- [x] Create goal getter susu account
-- [ ] Validate create goal getter susu
-- [x] Cancel create goal getter susu
-- [x] Approve create goal getter susu
-- [x] Activate create goal getter susu
-
-###### Update / Cancel
-- [x] Update goal getter susu create
-- [ ] Validate update goal getter susu create
-- [x] Cancel goal getter susu create
-- [ ] Validate cancel goal getter susu create
-- [x] Update recurring_debit_status
-
-###### Get
-- [x] Get single goal getter susu for customer
-- [x] Get all goal getter susu for customer
-
-###### Direct Deposit
-- [x] Create direct deposit
-- [x] Cancel direct deposit
-- [x] Approve direct deposit
-- [ ] Validate direct deposit
-
-###### Account Activation
-- [ ] Implement account activation (if initial_debit failed)
-- [ ] Validate account activation
-
-###### Stats
-- [ ] Get all statistics for goal getter susu
+###### DailySusu transactions
+- [ ] Get all transactions
+- [ ] Get single transaction
 
 
-## Flexy Susu
-- [x] Create and configure model and migration
 
-###### Create
-- [x] Create flexy susu account
-- [ ] Validate create flexy susu
-- [x] Cancel create flexy susu
-- [x] Approve create flexy susu
-- [x] Activate create flexy susu
 
-###### Update / Cancel
-- [x] Update flexy susu create
-- [ ] Validate update flexy susu create
-- [x] Cancel flexy susu create
-- [ ] Validate cancel flexy susu create
+## BizSusu
+- [x] Create BizSusu model and migration
+- [x] Configure BizSusu relations
 
-###### Get
-- [x] Get single flexy susu for customer
-- [x] Get all flexy susu for customer
+###### Create BizSusu
+- [x] Create account
+- [x] Cancel create account
+- [x] Approve account
+- [x] Activate account
+- [ ] Validate create account
+- [ ] Validate cancel account
+- [ ] Validate approve account
 
-###### Direct Deposit
-- [x] Create direct deposit
+###### BizSusu Activation (initial deposit)
+- [x] Set recurring_debit_status
+- [x] Set account status
+
+###### BizSusu Re-Activation (if initial deposit failed)
+- [ ] Initiate and approve account re-activation
+- [ ] Validate the account re-activation
+
+###### Get BizSusu
+- [x] Get single Biz susu for customer
+- [x] Get all Biz susu for customer
+- [ ] Validate get BizSusu
+
+###### BizSusu Direct Deposit
+- [x] Create direct deposit (in frequencies)
+- [x] Create direct deposit (in amount)
 - [x] Cancel direct deposit
 - [x] Approve direct deposit
-- [ ] Validate direct deposit
+- [ ] Validate create direct deposit
+- [ ] Validate cancel direct deposit
+- [ ] Validate approve direct deposit
 
-###### Account Activation
-- [ ] Implement account activation (if initial_debit failed)
-- [ ] Validate account activation
+###### BizSusu Withdrawal
+- [ ] Create partial withdrawal
+- [ ] Create full withdrawal
+- [ ] Cancel withdrawal process
+- [ ] Approve withdrawal
+- [ ] Validate create withdrawal
+- [ ] Validate cancel withdrawal
+- [ ] Validate approve withdrawal
 
-###### Stats
-- [ ] Get all statistics for flexy susu
+###### BizSusu Lock Account
+- [ ] Create lock account
+- [ ] Cancel lock account process
+- [ ] Approve lock account
+- [ ] Validate lock account
+
+###### BizSusu pause recurring debits
+- [ ] Initiate and approve pause recurring debits
+- [ ] Validate pause recurring debits
+- [ ] Implement BizSusu pause recurring debits
+
+###### BizSusu resume recurring debits
+- [ ] Initiate and approve resume recurring debits
+- [ ] Validate resume recurring debits
+- [ ] Implement BizSusu resume recurring debits
+
+###### BizSusu failed debit rollover
+- [ ] Initiate and approve failed debit rollover feature
+- [ ] Validate the failed debit rollover action
+- [ ] Implement BizSusu failed debit rollover feature
+
+###### BizSusu close account (In consideration)
+- [ ] Initiate and approve close BizSusu account
+- [ ] Validate the close BizSusu account
+- [ ] Implement BizSusu close BizSusu account
+
+###### BizSusu statistics
+- [ ] Build all BizSusu statistics
+- [ ] Get all BizSusu statistics
+
+###### BizSusu transactions
+- [ ] Get all transactions
+- [ ] Get single transaction
+
+
+
+
+
+## GoalGetterSusu
+- [x] Create GoalGetterSusu model and migration
+- [x] Configure GoalGetterSusu relations
+
+###### Create GoalGetterSusu
+- [x] Create account
+- [x] Cancel create account
+- [x] Approve account
+- [x] Activate account
+- [ ] Validate create account
+- [ ] Validate cancel account
+- [ ] Validate approve account
+
+###### GoalGetterSusu Activation (initial deposit)
+- [x] Set recurring_debit_status
+- [x] Set account status
+
+###### GoalGetterSusu Re-Activation (if initial deposit failed)
+- [ ] Initiate and approve account re-activation
+- [ ] Validate the account re-activation
+
+###### Get GoalGetterSusu
+- [x] Get single GoalGetterSusu for customer
+- [x] Get all GoalGetterSusu for customer
+- [ ] Validate get GoalGetterSusu
+
+###### GoalGetterSusu Direct Deposit
+- [x] Create direct deposit (in frequencies)
+- [x] Create direct deposit (in amount)
+- [x] Cancel direct deposit
+- [x] Approve direct deposit
+- [ ] Validate create direct deposit
+- [ ] Validate cancel direct deposit
+- [ ] Validate approve direct deposit
+
+###### GoalGetterSusu (Goal completed)
+- [ ] Validate and initiate goalCompleted feature
+
+###### GoalGetterSusu Withdrawal
+- [ ] Create partial withdrawal
+- [ ] Create full withdrawal
+- [ ] Cancel withdrawal process
+- [ ] Approve withdrawal
+- [ ] Validate create withdrawal
+- [ ] Validate cancel withdrawal
+- [ ] Validate approve withdrawal
+
+###### GoalGetterSusu Lock Account
+- [ ] Create lock account
+- [ ] Cancel lock account process
+- [ ] Approve lock account
+- [ ] Validate lock account
+
+###### GoalGetterSusu pause recurring debits
+- [ ] Initiate and approve pause recurring debits
+- [ ] Validate pause recurring debits
+- [ ] Implement GoalGetterSusu pause recurring debits
+
+###### GoalGetterSusu resume recurring debits
+- [ ] Initiate and approve resume recurring debits
+- [ ] Validate resume recurring debits
+- [ ] Implement GoalGetterSusu resume recurring debits
+
+###### GoalGetterSusu failed debit rollover
+- [ ] Initiate and approve failed debit rollover feature
+- [ ] Validate the failed debit rollover action
+- [ ] Implement GoalGetterSusu failed debit rollover feature
+
+###### GoalGetterSusu close account (In consideration)
+- [ ] Initiate and approve close GoalGetterSusu account
+- [ ] Validate the close GoalGetterSusu account
+- [ ] Implement GoalGetterSusu close GoalGetterSusu account
+
+###### GoalGetterSusu statistics
+- [ ] Build all GoalGetterSusu statistics
+- [ ] Get all GoalGetterSusu statistics
+
+###### GoalGetterSusu transactions
+- [ ] Get all transactions
+- [ ] Get single transaction
+
+
+
+
+## FlexySusu
+- [x] Create FlexySusu model and migration
+- [x] Configure FlexySusu relations
+
+###### Create FlexySusu
+- [x] Create account
+- [x] Cancel create account
+- [x] Approve account
+- [x] Activate account
+- [ ] Validate create account
+- [ ] Validate cancel account
+- [ ] Validate approve account
+
+###### FlexySusu Activation (initial deposit)
+- [x] Set recurring_debit_status
+- [x] Set account status
+
+###### FlexySusu Re-Activation (if initial deposit failed)
+- [ ] Initiate and approve account re-activation
+- [ ] Validate the account re-activation
+
+###### Get FlexySusu
+- [x] Get single FlexySusu for customer
+- [x] Get all FlexySusu for customer
+- [ ] Validate get FlexySusu
+
+###### FlexySusu Direct Deposit
+- [x] Create direct deposit (in frequencies)
+- [x] Create direct deposit (in amount)
+- [x] Cancel direct deposit
+- [x] Approve direct deposit
+- [ ] Validate create direct deposit
+- [ ] Validate cancel direct deposit
+- [ ] Validate approve direct deposit
+
+###### FlexySusu Withdrawal
+- [ ] Create partial withdrawal
+- [ ] Create full withdrawal
+- [ ] Cancel withdrawal process
+- [ ] Approve withdrawal
+- [ ] Validate withdrawal
+
+###### FlexySusu Lock Account
+- [ ] Create lock account
+- [ ] Cancel lock account process
+- [ ] Approve lock account
+- [ ] Validate lock account
+
+###### FlexySusu pause recurring debits
+- [ ] Initiate and approve pause recurring debits
+- [ ] Validate pause recurring debits
+- [ ] Implement FlexySusu pause recurring debits
+
+###### FlexySusu resume recurring debits
+- [ ] Initiate and approve resume recurring debits
+- [ ] Validate resume recurring debits
+- [ ] Implement FlexySusu resume recurring debits
+
+###### FlexySusu failed debit rollover
+- [ ] Initiate and approve failed debit rollover feature
+- [ ] Validate the failed debit rollover action
+- [ ] Implement FlexySusu failed debit rollover feature
+
+###### FlexySusu close account (In consideration)
+- [ ] Initiate and approve close FlexySusu account
+- [ ] Validate the close FlexySusu account
+- [ ] Implement FlexySusu close FlexySusu account
+
+###### FlexySusu statistics
+- [ ] Build all FlexySusu statistics
+- [ ] Get all FlexySusu statistics
+
+###### FlexySusu transactions
+- [ ] Get all transactions
+- [ ] Get single transaction
+
+
 
 
 ## Transactions
@@ -175,7 +381,15 @@ The SusuBox susu service API.
 - [x] TransactionStatus from Payment Service should match Susu Service 
 - [x] All transactions must have a TransactionType (debit or credit)
 - [ ] Handle TransactionCreatedFailureAction
+- [ ] Get all transactions
+- [ ] Get single transaction
 
+
+## PIN Authorization Middleware
+- [ ] Implement the PIN Authorization Middleware
+
+## Transaction reconciliation
+- [ ] Implement the transaction reconciliation feature
 
 ## General
 - [ ] Move all jobs that publishes job into the services / shared folder
@@ -186,7 +400,6 @@ The SusuBox susu service API.
 - [ ] Transaction notification (SMS / Email) should have balance updates
 - [ ] Rebuild all the Resource files (AccountBalanceResource as an example)
 - [ ] Provide descriptions for all api responses
-
 - [ ] Review all the exceptions and give proper messaging
 - [ ] Review all the response messages
 - [x] All $variable, function and method names should follow CamelCase

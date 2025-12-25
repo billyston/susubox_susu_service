@@ -55,10 +55,13 @@ final class TransactionCreateJob implements ShouldQueue
 
         // Determine the transaction_type and execute and return the resource
         $transaction = match ($paymentInstruction->transaction_type) {
+            // Execute the TransactionCreateCreditService and return The transaction resource
             TransactionType::CREDIT->value => $transactionCreateCreditService->execute(
                 paymentInstruction: $paymentInstruction,
                 requestDTO: $this->requestDTO,
             ),
+
+            // Execute the TransactionCreateDebitService and return The transaction resource
             TransactionType::DEBIT->value => $transactionCreateDebitService->execute(
                 paymentInstruction: $paymentInstruction,
                 requestDTO: $this->requestDTO

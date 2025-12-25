@@ -10,10 +10,10 @@ use App\Domain\Transaction\Enums\TransactionCategoryCode;
 final readonly class RecurringDepositApprovalResponseDTO
 {
     /**
-     * @param PaymentInstruction $payment_instruction
+     * @param PaymentInstruction $paymentInstruction
      */
     public function __construct(
-        public PaymentInstruction $payment_instruction,
+        public PaymentInstruction $paymentInstruction,
     ) {
         // ..
     }
@@ -26,7 +26,7 @@ final readonly class RecurringDepositApprovalResponseDTO
         PaymentInstruction $paymentInstruction,
     ): self {
         return new self(
-            payment_instruction: $paymentInstruction,
+            paymentInstruction: $paymentInstruction,
         );
     }
 
@@ -47,28 +47,27 @@ final readonly class RecurringDepositApprovalResponseDTO
                     'payment_instruction' => [
                         'type' => 'PaymentInstruction',
                         'attributes' => [
-                            'resource_id' => $this->payment_instruction->resource_id,
-                            'recurring_amount' => $this->payment_instruction->getMetadata()['recurring_amount']['amount'],
-                            'amount' => $this->payment_instruction->amount->getAmount()->__toString(),
-                            'charges' => $this->payment_instruction->charge->getAmount()->__toString(),
-                            'total' => $this->payment_instruction->total->getAmount()->__toString(),
+                            'resource_id' => $this->paymentInstruction->resource_id,
+                            'initial_deposit' => $this->paymentInstruction->getMetadata()['initial_deposit']['amount'],
+                            'charges' => $this->paymentInstruction->charge->getAmount()->__toString(),
+                            'amount' => $this->paymentInstruction->total->getAmount()->__toString(),
                         ],
                     ],
                     'product' => [
                         'type' => 'Product',
                         'attributes' => [
-                            'start_date' => $this->payment_instruction->getMetadata()['start_date'],
-                            'end_date' => $this->payment_instruction->getMetadata()['end_date'],
-                            'frequency' => $this->payment_instruction->getMetadata()['frequency'],
-                            'rollover_enabled' => $this->payment_instruction->getMetadata()['rollover_enabled'],
+                            'start_date' => $this->paymentInstruction->getMetadata()['start_date'],
+                            'end_date' => $this->paymentInstruction->getMetadata()['end_date'],
+                            'frequency' => $this->paymentInstruction->getMetadata()['frequency'],
+                            'rollover_enabled' => $this->paymentInstruction->getMetadata()['rollover_enabled'],
                         ],
                     ],
                     'wallet' => [
                         'type' => 'Wallet',
                         'attributes' => [
-                            'wallet_name' => $this->payment_instruction->wallet->wallet_name,
-                            'wallet_number' => $this->payment_instruction->wallet->wallet_number,
-                            'wallet_network' => $this->payment_instruction->wallet->network_code,
+                            'wallet_name' => $this->paymentInstruction->wallet->wallet_name,
+                            'wallet_number' => $this->paymentInstruction->wallet->wallet_number,
+                            'wallet_network' => $this->paymentInstruction->wallet->network_code,
                         ],
                     ],
                 ],

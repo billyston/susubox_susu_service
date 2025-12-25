@@ -16,9 +16,8 @@ final readonly class TransactionCreateRequestDTO
      * @param string $status
      * @param string $reference
      * @param bool $isInitialDeposit
-     * @param Money $amount
      * @param Money $charges
-     * @param Money $total
+     * @param Money $amount
      * @param string $mobileNumber
      * @param string $date
      * @param string $description
@@ -32,9 +31,8 @@ final readonly class TransactionCreateRequestDTO
         public string $status,
         public string $reference,
         public bool $isInitialDeposit,
-        public Money $amount,
         public Money $charges,
-        public Money $total,
+        public Money $amount,
         public string $mobileNumber,
         public string $date,
         public string $description,
@@ -66,7 +64,8 @@ final readonly class TransactionCreateRequestDTO
         // Compute monetary values
         $amount = Money::of($transaction['amount'] ?? 0, 'GHS');
         $charges = Money::of($transaction['charges'] ?? 0, 'GHS');
-        $total = Money::of($transaction['total'] ?? 0, 'GHS');
+
+        // Total should be calculated here
 
         return new self(
             resourceID: Str::uuid()->toString(),
@@ -74,9 +73,8 @@ final readonly class TransactionCreateRequestDTO
             status: $transaction['status'],
             reference: $transaction['reference'],
             isInitialDeposit: $isInitialDeposit,
-            amount: $amount,
             charges: $charges,
-            total: $total,
+            amount: $amount,
             mobileNumber: $transaction['mobile_number'],
             date: $transaction['date'],
             description: $transaction['description'],
