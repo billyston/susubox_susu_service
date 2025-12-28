@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Domain\Susu\Models\IndividualSusu;
 
 use App\Domain\Account\Models\Account;
+use App\Domain\Account\Models\AccountLock;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Models\Wallet;
 use App\Domain\Shared\Casts\MoneyCasts;
+use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Models\Duration;
 use App\Domain\Shared\Models\Frequency;
 use App\Domain\Shared\Models\HasUuid;
@@ -17,6 +19,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * Class GoalGetterSusu
@@ -90,6 +93,10 @@ final class GoalGetterSusu extends Model
         'recurring_debit_status',
         'withdrawal_status',
         'extra_data',
+        'accepted_terms',
+        'unlocked_at',
+        'locked_at',
+        'status',
     ];
 
     /**
@@ -171,5 +178,47 @@ final class GoalGetterSusu extends Model
             related: Duration::class,
             foreignKey: 'duration_id'
         );
+    }
+
+    /**
+     * @return MorphMany
+     */
+    public function accountLocks(
+    ): MorphMany {
+        return $this->morphMany(
+            related: AccountLock::class,
+            name: 'lockable'
+        );
+    }
+
+    public function activeAccountLock(
+    ): ?AccountLock {
+        return $this->accountLocks()
+            ->where('status', Statuses::ACTIVE->value)
+            ->where(function ($query) {
+                $query->whereNull('unlocked_at')
+                    ->orWhere('unlocked_at', '>', Carbon::now());
+            })
+            ->latest('locked_at')
+            ->first();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLocked(
+    ): bool {
+        return $this->withdrawal_status === Statuses::LOCKED->value
+            && $this->activeAccountLock() !== null;
+    }
+
+    /**
+     * @return void
+     */
+    protected static function booted(
+    ): void {
+        GoalGetterSusu::deleting(function (GoalGetterSusu $goalGetterSusu) {
+            $goalGetterSusu->accountLocks()->delete();
+        });
     }
 }

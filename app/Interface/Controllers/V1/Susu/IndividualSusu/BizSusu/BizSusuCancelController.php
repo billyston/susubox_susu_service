@@ -32,9 +32,7 @@ final class BizSusuCancelController extends Controller
     ): JsonResponse {
         // Execute the BizSusuCancelAction
         return $bizSusuCancelAction->execute(
-            customer: $customer,
             bizSusu: $bizSusu,
-            request: $bizSusuCancelRequest->validated()
         );
     }
 }

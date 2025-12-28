@@ -167,4 +167,18 @@ final class IndividualAccount extends Model
             ?? $this->flexySusu
             ?? $this->driveToOwnSusu;
     }
+
+    /**
+     * @return void
+     */
+    protected static function booted(
+    ): void {
+        IndividualAccount::deleting(function (IndividualAccount $individualAccount) {
+            $individualAccount->goalGetterSusu?->delete();
+            $individualAccount->dailySusu?->delete();
+            $individualAccount->bizSusu?->delete();
+            $individualAccount->flexySusu?->delete();
+            $individualAccount->driveToOwnSusu?->delete();
+        });
+    }
 }

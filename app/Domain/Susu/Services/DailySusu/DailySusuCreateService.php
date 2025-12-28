@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace App\Domain\Susu\Services\DailySusu;
 
+use App\Application\Susu\DTOs\DailySusu\DailySusuCreateRequestDTO;
 use App\Domain\Account\Models\Account;
 use App\Domain\Account\Models\AccountBalance;
 use App\Domain\Customer\Models\Customer;
-use App\Domain\Customer\Models\Wallet;
+use App\Domain\Customer\Services\CustomerWalletService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Shared\Models\Frequency;
-use App\Domain\Shared\Models\SusuScheme;
+use App\Domain\Shared\Services\FrequencyService;
+use App\Domain\Shared\Services\SusuSchemeService;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
 use App\Domain\Susu\Models\IndividualSusu\IndividualAccount;
 use Illuminate\Support\Facades\DB;
@@ -20,37 +21,63 @@ use Throwable;
 
 final class DailySusuCreateService
 {
+    private CustomerWalletService $customerWalletService;
+    private SusuSchemeService $susuSchemeService;
+    private FrequencyService $frequencyService;
+
+    /**
+     * @param CustomerWalletService $customerWalletService
+     * @param SusuSchemeService $susuSchemeService
+     * @param FrequencyService $frequencyService
+     */
+    public function __construct(
+        CustomerWalletService $customerWalletService,
+        SusuSchemeService $susuSchemeService,
+        FrequencyService $frequencyService,
+    ) {
+        $this->customerWalletService = $customerWalletService;
+        $this->susuSchemeService = $susuSchemeService;
+        $this->frequencyService = $frequencyService;
+    }
+
     /**
      * @param Customer $customer
-     * @param SusuScheme $susuScheme
-     * @param Frequency $frequency
-     * @param Wallet $wallet
-     * @param array $requestDTO
+     * @param DailySusuCreateRequestDTO $requestDTO
      * @return DailySusu
      * @throws SystemFailureException
      */
-    public static function execute(
+    public function execute(
         Customer $customer,
-        SusuScheme $susuScheme,
-        Frequency $frequency,
-        Wallet $wallet,
-        array $requestDTO
+        DailySusuCreateRequestDTO $requestDTO
     ): DailySusu {
         try {
             // Execute the database transaction
             return DB::transaction(function () use (
                 $customer,
-                $susuScheme,
-                $frequency,
-                $wallet,
                 $requestDTO
             ) {
+                // Execute the CustomerWalletService and return the resource
+                $wallet = $this->customerWalletService->execute(
+                    customer: $customer,
+                    walletResourceID: $requestDTO->walletResourceID,
+                );
+
+                // Execute the SusuSchemeService and return the resource
+                $susuScheme = $this->susuSchemeService->execute(
+                    schemeCode: config(key: 'susubox.susu_schemes.daily_susu_code')
+                );
+
+                // Execute the FrequencyService and return the resource
+                $frequency = $this->frequencyService->execute(
+                    frequency_code: 'daily'
+                );
+
                 // Create Financial Account
                 $account = Account::create([
                     'accountable_type' => IndividualAccount::class,
-                    'account_name' => $requestDTO['account_name'],
+                    'account_name' => $requestDTO->accountName,
                     'account_number' => Account::generateAccountNumber(),
-                    'accepted_terms' => $requestDTO['accepted_terms'],
+                    'accepted_terms' => $requestDTO->acceptedTerms,
                 ]);
 
                 // Create IndividualAccount (polymorphic bridge)
@@ -74,21 +101,19 @@ final class DailySusuCreateService
                     'individual_account_id' => $individualAccount->id,
                     'wallet_id' => $wallet->id,
                     'frequency_id' => $frequency->id,
-                    'susu_amount' => $requestDTO['susu_amount'],
-                    'initial_deposit' => $requestDTO['initial_deposit'],
-                    'rollover_enabled' => $requestDTO['rollover_enabled'],
+                    'susu_amount' => $requestDTO->susuAmount,
+                    'initial_deposit' => $requestDTO->initialDeposit,
+                    'rollover_enabled' => $requestDTO->rolloverEnabled,
                     'recurring_debit_status' => Statuses::PENDING->value,
                 ]);
             });
         } catch (
             Throwable $throwable
         ) {
-            Log::error('Exception in BizSusuCreateService', [
+            // Log the full exception with context
+            Log::error('Exception in DailySusuCreateService', [
                 'customer' => $customer,
-                'susu_scheme' => $susuScheme,
-                'frequency' => $frequency,
-                'wallet' => $wallet,
-                'dto' => $requestDTO,
+                'request_dto' => $requestDTO,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),
@@ -96,8 +121,9 @@ final class DailySusuCreateService
                 ],
             ]);
 
+            // Throw the SystemFailureException
             throw new SystemFailureException(
-                message: 'Failed to create the daily susu account. Please try again.',
+                message: 'There was a system failure while trying to create the daily susu.',
             );
         }
     }

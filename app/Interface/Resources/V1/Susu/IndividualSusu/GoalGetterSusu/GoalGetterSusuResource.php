@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Interface\Resources\V1\Susu\IndividualSusu\GoalGetterSusu;
 
+use App\Interface\Resources\V1\Account\AccountLockResource;
 use App\Interface\Resources\V1\Account\AccountResource;
 use App\Interface\Resources\V1\Customer\CustomerWalletResource;
 use App\Interface\Resources\V1\Shared\DurationResource;
@@ -45,8 +46,7 @@ final class GoalGetterSusuResource extends JsonResource
                 'duration' => new DurationResource($this->resource->duration),
                 'susu_scheme' => new SusuSchemeResource($this->resource->individual->susuScheme),
 
-//                'susu_scheme' => new SusuSchemeResource($this->resource->individualAccount->susuScheme),
-//                'account_lock' => $this->when(! empty($this->resource->lock), new SusuAccountLockData($this->resource)),
+                'account_lock' => $this->when($this->resource->isLocked(), new AccountLockResource($this->resource->activeAccountLock())),
 //                'account_pause' => $this->when(! empty($this->resource->pause), new SusuAccountPauseData($this->resource)),
             ],
         ];

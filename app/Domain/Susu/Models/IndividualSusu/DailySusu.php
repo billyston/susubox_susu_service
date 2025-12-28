@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Domain\Susu\Models\IndividualSusu;
 
 use App\Domain\Account\Models\Account;
+use App\Domain\Account\Models\AccountLock;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Models\Wallet;
 use App\Domain\Shared\Casts\MoneyCasts;
+use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Models\Frequency;
 use App\Domain\Shared\Models\HasUuid;
 use Carbon\Carbon;
@@ -16,6 +18,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * Class DailySusu
@@ -39,6 +42,7 @@ use Illuminate\Database\Eloquent\Relations\HasOneThrough;
  * @property bool $auto_settlement
  * @property string $recurring_debit_status
  * @property string $settlement_status
+ * @property bool $isLocked
  *
  * Extra data:
  * @property array|null $extra_data
@@ -49,6 +53,7 @@ use Illuminate\Database\Eloquent\Relations\HasOneThrough;
  * @property Account|null $account
  * @property Wallet $wallet
  * @property Frequency $frequency
+ * @property AccountLock|null $accountLocks
  *
  * @method static Builder|DailySusu whereResourceId($value)
  * @method static Builder|DailySusu whereIndividualAccountId($value)
@@ -157,5 +162,44 @@ final class DailySusu extends Model
             related: Frequency::class,
             foreignKey: 'frequency_id',
         );
+    }
+
+    /**
+     * @return MorphMany
+     */
+    public function accountLocks(
+    ): MorphMany {
+        return $this->morphMany(
+            related: AccountLock::class,
+            name: 'lockable'
+        );
+    }
+
+    public function activeAccountLock(
+    ): ?AccountLock {
+        return $this->accountLocks()
+            ->where('status', Statuses::ACTIVE->value)
+            ->where(function ($query) {
+                $query->whereNull('unlocked_at')
+                    ->orWhere('unlocked_at', '>', Carbon::now());
+            })
+            ->latest('locked_at')
+            ->first();
+    }
+
+    public function isLocked(
+    ): bool {
+        return $this->settlement_status === Statuses::LOCKED->value
+            && $this->activeAccountLock() !== null;
+    }
+
+    /**
+     * @return void
+     */
+    protected static function booted(
+    ): void {
+        DailySusu::deleting(function (DailySusu $dailySusu) {
+            $dailySusu->accountLocks()->delete();
+        });
     }
 }

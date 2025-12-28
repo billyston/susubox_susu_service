@@ -29,7 +29,7 @@ final class FlexySusuShowService
                 $flexySusu->individual->customer_id !== $customer->id => throw new UnauthorisedAccessException(
                     message: 'You are not authorized to access this susu account.'
                 ),
-                $flexySusu->individual->susuScheme->code !== config('susubox.susu_schemes.biz_susu_code') => throw new UnauthorisedAccessException(
+                $flexySusu->individual->susuScheme->code !== config('susubox.susu_schemes.flexy_susu_code') => throw new UnauthorisedAccessException(
                     message: 'You are not authorized to access this susu account.'
                 ),
 

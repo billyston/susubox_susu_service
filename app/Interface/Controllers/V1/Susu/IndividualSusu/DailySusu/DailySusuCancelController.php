@@ -32,9 +32,7 @@ final class DailySusuCancelController extends Controller
     ): JsonResponse {
         // Execute the DailySusuCancelAction
         return $dailySusuCancelAction->execute(
-            customer: $customer,
             dailySusu: $dailySusu,
-            request: $dailySusuCancelRequest->validated()
         );
     }
 }

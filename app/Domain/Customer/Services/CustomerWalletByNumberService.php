@@ -32,7 +32,7 @@ final class CustomerWalletByNumberService
         } catch (
             ModelNotFoundException $exception
         ) {
-            Log::warning('Linked wallet not found', [
+            Log::warning('Exception in CustomerWalletByNumberService', [
                 'wallet_number' => $walletNumber,
                 'exception' => [
                     'message' => $exception->getMessage(),

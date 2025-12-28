@@ -29,7 +29,7 @@ final class GoalGetterSusuShowService
                 $goalGetterSusu->individual->customer_id !== $customer->id => throw new UnauthorisedAccessException(
                     message: 'You are not authorized to access this susu account.'
                 ),
-                $goalGetterSusu->individual->susuScheme->code !== config('susubox.susu_schemes.biz_susu_code') => throw new UnauthorisedAccessException(
+                $goalGetterSusu->individual->susuScheme->code !== config('susubox.susu_schemes.goal_getter_susu_code') => throw new UnauthorisedAccessException(
                     message: 'You are not authorized to access this susu account.'
                 ),
 

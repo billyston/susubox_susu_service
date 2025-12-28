@@ -32,9 +32,7 @@ final class GoalGetterSusuCancelController extends Controller
     ): JsonResponse {
         // Execute the GoalGetterSusuCancelAction and return the JsonResponse
         return $goalGetterSusuCancelAction->execute(
-            customer: $customer,
             goalGetterSusu: $goalGetterSusu,
-            request: $goalGetterSusuCancelRequest->validated()
         );
     }
 }

@@ -5,43 +5,38 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\BizSusu;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Domain\Account\Services\AccountCancelService;
-use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\CancellationNotAllowedException;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\BizSusu;
+use App\Domain\Susu\Services\BizSusu\BizSusuCancelService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class BizSusuCancelAction
 {
-    private AccountCancelService $accountCancelService;
+    private BizSusuCancelService $bizSusuCancelService;
 
     /**
-     * @param AccountCancelService $accountCancelService
+     * @param BizSusuCancelService $bizSusuCancelService
      */
     public function __construct(
-        AccountCancelService $accountCancelService
+        BizSusuCancelService $bizSusuCancelService
     ) {
-        $this->accountCancelService = $accountCancelService;
+        $this->bizSusuCancelService = $bizSusuCancelService;
     }
 
     /**
-     * @param Customer $customer
      * @param BizSusu $bizSusu
-     * @param array $request
      * @return JsonResponse
      * @throws CancellationNotAllowedException
      * @throws SystemFailureException
      */
     public function execute(
-        Customer $customer,
         BizSusu $bizSusu,
-        array $request,
     ): JsonResponse {
-        // Execute the AccountCancelService
-        $this->accountCancelService->execute(
-            account: $bizSusu->account,
+        // Execute the BizSusuCancelService
+        $this->bizSusuCancelService->execute(
+            bizSusu: $bizSusu,
         );
 
         // Build and return the JsonResponse

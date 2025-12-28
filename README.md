@@ -90,6 +90,9 @@ The SusuBox susu service API.
 - [ ] Validate cancel lock account
 - [ ] Validate approve lock account
 
+###### DailySusu Unlock Account
+- [ ] Initiate the unlock background job
+
 ###### DailySusu activate auto settlement
 - [ ] Initiate and approve the auto settlement
 - [ ] Validate the auto settlement
@@ -181,6 +184,9 @@ The SusuBox susu service API.
 - [ ] Approve lock account
 - [ ] Validate lock account
 
+###### BizSusu Unlock Account
+- [ ] Initiate the unlock background job
+
 ###### BizSusu pause recurring debits
 - [ ] Initiate and approve pause recurring debits
 - [ ] Validate pause recurring debits
@@ -266,6 +272,9 @@ The SusuBox susu service API.
 - [ ] Approve lock account
 - [ ] Validate lock account
 
+###### GoalGetterSusu Unlock Account
+- [ ] Initiate the unlock background job
+
 ###### GoalGetterSusu pause recurring debits
 - [ ] Initiate and approve pause recurring debits
 - [ ] Validate pause recurring debits
@@ -318,7 +327,7 @@ The SusuBox susu service API.
 - [ ] Initiate and approve account re-activation
 - [ ] Validate the account re-activation
 
-###### Get FlexySusu
+###### FlexySusu Get
 - [x] Get single FlexySusu for customer
 - [x] Get all FlexySusu for customer
 - [ ] Validate get FlexySusu
@@ -345,20 +354,13 @@ The SusuBox susu service API.
 - [ ] Approve lock account
 - [ ] Validate lock account
 
+###### FlexySusu Unlock Account
+- [ ] Initiate the unlock background job
+
 ###### FlexySusu pause recurring debits
 - [ ] Initiate and approve pause recurring debits
 - [ ] Validate pause recurring debits
 - [ ] Implement FlexySusu pause recurring debits
-
-###### FlexySusu resume recurring debits
-- [ ] Initiate and approve resume recurring debits
-- [ ] Validate resume recurring debits
-- [ ] Implement FlexySusu resume recurring debits
-
-###### FlexySusu failed debit rollover
-- [ ] Initiate and approve failed debit rollover feature
-- [ ] Validate the failed debit rollover action
-- [ ] Implement FlexySusu failed debit rollover feature
 
 ###### FlexySusu close account (In consideration)
 - [ ] Initiate and approve close FlexySusu account

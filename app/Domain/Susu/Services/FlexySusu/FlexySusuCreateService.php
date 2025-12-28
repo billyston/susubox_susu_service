@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Domain\Susu\Services\FlexySusu;
 
+use App\Application\Susu\DTOs\FlexySusu\FlexySusuCreateRequestDTO;
 use App\Domain\Account\Models\Account;
 use App\Domain\Account\Models\AccountBalance;
 use App\Domain\Customer\Models\Customer;
-use App\Domain\Customer\Models\Wallet;
+use App\Domain\Customer\Services\CustomerWalletService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Shared\Models\SusuScheme;
+use App\Domain\Shared\Services\SusuSchemeService;
 use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
 use App\Domain\Susu\Models\IndividualSusu\IndividualAccount;
 use Illuminate\Support\Facades\DB;
@@ -18,34 +19,54 @@ use Throwable;
 
 final class FlexySusuCreateService
 {
+    private CustomerWalletService $customerLinkedWalletService;
+    private SusuSchemeService $susuSchemeService;
+
+    /**
+     * @param CustomerWalletService $customerLinkedWalletService
+     * @param SusuSchemeService $susuSchemeService
+     */
+    public function __construct(
+        CustomerWalletService $customerLinkedWalletService,
+        SusuSchemeService $susuSchemeService,
+    ) {
+        $this->customerLinkedWalletService = $customerLinkedWalletService;
+        $this->susuSchemeService = $susuSchemeService;
+    }
+
     /**
      * @param Customer $customer
-     * @param SusuScheme $susuScheme
-     * @param Wallet $wallet
-     * @param array $requestDTO
+     * @param FlexySusuCreateRequestDTO $requestDTO
      * @return FlexySusu
      * @throws SystemFailureException
      */
-    public static function execute(
+    public function execute(
         Customer $customer,
-        SusuScheme $susuScheme,
-        Wallet $wallet,
-        array $requestDTO
+        FlexySusuCreateRequestDTO $requestDTO
     ): FlexySusu {
         try {
             // Execute the database transaction
             return DB::transaction(function () use (
                 $customer,
-                $susuScheme,
-                $wallet,
                 $requestDTO
             ) {
+                // Execute the CustomerWalletService and return the resource
+                $wallet = $this->customerLinkedWalletService->execute(
+                    customer: $customer,
+                    walletResourceID: $requestDTO->walletResourceID,
+                );
+
+                // Execute the SusuSchemeService and return the resource
+                $susuScheme = $this->susuSchemeService->execute(
+                    schemeCode: config(key: 'susubox.susu_schemes.flexy_susu_code')
+                );
+
                 // Create Financial Account
                 $account = Account::create([
                     'accountable_type' => IndividualAccount::class,
-                    'account_name' => $requestDTO['account_name'],
+                    'account_name' => $requestDTO->accountName,
                     'account_number' => Account::generateAccountNumber(),
-                    'accepted_terms' => $requestDTO['accepted_terms'],
+                    'accepted_terms' => $requestDTO->acceptedTerms,
                 ]);
 
                 // Create IndividualAccount (polymorphic bridge)
@@ -68,7 +89,7 @@ final class FlexySusuCreateService
                 return FlexySusu::create([
                     'individual_account_id' => $individualAccount->id,
                     'wallet_id' => $wallet->id,
-                    'initial_deposit' => $requestDTO['initial_deposit'],
+                    'initial_deposit' => $requestDTO->initialDeposit,
                 ]);
             });
         } catch (
@@ -77,9 +98,7 @@ final class FlexySusuCreateService
             // Log the full exception with context
             Log::error('Exception in FlexySusuCreateService', [
                 'customer' => $customer,
-                'susu_scheme' => $susuScheme,
-                'linked_wallet' => $wallet,
-                'dto' => $requestDTO,
+                'request_dto' => $requestDTO,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),
@@ -89,7 +108,7 @@ final class FlexySusuCreateService
 
             // Throw the SystemFailureException
             throw new SystemFailureException(
-                message: 'A system failure occurred while trying to create the flexy susu.',
+                message: 'There was a system error while trying to create the flexy susu.',
             );
         }
     }

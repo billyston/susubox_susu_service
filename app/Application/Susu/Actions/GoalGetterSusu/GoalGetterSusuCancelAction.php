@@ -5,43 +5,38 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\GoalGetterSusu;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Domain\Account\Services\AccountCancelService;
-use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\CancellationNotAllowedException;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\GoalGetterSusu;
+use App\Domain\Susu\Services\GoalGetterSusu\GoalGetterSusuCancelService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class GoalGetterSusuCancelAction
 {
-    private AccountCancelService $accountCancelService;
+    private GoalGetterSusuCancelService $goalGetterSusuCancelService;
 
     /**
-     * @param AccountCancelService $accountCancelService
+     * @param GoalGetterSusuCancelService $goalGetterSusuCancelService
      */
     public function __construct(
-        AccountCancelService $accountCancelService
+        GoalGetterSusuCancelService $goalGetterSusuCancelService
     ) {
-        $this->accountCancelService = $accountCancelService;
+        $this->goalGetterSusuCancelService = $goalGetterSusuCancelService;
     }
 
     /**
-     * @param Customer $customer
      * @param GoalGetterSusu $goalGetterSusu
-     * @param array $request
      * @return JsonResponse
      * @throws CancellationNotAllowedException
      * @throws SystemFailureException
      */
     public function execute(
-        Customer $customer,
         GoalGetterSusu $goalGetterSusu,
-        array $request,
     ): JsonResponse {
-        // Execute the AccountCancelService
-        $this->accountCancelService->execute(
-            account: $goalGetterSusu->account,
+        // Execute the GoalGetterSusuCancelService
+        $this->goalGetterSusuCancelService->execute(
+            goalGetterSusu: $goalGetterSusu,
         );
 
         // Build and return the JsonResponse

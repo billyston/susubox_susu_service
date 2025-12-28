@@ -5,10 +5,7 @@ declare(strict_types=1);
 namespace App\Interface\Controllers\V1\Susu\IndividualSusu\BizSusu;
 
 use App\Application\Susu\Actions\BizSusu\BizSusuCreateAction;
-use App\Domain\Customer\Exceptions\WalletNotFoundException;
 use App\Domain\Customer\Models\Customer;
-use App\Domain\Shared\Exceptions\FrequencyNotFoundException;
-use App\Domain\Shared\Exceptions\SusuSchemeNotFoundException;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Interface\Controllers\Shared\Controller;
 use App\Interface\Requests\V1\Susu\IndividualSusu\BizSusu\BizSusuCreateRequest;
@@ -22,9 +19,6 @@ final class BizSusuCreateController extends Controller
      * @param BizSusuCreateRequest $bizSusuCreateRequest
      * @param BizSusuCreateAction $bizSusuCreateAction
      * @return JsonResponse
-     * @throws FrequencyNotFoundException
-     * @throws WalletNotFoundException
-     * @throws SusuSchemeNotFoundException
      * @throws SystemFailureException
      * @throws UnknownCurrencyException
      */

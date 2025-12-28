@@ -32,9 +32,7 @@ final class FlexySusuCancelController extends Controller
     ): JsonResponse {
         // Execute the FlexySusuCancelAction and return the JsonResponse
         return $flexySusuCancelAction->execute(
-            customer: $customer,
             flexySusu: $flexy_susu,
-            request: $flexySusuCancelRequest->validated()
         );
     }
 }

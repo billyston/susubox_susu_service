@@ -137,4 +137,17 @@ final class Account extends Model
 
         return $number;
     }
+
+    /**
+     * @return void
+     */
+    protected static function booted(
+    ): void {
+        Account::deleting(function (
+            Account $account
+        ) {
+            $account->accountBalance()?->delete();
+            $account->accountable()?->delete();
+        });
+    }
 }
