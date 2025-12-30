@@ -34,7 +34,8 @@ return new class extends Migration
                     Statuses::PENDING->value,
                     Statuses::ACTIVE->value,
                     Statuses::CANCELLED->value,
-                    Statuses::SUSPENDED,
+                    Statuses::SUSPENDED->value,
+                    Statuses::COMPLETED->value,
                 ])->default(value: Statuses::PENDING->value);
 
                 // Timestamps (created_at / updated_at) fields

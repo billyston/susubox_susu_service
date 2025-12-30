@@ -13,6 +13,7 @@ final readonly class AccountLockResponseDTO
 {
     /**
      * @param AccountLock $accountLock
+     * @param Account $account
      * @param Customer $customer
      */
     public function __construct(
@@ -50,8 +51,9 @@ final readonly class AccountLockResponseDTO
                 'type' => 'AccountLock',
                 'attributes' => [
                     'resource_id' => $this->accountLock->resource_id,
-                    'locked_at' => Carbon::parse($this->accountLock->locked_at)->isoFormat(format: 'MM/DD/YYYY'),
-                    'unlocked_at' => Carbon::parse($this->accountLock->unlocked_at)->isoFormat(format: 'MM/DD/YYYY'),
+                    'locked_at' => Carbon::parse($this->accountLock->locked_at)->toFormattedDateString(),
+                    'unlocked_at' => Carbon::parse($this->accountLock->unlocked_at)->toFormattedDateString(),
+                    'status' => $this->accountLock->status,
                 ],
                 'relationships' => [
                     'account' => [

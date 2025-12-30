@@ -52,8 +52,8 @@ The SusuBox susu service API.
 - [ ] Validate approve account
 
 ###### DailySusu Activation (initial deposit)
-- [x] Set recurring_debit_status
-- [x] Set account status
+- [x] Set recurring_debit_status (active)
+- [x] Set account status (active)
 
 ###### DailySusu Re-Activation (if initial deposit failed)
 - [ ] Initiate and approve account re-activation
@@ -83,18 +83,18 @@ The SusuBox susu service API.
 - [ ] Validate approve settlement
 
 ###### DailySusu Lock Account
-- [ ] Create lock account
-- [ ] Cancel lock account process
-- [ ] Approve lock account
+- [x] Create lock account
+- [x] Cancel lock account process
+- [x] Approve lock account
 - [ ] Validate create lock account
 - [ ] Validate cancel lock account
 - [ ] Validate approve lock account
 
 ###### DailySusu Unlock Account
-- [ ] Initiate the unlock background job
+- [x] Initiate the account_unlock background job
 
 ###### DailySusu activate auto settlement
-- [ ] Initiate and approve the auto settlement
+- [ ] Initiate and approve the auto settlement feature
 - [ ] Validate the auto settlement
 - [ ] Initiate auto settlement (After successful deposit)
 
@@ -179,13 +179,15 @@ The SusuBox susu service API.
 - [ ] Validate approve withdrawal
 
 ###### BizSusu Lock Account
-- [ ] Create lock account
-- [ ] Cancel lock account process
-- [ ] Approve lock account
-- [ ] Validate lock account
+- [x] Create lock account
+- [x] Cancel lock account process
+- [x] Approve lock account
+- [ ] Validate create lock account
+- [ ] Validate cancel lock account
+- [ ] Validate approve lock account
 
 ###### BizSusu Unlock Account
-- [ ] Initiate the unlock background job
+- [x] Initiate the account_unlock background job
 
 ###### BizSusu pause recurring debits
 - [ ] Initiate and approve pause recurring debits
@@ -267,10 +269,7 @@ The SusuBox susu service API.
 - [ ] Validate approve withdrawal
 
 ###### GoalGetterSusu Lock Account
-- [ ] Create lock account
-- [ ] Cancel lock account process
-- [ ] Approve lock account
-- [ ] Validate lock account
+- [x] Create lock account
 
 ###### GoalGetterSusu Unlock Account
 - [ ] Initiate the unlock background job
@@ -349,13 +348,15 @@ The SusuBox susu service API.
 - [ ] Validate withdrawal
 
 ###### FlexySusu Lock Account
-- [ ] Create lock account
-- [ ] Cancel lock account process
-- [ ] Approve lock account
-- [ ] Validate lock account
+- [x] Create lock account
+- [x] Cancel lock account process
+- [x] Approve lock account
+- [ ] Validate create lock account
+- [ ] Validate cancel lock account
+- [ ] Validate approve lock account
 
 ###### FlexySusu Unlock Account
-- [ ] Initiate the unlock background job
+- [x] Initiate the account_unlock background job
 
 ###### FlexySusu pause recurring debits
 - [ ] Initiate and approve pause recurring debits
@@ -382,10 +383,19 @@ The SusuBox susu service API.
 - [x] Create account transaction
 - [x] TransactionStatus from Payment Service should match Susu Service 
 - [x] All transactions must have a TransactionType (debit or credit)
-- [ ] Handle TransactionCreatedFailureAction
-- [ ] Get all transactions
-- [ ] Get single transaction
+- [ ] Get all transactions for account
+- [ ] Get single transaction for account
 
+## Transactions Post Actions
+- [ ] Handle TransactionCreatedSuccessAction
+  - [ ] Handle initial_deposit
+  - [ ] Handle subsequent debit
+  - [ ] Handle susu type actions (process auto settlement, close goal)
+  - [ ] Dispatch TransactionSuccessNotification
+
+
+- [ ] Handle TransactionCreatedFailureAction
+  - [ ] Dispatch TransactionFailureNotification
 
 ## PIN Authorization Middleware
 - [ ] Implement the PIN Authorization Middleware
@@ -399,10 +409,9 @@ The SusuBox susu service API.
 - [ ] When payment_instruction is cancelled, approval_status->cancelled, status->terminated
 - [ ] When transaction is created, update the payment_instruction->status (active, terminated, success, failed)
 - [ ] internal_reference field must be updated after payment_service returned data
-- [ ] Transaction notification (SMS / Email) should have balance updates
 - [ ] Rebuild all the Resource files (AccountBalanceResource as an example)
+- [ ] Review all the response messages
 - [ ] Provide descriptions for all api responses
 - [ ] Review all the exceptions and give proper messaging
-- [ ] Review all the response messages
 - [x] All $variable, function and method names should follow CamelCase
-- [ ] All APIResource, ResponseDTO toArray and DB fields names must follow snake_case 
+- [x] All APIResource, ResponseDTO toArray and DB fields names must follow snake_case

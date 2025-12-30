@@ -6,7 +6,6 @@ namespace App\Domain\Susu\Services\FlexySusu;
 
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
@@ -43,10 +42,6 @@ final class FlexySusuWithdrawalStatusUpdateService
         ) {
             throw $invalidArgumentException;
         } catch (
-            QueryException $queryException
-        ) {
-            throw $queryException;
-        } catch (
             Throwable $throwable
         ) {
             // Log the full exception with context
@@ -62,7 +57,7 @@ final class FlexySusuWithdrawalStatusUpdateService
 
             // Throw the SystemFailureException
             throw new SystemFailureException(
-                message: 'There was an error while trying to update the withdrawal status.',
+                message: 'There was system failure while trying to update the withdrawal status.',
             );
         }
     }

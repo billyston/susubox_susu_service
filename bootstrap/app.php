@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Application\Account\Schedulers\AccountUnLockScheduler;
 use App\Application\Customer\Commands\CustomerRedisStreamConsumer;
 use App\Domain\Shared\Exceptions\ApiExceptionHandler;
 use App\Interface\Middleware\Shared\CertificateTransparencyPolicy;
@@ -52,7 +53,12 @@ return Application::configure(basePath: dirname(__DIR__))
         function (
             Schedule $schedule
         ): void {
-            //..
+            // Schedule the AccountUnLockScheduler
+            $schedule
+                ->job(job: AccountUnLockScheduler::class)
+                ->everyMinute()
+                ->withoutOverlapping()
+                ->onOneServer();
         }
     )->withExceptions(
         using: function (

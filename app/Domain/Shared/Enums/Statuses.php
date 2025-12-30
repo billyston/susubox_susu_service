@@ -21,6 +21,7 @@ enum Statuses: string
     case APPROVED = 'approved';
     case CLOSED = 'closed';
     case TERMINATED = 'terminated';
+    case COMPLETED = 'completed';
 
     /**
      * @return array

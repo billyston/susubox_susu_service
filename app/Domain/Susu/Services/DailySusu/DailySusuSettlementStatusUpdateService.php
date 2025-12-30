@@ -6,7 +6,6 @@ namespace App\Domain\Susu\Services\DailySusu;
 
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
@@ -43,14 +42,10 @@ final class DailySusuSettlementStatusUpdateService
         ) {
             throw $invalidArgumentException;
         } catch (
-            QueryException $queryException
-        ) {
-            throw $queryException;
-        } catch (
             Throwable $throwable
         ) {
             // Log the full exception with context
-            Log::error('Exception in AccountStatusUpdateService', [
+            Log::error('Exception in DailySusuSettlementStatusUpdateService', [
                 'daily_susu' => $dailySusu,
                 'status' => $status,
                 'exception' => [
@@ -62,7 +57,7 @@ final class DailySusuSettlementStatusUpdateService
 
             // Throw the SystemFailureException
             throw new SystemFailureException(
-                message: 'There was an error while trying to update the settlement status.',
+                message: 'There was system failure while trying to update the settlement status.',
             );
         }
     }
