@@ -45,8 +45,8 @@ final class GoalGetterSusuResource extends JsonResource
                 'wallet' => new CustomerWalletResource($this->resource->wallet),
                 'duration' => new DurationResource($this->resource->duration),
                 'susu_scheme' => new SusuSchemeResource($this->resource->individual->susuScheme),
-
                 'account_lock' => $this->when($this->resource->isLocked(), new AccountLockResource($this->resource->activeAccountLock())),
+
 //                'account_pause' => $this->when(! empty($this->resource->pause), new SusuAccountPauseData($this->resource)),
             ],
         ];

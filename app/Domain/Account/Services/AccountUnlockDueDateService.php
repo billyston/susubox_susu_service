@@ -7,7 +7,6 @@ namespace App\Domain\Account\Services;
 use App\Domain\Account\Models\AccountLock;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -15,8 +14,9 @@ use Throwable;
 final class AccountUnlockDueDateService
 {
     /**
+     * @param callable $callback
      * @param int $chunkSize
-     * @return Collection
+     * @return void
      * @throws SystemFailureException
      */
     public static function execute(
@@ -32,7 +32,7 @@ final class AccountUnlockDueDateService
                 return AccountLock::query()
                     ->where('status', Statuses::ACTIVE->value)
                     ->whereNotNull('locked_at')
-                    ->where('locked_at', '<=', now())
+                    ->where('unlocked_at', '<=', now())
                     ->orderBy('id')
                     ->chunkById($chunkSize, $callback);
             });

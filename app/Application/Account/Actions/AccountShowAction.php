@@ -5,45 +5,49 @@ declare(strict_types=1);
 namespace App\Application\Account\Actions;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Domain\Account\Services\AccountIndexService;
+use App\Domain\Account\Models\Account;
+use App\Domain\Account\Services\AccountShowService;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Interface\Resources\V1\Account\AccountCollectionResource;
+use App\Interface\Resources\V1\Account\AccountResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-final class AccountIndexAction
+final class AccountShowAction
 {
-    private AccountIndexService $accountIndexService;
+    private AccountShowService $accountShowService;
 
     /**
-     * @param AccountIndexService $accountIndexService
+     * @param AccountShowService $accountShowService
      */
     public function __construct(
-        AccountIndexService $accountIndexService
+        AccountShowService $accountShowService
     ) {
-        $this->accountIndexService = $accountIndexService;
+        $this->accountShowService = $accountShowService;
     }
 
     /**
      * @param Customer $customer
+     * @param Account $account
      * @return JsonResponse
      * @throws SystemFailureException
      */
     public function execute(
         Customer $customer,
+        Account $account,
     ): JsonResponse {
         // Execute the AccountIndexService and return the collection
-        $customerAccounts = $this->accountIndexService->execute(
+        $account = $this->accountShowService->execute(
             customer: $customer,
+            account: $account
         );
 
         // Build and return the JsonResponse
         return ApiResponseBuilder::success(
             code: Response::HTTP_OK,
             message: 'Request successful.',
-            data: AccountCollectionResource::collection(
-                resource: $customerAccounts
+            data: new AccountResource(
+                resource: $account
             ),
         );
     }

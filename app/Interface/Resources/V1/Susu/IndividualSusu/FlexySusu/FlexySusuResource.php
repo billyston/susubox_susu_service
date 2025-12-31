@@ -38,8 +38,8 @@ final class FlexySusuResource extends JsonResource
                 'account' => new AccountResource($this->resource->individual->account),
                 'wallet' => new CustomerWalletResource($this->resource->wallet),
                 'susu_scheme' => new SusuSchemeResource($this->resource->individual->susuScheme),
-
                 'account_lock' => $this->when($this->resource->isLocked(), new AccountLockResource($this->resource->activeAccountLock())),
+
 //                'account_pause' => $this->when(! empty($this->resource->pause), new SusuAccountPauseData($this->resource)),
             ],
         ];
