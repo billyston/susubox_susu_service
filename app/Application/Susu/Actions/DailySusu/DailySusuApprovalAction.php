@@ -66,6 +66,7 @@ final class DailySusuApprovalAction
 
         // Build the RecurringDepositValueObject
         $debitValues = RecurringDepositValueObject::create(
+            initialDepositFrequency: $dailySusu->initial_deposit_frequency,
             initialDeposit: $dailySusu->initial_deposit,
             susuAmount: $dailySusu->susu_amount,
             startDate: $dailySusu->start_date,

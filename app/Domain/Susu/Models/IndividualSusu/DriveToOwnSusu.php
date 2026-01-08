@@ -5,16 +5,21 @@ declare(strict_types=1);
 namespace App\Domain\Susu\Models\IndividualSusu;
 
 use App\Domain\Account\Models\Account;
+use App\Domain\Account\Models\AccountLock;
+use App\Domain\Account\Models\AccountPause;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Models\Wallet;
 use App\Domain\Shared\Casts\MoneyCasts;
+use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Models\Frequency;
 use App\Domain\Shared\Models\HasUuid;
+use Carbon\Carbon;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * Class DriveToOwnSusu
@@ -142,5 +147,85 @@ final class DriveToOwnSusu extends Model
             related: Frequency::class,
             foreignKey: 'frequency_id',
         );
+    }
+
+    /**
+     * @return MorphMany
+     */
+    public function accountLocks(
+    ): MorphMany {
+        return $this->morphMany(
+            related: AccountLock::class,
+            name: 'lockable'
+        );
+    }
+
+    public function activeAccountLock(
+    ): ?AccountLock {
+        return $this->accountLocks()
+            ->where('status', Statuses::ACTIVE->value)
+            ->where(function ($query) {
+                $query->whereNull('unlocked_at')
+                    ->orWhere('unlocked_at', '>', Carbon::now());
+            })
+            ->latest('locked_at')
+            ->first();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLocked(
+    ): bool {
+        return $this->withdrawal_status === Statuses::LOCKED->value
+            && $this->activeAccountLock() !== null;
+    }
+
+    /**
+     * @return MorphMany
+     */
+    public function accountPauses(
+    ): MorphMany {
+        return $this->morphMany(
+            related: AccountPause::class,
+            name: 'pauseable'
+        );
+    }
+
+    /**
+     * @return AccountLock|null
+     */
+    public function activeAccountPauses(
+    ): ?AccountPause {
+        return $this->accountPauses()
+            ->where('status', Statuses::ACTIVE->value)
+            ->where(function ($query) {
+                $query->whereNull('paused_at')
+                    ->orWhere('resumed_at', '>', Carbon::now());
+            })
+            ->latest('paused_at')
+            ->first();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPaused(
+    ): bool {
+        return $this->recurring_debit_status === Statuses::PAUSED->value
+            && $this->activeAccountPauses() !== null;
+    }
+
+    /**
+     * @return void
+     */
+    protected static function booted(
+    ): void {
+        DriveToOwnSusu::deleting(function (DriveToOwnSusu $driveToOwnSusu) {
+            $driveToOwnSusu->accountLocks()->delete();
+        });
+        DriveToOwnSusu::deleting(function (DriveToOwnSusu $driveToOwnSusu) {
+            $driveToOwnSusu->accountPauses()->delete();
+        });
     }
 }

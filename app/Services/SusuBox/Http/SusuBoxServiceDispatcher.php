@@ -32,7 +32,7 @@ final class SusuBoxServiceDispatcher
 
         // Ensure service name is valid
         if (! isset($baseUrls[$service])) {
-            throw new InvalidArgumentException("Unknown SusuBox service: {$service}");
+            throw new InvalidArgumentException('Unknown SusuBox service: '.$service);
         }
 
         // Construct full target URL

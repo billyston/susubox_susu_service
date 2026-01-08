@@ -22,6 +22,8 @@ enum Statuses: string
     case CLOSED = 'closed';
     case TERMINATED = 'terminated';
     case COMPLETED = 'completed';
+    case SETTLED = 'settled';
+    case ROLLED_OVER = 'rolled_over';
 
     /**
      * @return array

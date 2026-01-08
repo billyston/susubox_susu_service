@@ -14,6 +14,7 @@ final readonly class TransactionCreateRequestDTO
      * @param string $resourceID
      * @param string $code
      * @param string $status
+     * @param string $internalReference
      * @param string $reference
      * @param bool $isInitialDeposit
      * @param Money $charges
@@ -29,6 +30,7 @@ final readonly class TransactionCreateRequestDTO
         public string $resourceID,
         public string $code,
         public string $status,
+        public string $internalReference,
         public string $reference,
         public bool $isInitialDeposit,
         public Money $charges,
@@ -71,7 +73,8 @@ final readonly class TransactionCreateRequestDTO
             resourceID: Str::uuid()->toString(),
             code: $transaction['code'],
             status: $transaction['status'],
-            reference: $transaction['reference'],
+            internalReference: $transaction['internal_reference'],
+            reference: $transaction['transaction_reference'],
             isInitialDeposit: $isInitialDeposit,
             charges: $charges,
             amount: $amount,

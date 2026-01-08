@@ -55,6 +55,8 @@ final class TransactionCreatedSuccessAction
                 model: $transaction->account->accountable->susu(),
                 status: Statuses::ACTIVE->value
             );
+
+            //
         }
 
         // Update payment instruction

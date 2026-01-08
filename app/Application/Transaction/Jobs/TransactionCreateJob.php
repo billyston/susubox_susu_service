@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Transaction\Jobs;
 
+use App\Application\Account\Jobs\AccountCycleJob;
 use App\Application\Transaction\DTOs\TransactionCreateRequestDTO;
 use App\Domain\PaymentInstruction\Services\PaymentInstructionByResourceIdService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
@@ -67,6 +68,11 @@ final class TransactionCreateJob implements ShouldQueue
                 requestDTO: $this->requestDTO
             ),
         };
+
+        // Dispatch the AccountCycleJob
+        AccountCycleJob::dispatch(
+            transactionResource: $transaction->resource_id,
+        );
 
         // Dispatch the TransactionPostProcessJob
         TransactionPostProcessJob::dispatch(

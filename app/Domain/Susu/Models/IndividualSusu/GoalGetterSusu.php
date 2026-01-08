@@ -6,6 +6,7 @@ namespace App\Domain\Susu\Models\IndividualSusu;
 
 use App\Domain\Account\Models\Account;
 use App\Domain\Account\Models\AccountLock;
+use App\Domain\Account\Models\AccountPause;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Models\Wallet;
 use App\Domain\Shared\Casts\MoneyCasts;
@@ -213,12 +214,50 @@ final class GoalGetterSusu extends Model
     }
 
     /**
+     * @return MorphMany
+     */
+    public function accountPauses(
+    ): MorphMany {
+        return $this->morphMany(
+            related: AccountPause::class,
+            name: 'pauseable'
+        );
+    }
+
+    /**
+     * @return AccountLock|null
+     */
+    public function activeAccountPause(
+    ): ?AccountPause {
+        return $this->accountPauses()
+            ->where('status', Statuses::ACTIVE->value)
+            ->where(function ($query) {
+                $query->whereNull('paused_at')
+                    ->orWhere('resumed_at', '>', Carbon::now());
+            })
+            ->latest('paused_at')
+            ->first();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPaused(
+    ): bool {
+        return $this->recurring_debit_status === Statuses::PAUSED->value
+            && $this->activeAccountPause() !== null;
+    }
+
+    /**
      * @return void
      */
     protected static function booted(
     ): void {
         GoalGetterSusu::deleting(function (GoalGetterSusu $goalGetterSusu) {
             $goalGetterSusu->accountLocks()->delete();
+        });
+        GoalGetterSusu::deleting(function (GoalGetterSusu $goalGetterSusu) {
+            $goalGetterSusu->accountPauses()->delete();
         });
     }
 }

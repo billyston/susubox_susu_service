@@ -7,6 +7,7 @@ namespace App\Domain\Susu\Services\DailySusu;
 use App\Application\Susu\DTOs\DailySusu\DailySusuCreateRequestDTO;
 use App\Domain\Account\Models\Account;
 use App\Domain\Account\Models\AccountBalance;
+use App\Domain\Account\Models\AccountCycleDefinition;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Services\CustomerWalletService;
 use App\Domain\Shared\Enums\Statuses;
@@ -97,15 +98,32 @@ final class DailySusuCreateService
                 ]);
 
                 // Create and return the DailySusu resource
-                return DailySusu::create([
+                $dailySusu = DailySusu::create([
                     'individual_account_id' => $individualAccount->id,
                     'wallet_id' => $wallet->id,
                     'frequency_id' => $frequency->id,
                     'susu_amount' => $requestDTO->susuAmount,
                     'initial_deposit' => $requestDTO->initialDeposit,
+                    'initial_deposit_frequency' => $requestDTO->initialDepositFrequency,
                     'rollover_enabled' => $requestDTO->rolloverEnabled,
                     'recurring_debit_status' => Statuses::PENDING->value,
                 ]);
+
+                // Create the AccountCycleDefinition
+                AccountCycleDefinition::create([
+                    'definable_type' => DailySusu::class,
+                    'definable_id' => $dailySusu->id,
+                    'cycle_length' => $requestDTO->cycleLength,
+                    'expected_frequencies' => $requestDTO->expectedFrequencies,
+                    'expected_cycle_amount' => $requestDTO->expectedCycleAmount,
+                    'expected_settlement_amount' => $requestDTO->expectedSettlementAmount,
+                    'commission_amount' => $requestDTO->commissionAmount,
+                    'commission_frequencies' => $requestDTO->commissionFrequencies,
+                    'settlement_frequencies' => $requestDTO->settlementFrequencies,
+                ]);
+
+                // Return the DailySusu resource
+                return $dailySusu;
             });
         } catch (
             Throwable $throwable

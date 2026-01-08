@@ -29,7 +29,7 @@ final class DailySusuShowService
                 $dailySusu->individual->customer_id !== $customer->id => throw new UnauthorisedAccessException(
                     message: 'You are not authorized to access this susu account.'
                 ),
-                $dailySusu->individual->susuScheme->code !== config('susubox.susu_schemes.daily_susu_code') => throw new UnauthorisedAccessException(
+                $dailySusu->individual->scheme->code !== config('susubox.susu_schemes.daily_susu_code') => throw new UnauthorisedAccessException(
                     message: 'You are not authorized to access this susu account.'
                 ),
 

@@ -7,15 +7,26 @@ namespace App\Domain\Transaction\Services;
 use App\Application\Transaction\DTOs\TransactionCreateRequestDTO;
 use App\Domain\Account\Models\AccountBalance;
 use App\Domain\PaymentInstruction\Models\PaymentInstruction;
+use App\Domain\PaymentInstruction\Services\PaymentInstructionInternalReferenceUpdateService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Transaction\Models\Transaction;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
 final class TransactionCreateCreditService
 {
+    private TransactionCreateService $transactionCreateService;
+    private PaymentInstructionInternalReferenceUpdateService $paymentInstructionInternalReferenceUpdateService;
+
+    public function __construct(
+        TransactionCreateService $transactionCreateService,
+        PaymentInstructionInternalReferenceUpdateService $paymentInstructionInternalReferenceUpdateService
+    ) {
+        $this->transactionCreateService = $transactionCreateService;
+        $this->paymentInstructionInternalReferenceUpdateService = $paymentInstructionInternalReferenceUpdateService;
+    }
+
     /**
      * @param PaymentInstruction $paymentInstruction
      * @param TransactionCreateRequestDTO $requestDTO
@@ -38,38 +49,22 @@ final class TransactionCreateCreditService
                     ->lockForUpdate()
                     ->first();
 
-                // Return the Transaction if exist (and abort process)
-                if ($existingTransaction) {
+                // Return the Transaction (if its already exist)
+                if ($existingTransaction !== null) {
                     return $existingTransaction;
                 }
 
                 // Create the new Transaction
-                $transaction = Transaction::create([
-                    'resource_id' => $requestDTO->resourceID,
-                    'account_id' => $paymentInstruction->account_id,
-                    'payment_instruction_id' => $paymentInstruction->id,
-                    'transaction_category_id' => $paymentInstruction->transaction_category_id,
-                    'wallet_id' => $paymentInstruction->wallet->id,
-                    'transaction_type' => $paymentInstruction->transaction_type,
-                    'reference_number' => $requestDTO->reference,
+                $transaction = $this->transactionCreateService->execute(
+                    paymentInstruction: $paymentInstruction,
+                    requestDTO: $requestDTO
+                );
 
-                    'amount' => $paymentInstruction->amount,
-                    'charge' => $paymentInstruction->charge,
-                    'total' => $paymentInstruction->total,
-
-                    'description' => $requestDTO->description,
-                    'narration' => Transaction::narration(
-                        category: $paymentInstruction->transactionCategory->name,
-                        amount: $requestDTO->amount->getAmount()->toFloat(),
-                        account_number: $paymentInstruction->account->account_number,
-                        wallet: $paymentInstruction->wallet->wallet_number,
-                        date: $requestDTO->date,
-                    ),
-                    'date' => $requestDTO->date,
-                    'status_code' => $requestDTO->code,
-                    'status' => $requestDTO->status,
-                    'extra_data' => $requestDTO->toArray(),
-                ]);
+                // Set internal_reference on PaymentInstruction (if missing)
+                $this->paymentInstructionInternalReferenceUpdateService->execute(
+                    $paymentInstruction,
+                    $requestDTO->internalReference
+                );
 
                 // Return the Transaction if new transaction status is not (success)
                 if ($transaction->status !== $requestDTO->status) {
@@ -77,27 +72,14 @@ final class TransactionCreateCreditService
                 }
 
                 // Find the AccountBalance and lock it for balance update
-                $balance = AccountBalance::query()
-                    ->where('account_id', $paymentInstruction->account_id)
-                    ->lockForUpdate()
-                    ->firstOrFail();
-
-                // Set the new balance data
-                $balance->ledger_balance = $balance->ledger_balance->plus($paymentInstruction->amount);
-                $balance->available_balance = $balance->available_balance->plus($paymentInstruction->amount);
-                $balance->last_transaction_id = $transaction->id;
-                $balance->last_reconciled_at = now();
-
-                // Execute and save to the database
-                $balance->save();
+                $this->accountBalanceUpdate(
+                    $paymentInstruction,
+                    $transaction
+                );
 
                 // Return the Transaction resource
                 return $transaction->refresh();
             });
-        } catch (
-            QueryException $queryException
-        ) {
-            throw $queryException;
         } catch (
             Throwable $throwable
         ) {
@@ -114,8 +96,33 @@ final class TransactionCreateCreditService
 
             // Throw the SystemFailureException
             throw new SystemFailureException(
-                message: 'There was an error while trying to create the transaction.',
+                message: 'There was a system failure while trying to create the transaction.',
             );
         }
+    }
+
+    /**
+     * @param PaymentInstruction $paymentInstruction
+     * @param Transaction $transaction
+     * @return void
+     */
+    private function accountBalanceUpdate(
+        PaymentInstruction $paymentInstruction,
+        Transaction $transaction
+    ): void {
+        // Get the AccountBalance
+        $balance = AccountBalance::query()
+            ->where('account_id', $paymentInstruction->account_id)
+            ->lockForUpdate()
+            ->firstOrFail();
+
+        // Set the new balance data
+        $balance->ledger_balance = $balance->ledger_balance->plus($transaction->amount);
+        $balance->available_balance = $balance->available_balance->plus($transaction->total);
+        $balance->last_transaction_id = $transaction->id;
+        $balance->last_reconciled_at = now();
+
+        // Save the data in the database
+        $balance->save();
     }
 }

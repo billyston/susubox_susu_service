@@ -30,9 +30,12 @@ return new class extends Migration
                 // Table main attributes
                 $table->bigInteger(column: 'susu_amount');
                 $table->bigInteger(column: 'initial_deposit');
+                $table->integer(column: 'initial_deposit_frequency');
                 $table->string(column: 'currency')->default(value: 'GHS');
+
                 $table->date(column: 'start_date')->default(value: Carbon::today());
                 $table->date(column: 'end_date')->default(value: Helpers::getEndCollectionDate());
+
                 $table->boolean(column: 'rollover_enabled')->default(value: false);
                 $table->boolean(column: 'is_collateralized')->default(value: false);
                 $table->boolean(column: 'auto_settlement')->default(value: false);

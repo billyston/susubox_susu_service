@@ -108,13 +108,13 @@ final class Account extends Model
     /**
      * @return mixed|null
      */
-    public function getSusuScheme(
+    public function scheme(
     ): mixed {
         if (! $this->accountable) {
             return null;
         }
 
-        return $this->accountable->susuScheme;
+        return $this->accountable->scheme;
     }
 
     /**

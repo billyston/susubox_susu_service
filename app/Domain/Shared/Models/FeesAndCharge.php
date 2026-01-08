@@ -6,53 +6,58 @@ namespace App\Domain\Shared\Models;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 /**
  * Class FeesAndCharge
  *
- * @property string $id
+ * @property int $id
  * @property string $resource_id
- * @property string $susu_scheme_id
- * @property string $category
- * @property string $collection_cycle
- * @property string $settlement_cycle
- * @property float $commission
- * @property float $charge
- * @property float $fee
+ * @property int $susu_scheme_id
+ * @property string $event
+ * @property string $calculation_type
+ * @property float $value
+ * @property bool $is_active
+ * @property Carbon|null $effective_from
+ * @property Carbon|null $effective_to
  *
- * Relationships:
- * @property SusuScheme $susuScheme
+ * @property SusuScheme $scheme
+ * @property Collection|FeeOverride[] $overrides
  *
- * @method static Builder|FeesAndCharge whereResourceId($value)
- * @method static Builder|FeesAndCharge whereSusuSchemeId($value)
- * @method static Builder|FeesAndCharge whereCategory($value)
- * @method static Builder|FeesAndCharge whereCollectionCycle($value)
- * @method static Builder|FeesAndCharge whereSettlementCycle($value)
- * @method static Builder|FeesAndCharge whereCommission($value)
- * @method static Builder|FeesAndCharge whereCharge($value)
- * @method static Builder|FeesAndCharge whereFee($value)
+ * @method static Builder|FeesAndCharge whereResourceId(string $resourceId)
+ * @method static Builder|FeesAndCharge whereIsActive(bool $active)
+ * @method static Builder|FeesAndCharge active()
  *
  * @mixin Eloquent
  */
 final class FeesAndCharge extends Model
 {
+    use HasUuid;
+
     public $timestamps = false;
 
     protected $guarded = ['id'];
 
-    protected $casts = [];
+    protected $casts = [
+        'value' => 'decimal:4',
+        'is_active' => 'boolean',
+        'effective_from' => 'datetime',
+        'effective_to' => 'datetime',
+    ];
 
     protected $fillable = [
         'resource_id',
         'susu_scheme_id',
-        'category',
-        'collection_cycle',
-        'settlement_cycle',
-        'commission',
-        'charge',
-        'fee',
+        'event',
+        'calculation_type',
+        'value',
+        'is_active',
+        'effective_from',
+        'effective_to',
     ];
 
     /**
@@ -66,11 +71,22 @@ final class FeesAndCharge extends Model
     /**
      * @return BelongsTo
      */
-    public function susuScheme(
+    public function scheme(
     ): BelongsTo {
         return $this->belongsTo(
             related: SusuScheme::class,
             foreignKey: 'susu_scheme_id',
+        );
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function overrides(
+    ): HasMany {
+        return $this->hasMany(
+            related: FeeOverride::class,
+            foreignKey: 'fee_override_id',
         );
     }
 }

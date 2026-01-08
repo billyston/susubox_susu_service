@@ -6,6 +6,7 @@ namespace App\Application\Transaction\Jobs;
 
 use App\Application\Transaction\DTOs\TransactionCreateResponseDTO;
 use App\Domain\Shared\Exceptions\SystemFailureException;
+use App\Domain\Transaction\Enums\TransactionCategoryCode;
 use App\Domain\Transaction\Services\TransactionByResourceIdService;
 use App\Services\SusuBox\Http\Requests\TransactionCreatedRequestHandler;
 use Illuminate\Bus\Batchable;
@@ -48,6 +49,17 @@ final class TransactionNotificationJob implements ShouldQueue
         $transaction = $transactionByResourceIdService->execute(
             resourceID: $this->transactionResource,
         );
+
+        /**
+         * Do NOT send notification for
+         * recurring_deposit that is NOT initial_deposit
+         */
+        if (
+            $transaction->category->code === TransactionCategoryCode::RECURRING_DEBIT_CODE->value
+            && $this->isInitialDeposit === false
+        ) {
+            return;
+        }
 
         // Build the TransactionCreateResponseDTO
         $responseDTO = TransactionCreateResponseDTO::fromDomain(

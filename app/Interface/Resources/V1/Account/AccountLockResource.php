@@ -27,7 +27,7 @@ final class AccountLockResource extends JsonResource
                 'resource_id' => $this->resource->resource_id,
                 'locked_at' => Carbon::parse($this->resource->locked_at)->isoFormat(format: 'MM/DD/YYYY'),
                 'unlocked_at' => Carbon::parse($this->resource->unlocked_at)->isoFormat(format: 'MM/DD/YYYY'),
-                'days_left' => max(now()->startOfDay()->diffInDays(Carbon::parse($this->resource->unlocked_at)->startOfDay(), false), 0),
+                'days_left' => max(now()->startOfDay()->diffInDays(Carbon::parse($this->resource->unlocked_at)->startOfDay()), 0),
                 'status' => $this->resource->status,
             ],
         ];

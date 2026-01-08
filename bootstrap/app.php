@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Application\Account\Schedulers\AccountPauseResumeScheduler;
 use App\Application\Account\Schedulers\AccountUnLockScheduler;
 use App\Application\Customer\Commands\CustomerRedisStreamConsumer;
 use App\Domain\Shared\Exceptions\ApiExceptionHandler;
@@ -56,6 +57,13 @@ return Application::configure(basePath: dirname(__DIR__))
             // Schedule the AccountUnLockScheduler
             $schedule
                 ->job(job: AccountUnLockScheduler::class)
+                ->everyMinute()
+                ->withoutOverlapping()
+                ->onOneServer();
+
+            // Schedule the AccountPauseResumeScheduler
+            $schedule
+                ->job(job: AccountPauseResumeScheduler::class)
                 ->everyMinute()
                 ->withoutOverlapping()
                 ->onOneServer();

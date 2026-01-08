@@ -32,6 +32,7 @@ return new class extends Migration
 
                 $table->enum(column: 'status', allowed: [
                     Statuses::PENDING->value,
+                    Statuses::APPROVED->value,
                     Statuses::ACTIVE->value,
                     Statuses::CANCELLED->value,
                     Statuses::SUSPENDED->value,

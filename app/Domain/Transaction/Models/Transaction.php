@@ -39,6 +39,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|Carbon $date
  * @property string|int $status_code
  * @property string $status
+ * @property array $getMetadata
  *
  * Extra data:
  * @property array|null $extra_data
@@ -175,7 +176,7 @@ final class Transaction extends Model
         return sprintf(
             '%s of GHS %s %s to susu account number %s from wallet: %s on %s',
             ucfirst($action),
-            number_format((float) $amount, 2),
+            number_format($amount, 2),
             $direction,
             $account_number,
             $wallet,

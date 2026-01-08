@@ -18,29 +18,26 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 /**
  * Class IndividualAccount
  *
- * @property string $id
+ * @property int $id
  * @property string $resource_id
- * @property string $customer_id
- * @property string $susu_scheme_id
+ * @property int $customer_id
+ * @property int $susu_scheme_id
  *
- * Relationships:
- * @property Account|null $account
  * @property Customer $customer
- * @property SusuScheme $susuScheme
+ * @property SusuScheme $scheme
+ * @property Account|null $account
  *
- * Morph Relations:
- * @property DailySusu|BizSusu|GoalGetterSusu|FlexySusu|DriveToOwnSusu|null $susuable
- *
- * Typed Accessors:
  * @property DailySusu|null $dailySusu
  * @property BizSusu|null $bizSusu
  * @property GoalGetterSusu|null $goalGetterSusu
  * @property FlexySusu|null $flexySusu
  * @property DriveToOwnSusu|null $driveToOwnSusu
  *
- * @method static Builder|IndividualAccount whereResourceId($value)
- * @method static Builder|IndividualAccount whereCustomerId($value)
- * @method static Builder|IndividualAccount whereSusuSchemeId($value)
+ * @property BizSusu|DailySusu|DriveToOwnSusu|FlexySusu|GoalGetterSusu|null $susu
+ *
+ * @method static Builder|IndividualAccount whereResourceId(string $resourceId)
+ * @method static Builder|IndividualAccount whereCustomerId(int $customerId)
+ * @method static Builder|IndividualAccount whereSusuSchemeId(int $susuSchemeId)
  *
  * @mixin Eloquent
  */
@@ -93,7 +90,7 @@ final class IndividualAccount extends Model
     /**
      * @return BelongsTo
      */
-    public function susuScheme(
+    public function scheme(
     ): BelongsTo {
         return $this->belongsTo(
             related: SusuScheme::class,

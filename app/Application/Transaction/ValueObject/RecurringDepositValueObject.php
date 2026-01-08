@@ -13,7 +13,9 @@ use Brick\Money\Money;
 final readonly class RecurringDepositValueObject
 {
     /**
+     * @param int|null $initialDepositFrequency
      * @param Money $initialDeposit
+     * @param Money $susuAmount
      * @param Money $amount
      * @param Money $charge
      * @param Money $total
@@ -23,6 +25,7 @@ final readonly class RecurringDepositValueObject
      * @param bool $rolloverEnabled
      */
     public function __construct(
+        public ?int $initialDepositFrequency,
         public Money $initialDeposit,
         public Money $susuAmount,
         public Money $amount,
@@ -37,28 +40,33 @@ final readonly class RecurringDepositValueObject
     }
 
     /**
+     * @param int|null $initialDepositFrequency
      * @param Money $initialDeposit
      * @param Money $susuAmount
      * @param string $startDate
      * @param string $endDate
      * @param string $frequency
      * @param bool $rolloverEnabled
+     * @param Money|null $charge
      * @return self
      * @throws MoneyMismatchException
      * @throws UnknownCurrencyException
      */
     public static function create(
+        ?int $initialDepositFrequency,
         Money $initialDeposit,
         Money $susuAmount,
         string $startDate,
         string $endDate,
         string $frequency,
         bool $rolloverEnabled,
+        ?Money $charge = null,
     ): self {
-        // Get the charge
-        $charge = $charge ?? Money::of(0.00, 'GHS');
+        // Get the charge (if any)
+        $charge ??= Money::of(0, $susuAmount->getCurrency());
 
         return new self(
+            initialDepositFrequency: $initialDepositFrequency,
             initialDeposit: $initialDeposit,
             susuAmount: $susuAmount,
             amount: $susuAmount,
@@ -74,10 +82,10 @@ final readonly class RecurringDepositValueObject
     /**
      * @return array
      */
-    public function toArray(
-    ): array {
+    public function toArray(): array
+    {
         return [
-            'amount' => $this->susuAmount,
+            'amount' => $this->amount,
             'charge' => $this->charge,
             'total' => $this->total,
             'approval_status' => Statuses::APPROVED->value,
@@ -86,6 +94,7 @@ final readonly class RecurringDepositValueObject
 
             'extra_data' => [
                 'is_initial_deposit' => true,
+                'initial_deposit_frequency' => $this->initialDepositFrequency,
                 'initial_deposit' => $this->initialDeposit,
                 'recurring_amount' => $this->susuAmount,
                 'start_date' => $this->startDate,

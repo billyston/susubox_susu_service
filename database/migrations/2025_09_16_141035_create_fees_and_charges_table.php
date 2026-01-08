@@ -23,14 +23,15 @@ return new class extends Migration
                 $table->foreignId(column: 'susu_scheme_id')->constrained(table: 'susu_schemes');
 
                 // Table main attributes
-                $table->string(column: 'category');
-                $table->integer(column: 'collection_cycle')->nullable();
-                $table->integer(column: 'settlement_cycle')->nullable();
-                $table->float(column: 'commission')->nullable();
-                $table->float(column: 'charge')->nullable();
-                $table->float(column: 'fee')->nullable();
+                $table->string(column: 'event');
+                $table->string(column: 'calculation_type');
+                $table->decimal(column: 'value', total: 12, places: 4)->nullable();
 
-                // Timestamps (created_at / updated_at) fields
+                $table->boolean(column: 'is_active')->default(true);
+                $table->timestamp(column: 'effective_from')->nullable();
+                $table->timestamp(column: 'effective_to')->nullable();
+
+                $table->index(['susu_scheme_id', 'event', 'is_active']);
             });
     }
 

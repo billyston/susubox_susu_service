@@ -175,18 +175,4 @@ final class PaymentInstruction extends Model
     ): array {
         return $this->extra_data ?? [];
     }
-
-    /**
-     * @return mixed|null
-     */
-    public function susu(
-    ) {
-        if (! $this->account) {
-            return null;
-        }
-
-        $individual = $this->account->accountable;
-
-        return $individual?->susuable;
-    }
 }

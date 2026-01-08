@@ -25,8 +25,8 @@ The SusuBox susu service API.
 
 ## Account
 - [x] Create and Configure Account model and migration
-- [ ] Get all customer susu accounts
-- [ ] Get a susu account for customer
+- [x] Get all customer susu accounts
+- [x] Get a susu account for customer
 - [x] Get account balance
 - [x] Update account status (active) after successful initial debit
 - [ ] Work on a unique account_number
@@ -104,9 +104,12 @@ The SusuBox susu service API.
 - [ ] De-activate the auto settlement (Set status to false)
 
 ###### DailySusu pause recurring debits
-- [ ] Initiate and approve pause recurring debits
-- [ ] Validate pause recurring debits
-- [ ] Implement DailySusu pause recurring debits
+- [ ] Create pause debit
+- [ ] Cancel pause debit process
+- [ ] Approve pause debit process
+- [ ] Validate create pause debit
+- [ ] Validate cancel pause debit
+- [ ] Validate approve pause debit
 
 ###### DailySusu resume recurring debits
 - [ ] Initiate and approve resume recurring debits
@@ -190,9 +193,12 @@ The SusuBox susu service API.
 - [x] Initiate the account_unlock background job
 
 ###### BizSusu pause recurring debits
-- [ ] Initiate and approve pause recurring debits
-- [ ] Validate pause recurring debits
-- [ ] Implement BizSusu pause recurring debits
+- [ ] Create pause debit
+- [ ] Cancel pause debit process
+- [ ] Approve pause debit process
+- [ ] Validate create pause debit
+- [ ] Validate cancel pause debit
+- [ ] Validate approve pause debit
 
 ###### BizSusu resume recurring debits
 - [ ] Initiate and approve resume recurring debits
@@ -388,14 +394,14 @@ The SusuBox susu service API.
 
 ## Transactions Post Actions
 - [ ] Handle TransactionCreatedSuccessAction
-  - [ ] Handle initial_deposit
-  - [ ] Handle subsequent debit
-  - [ ] Handle susu type actions (process auto settlement, close goal)
-  - [ ] Dispatch TransactionSuccessNotification
+- [ ] Handle initial_deposit
+- [ ] Handle subsequent debit
+- [ ] Handle susu type actions (process auto settlement, close goal)
+- [ ] Dispatch TransactionSuccessNotification
 
 
 - [ ] Handle TransactionCreatedFailureAction
-  - [ ] Dispatch TransactionFailureNotification
+- [ ] Dispatch TransactionFailureNotification
 
 ## PIN Authorization Middleware
 - [ ] Implement the PIN Authorization Middleware
@@ -407,7 +413,7 @@ The SusuBox susu service API.
 - [ ] Move all jobs that publishes job into the services / shared folder
 - [ ] Do not hard code 'service_category' in approval DTOs
 - [ ] When payment_instruction is cancelled, approval_status->cancelled, status->terminated
-- [ ] When transaction is created, update the payment_instruction->status (active, terminated, success, failed)
+- [ ] Update transaction's payment_instruction->status (active, terminated, success, failed)
 - [ ] internal_reference field must be updated after payment_service returned data
 - [ ] Rebuild all the Resource files (AccountBalanceResource as an example)
 - [ ] Review all the response messages

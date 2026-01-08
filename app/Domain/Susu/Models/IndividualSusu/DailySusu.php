@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Domain\Susu\Models\IndividualSusu;
 
 use App\Domain\Account\Models\Account;
+use App\Domain\Account\Models\AccountCycle;
+use App\Domain\Account\Models\AccountCycleDefinition;
 use App\Domain\Account\Models\AccountLock;
+use App\Domain\Account\Models\AccountPause;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Models\Wallet;
 use App\Domain\Shared\Casts\MoneyCasts;
@@ -13,54 +16,57 @@ use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Models\Frequency;
 use App\Domain\Shared\Models\HasUuid;
 use Carbon\Carbon;
-use Eloquent;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 /**
  * Class DailySusu
  *
- * @property string $id
+ * @property int $id
  * @property string $resource_id
- * @property string $individual_account_id
- * @property string|null $customer_id
- * @property string $wallet_id
- * @property string $frequency_id
  *
- * Monetary fields (casted via MoneyCasts):
+ * @property int $individual_account_id
+ * @property int $wallet_id
+ * @property int $frequency_id
+ *
  * @property mixed $susu_amount
- * @property mixed $initial_deposit
- *
+ * @property mixed|null $initial_deposit
+ * @property mixed|null $initial_deposit_frequency
  * @property string $currency
- * @property string|Carbon $start_date
- * @property string|Carbon|null $end_date
+ *
+ * @property Carbon|string $start_date
+ * @property Carbon|string $end_date
+ *
+ * @property int $cycle_length
+ * @property int $expected_frequencies
+ * @property mixed $expected_cycle_amount
+ * @property mixed $expected_settlement_amount
+ *
+ * @property int|null $commission_frequencies
+ * @property mixed|null $commission_amount
+ *
  * @property bool $rollover_enabled
  * @property bool $is_collateralized
  * @property bool $auto_settlement
+ *
  * @property string $recurring_debit_status
  * @property string $settlement_status
- * @property bool $isLocked
  *
- * Extra data:
  * @property array|null $extra_data
  *
- * Relationships:
- * @property IndividualAccount $individual
- * @property Customer|null $customer
- * @property Account|null $account
- * @property Wallet $wallet
- * @property Frequency $frequency
- * @property AccountLock|null $accountLocks
+ * @property-read IndividualAccount $individual
+ * @property-read Customer $customer
+ * @property-read Account $account
+ * @property-read Wallet $wallet
+ * @property-read Frequency $frequency
  *
- * @method static Builder|DailySusu whereResourceId($value)
- * @method static Builder|DailySusu whereIndividualAccountId($value)
- * @method static Builder|DailySusu whereWalletId($value)
- * @method static Builder|DailySusu whereFrequencyId($value)
- *
- * @mixin Eloquent
+ * @property-read AccountCycleDefinition $cycleDefinition
+ * @property-read Collection<int, AccountLock> $accountLocks
+ * @property-read Collection<int, AccountPause> $accountPauses
  */
 final class DailySusu extends Model
 {
@@ -81,16 +87,21 @@ final class DailySusu extends Model
         'individual_account_id',
         'wallet_id',
         'frequency_id',
+
         'susu_amount',
         'initial_deposit',
+        'initial_deposit_frequency',
         'currency',
+
         'start_date',
         'end_date',
+
         'rollover_enabled',
         'is_collateralized',
         'auto_settlement',
         'recurring_debit_status',
         'settlement_status',
+
         'extra_data',
     ];
 
@@ -165,6 +176,28 @@ final class DailySusu extends Model
     }
 
     /**
+     * @return MorphOne
+     */
+    public function cycleDefinition(
+    ): MorphOne {
+        return $this->morphOne(
+            related: AccountCycleDefinition::class,
+            name: 'definable'
+        );
+    }
+
+    /**
+     * @return MorphMany
+     */
+    public function cycles(
+    ): MorphMany {
+        return $this->morphMany(
+            related: AccountCycle::class,
+            name: 'cycleable'
+        );
+    }
+
+    /**
      * @return MorphMany
      */
     public function accountLocks(
@@ -175,6 +208,9 @@ final class DailySusu extends Model
         );
     }
 
+    /**
+     * @return AccountLock|null
+     */
     public function activeAccountLock(
     ): ?AccountLock {
         return $this->accountLocks()
@@ -187,10 +223,48 @@ final class DailySusu extends Model
             ->first();
     }
 
+    /**
+     * @return bool
+     */
     public function isLocked(
     ): bool {
         return $this->settlement_status === Statuses::LOCKED->value
             && $this->activeAccountLock() !== null;
+    }
+
+    /**
+     * @return MorphMany
+     */
+    public function accountPauses(
+    ): MorphMany {
+        return $this->morphMany(
+            related: AccountPause::class,
+            name: 'pauseable'
+        );
+    }
+
+    /**
+     * @return AccountLock|null
+     */
+    public function activeAccountPause(
+    ): ?AccountPause {
+        return $this->accountPauses()
+            ->where('status', Statuses::ACTIVE->value)
+            ->where(function ($query) {
+                $query->whereNull('paused_at')
+                    ->orWhere('resumed_at', '>', Carbon::now());
+            })
+            ->latest('paused_at')
+            ->first();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPaused(
+    ): bool {
+        return $this->recurring_debit_status === Statuses::PAUSED->value
+            && $this->activeAccountPause() !== null;
     }
 
     /**
@@ -200,6 +274,9 @@ final class DailySusu extends Model
     ): void {
         DailySusu::deleting(function (DailySusu $dailySusu) {
             $dailySusu->accountLocks()->delete();
+        });
+        DailySusu::deleting(function (DailySusu $dailySusu) {
+            $dailySusu->accountPauses()->delete();
         });
     }
 }

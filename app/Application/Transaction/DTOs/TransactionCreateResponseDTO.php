@@ -74,7 +74,7 @@ final readonly class TransactionCreateResponseDTO
                             'resource_id' => $this->account->resource_id,
                             'account_name' => $this->account->account_name,
                             'account_number' => $this->account->account_number,
-                            'account_scheme' => $this->account->getSusuScheme()->alias,
+                            'account_scheme' => $this->account->scheme()->alias,
                         ],
                     ],
                     'customer' => [
