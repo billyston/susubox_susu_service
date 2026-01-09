@@ -7,7 +7,7 @@ namespace App\Interface\Resources\V1\Susu\IndividualSusu\DailySusu;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-final class DailySusuCycleResource extends JsonResource
+final class DailySusuAccountCycleResource extends JsonResource
 {
     /**
      * @param Request $request

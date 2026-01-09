@@ -29,6 +29,7 @@ final class DailySusuCycleService
             return DB::transaction(function () use (
                 $responseDTO
             ) {
+                // Define the key variables
                 $remainingFrequencies = $responseDTO->frequency;
                 $lastCycle = null;
 

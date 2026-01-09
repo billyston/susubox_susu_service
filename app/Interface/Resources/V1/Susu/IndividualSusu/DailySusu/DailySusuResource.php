@@ -65,7 +65,7 @@ final class DailySusuResource extends JsonResource
                         'commission_amount' => $this->resource->cycleDefinition->commission_amount->getAmount()->__toString(),
                     ],
                 ],
-                'account_cycles' => DailySusuCycleResource::collection($this->resource->cycles),
+                'account_cycles' => DailySusuAccountCycleResource::collection($this->resource->cycles),
                 'wallet' => [
                     'type' => 'Wallet',
                     'attributes' => [
