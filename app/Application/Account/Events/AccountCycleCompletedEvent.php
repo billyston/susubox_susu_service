@@ -18,7 +18,7 @@ final class AccountCycleCompletedEvent
      * @param string $accountCycleResourceId
      */
     public function __construct(
-        private readonly string $accountCycleResourceId
+        public readonly string $accountCycleResourceId
     ) {
         //..
     }

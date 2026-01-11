@@ -268,6 +268,14 @@ final class DailySusu extends Model
     }
 
     /**
+     * @return string|null
+     */
+    public function charge(
+    ): ?string {
+        return $this->individual->scheme->charges->value;
+    }
+
+    /**
      * @return void
      */
     protected static function booted(

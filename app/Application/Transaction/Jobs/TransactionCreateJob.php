@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\Application\Transaction\Jobs;
 
-use App\Application\Account\Jobs\AccountCycleJob;
 use App\Application\Transaction\DTOs\TransactionCreateRequestDTO;
 use App\Domain\PaymentInstruction\Services\PaymentInstructionByResourceIdService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Transaction\Enums\TransactionType;
-use App\Domain\Transaction\Services\TransactionCreateCreditService;
-use App\Domain\Transaction\Services\TransactionCreateDebitService;
+use App\Domain\Transaction\Services\TransactionCreditCreateService;
+use App\Domain\Transaction\Services\TransactionDebitCreateService;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -39,15 +38,15 @@ final class TransactionCreateJob implements ShouldQueue
 
     /**
      * @param PaymentInstructionByResourceIdService $paymentInstructionByResource
-     * @param TransactionCreateCreditService $transactionCreateCreditService
-     * @param TransactionCreateDebitService $transactionCreateDebitService
+     * @param TransactionCreditCreateService $transactionCreditCreateService
+     * @param TransactionDebitCreateService $transactionDebitCreateService
      * @return void
      * @throws SystemFailureException
      */
     public function handle(
         PaymentInstructionByResourceIdService $paymentInstructionByResource,
-        TransactionCreateCreditService $transactionCreateCreditService,
-        TransactionCreateDebitService $transactionCreateDebitService,
+        TransactionCreditCreateService $transactionCreditCreateService,
+        TransactionDebitCreateService $transactionDebitCreateService,
     ): void {
         // Execute the PaymentInstructionByResourceIdService and return the resource
         $paymentInstruction = $paymentInstructionByResource->execute(
@@ -55,35 +54,18 @@ final class TransactionCreateJob implements ShouldQueue
         );
 
         // Determine the transaction_type and execute and return the resource
-        $transaction = match ($paymentInstruction->transaction_type) {
-            // Execute the TransactionCreateCreditService and return The transaction resource
-            TransactionType::CREDIT->value => $transactionCreateCreditService->execute(
+        match ($paymentInstruction->transaction_type) {
+            // Execute the TransactionCreditCreateService and return The transaction resource
+            TransactionType::CREDIT->value => $transactionCreditCreateService->execute(
                 paymentInstruction: $paymentInstruction,
                 requestDTO: $this->requestDTO,
             ),
 
-            // Execute the TransactionCreateDebitService and return The transaction resource
-            TransactionType::DEBIT->value => $transactionCreateDebitService->execute(
+            // Execute the TransactionDebitCreateService and return The transaction resource
+            TransactionType::DEBIT->value => $transactionDebitCreateService->execute(
                 paymentInstruction: $paymentInstruction,
                 requestDTO: $this->requestDTO
             ),
         };
-
-        // Dispatch the AccountCycleJob
-        AccountCycleJob::dispatch(
-            transactionResource: $transaction->resource_id,
-        );
-
-        // Dispatch the TransactionPostProcessJob
-        TransactionPostProcessJob::dispatch(
-            transactionResource: $transaction->resource_id,
-            isInitialDeposit: $this->requestDTO->isInitialDeposit
-        );
-
-        // Dispatch the TransactionNotificationJob
-        TransactionNotificationJob::dispatch(
-            transactionResource: $transaction->resource_id,
-            isInitialDeposit: $this->requestDTO->isInitialDeposit
-        );
     }
 }

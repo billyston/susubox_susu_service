@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property string $status
  *
  * Relationships:
- * @property FeesAndCharge|null $feesAndCharges
+ * @property FeesAndCharge|null $charges
  * @property Collection<int, Account> $accounts
  *
  * @method static Builder|SusuScheme whereResourceId($value)
@@ -67,7 +67,7 @@ final class SusuScheme extends Model
     /**
      * @return HasOne
      */
-    public function feesAndCharges(
+    public function charges(
     ): HasOne {
         return $this->hasOne(
             related: FeesAndCharge::class,

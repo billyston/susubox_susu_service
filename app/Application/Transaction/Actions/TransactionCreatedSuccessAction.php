@@ -13,25 +13,14 @@ use App\Domain\Transaction\Models\Transaction;
 use App\Domain\Transaction\Services\RecurringDebitStatusUpdateService;
 use Throwable;
 
-final class TransactionCreatedSuccessAction
+final readonly class TransactionCreatedSuccessAction
 {
-    private AccountStatusUpdateService $accountStatusUpdateService;
-    private RecurringDebitStatusUpdateService $recurringDebitStatusUpdateService;
-    private PaymentInstructionStatusUpdateService $paymentInstructionStatusUpdateService;
-
-    /**
-     * @param AccountStatusUpdateService $accountStatusUpdateService
-     * @param RecurringDebitStatusUpdateService $recurringDebitStatusUpdateService
-     * @param PaymentInstructionStatusUpdateService $paymentInstructionStatusUpdateService
-     */
     public function __construct(
-        AccountStatusUpdateService $accountStatusUpdateService,
-        RecurringDebitStatusUpdateService $recurringDebitStatusUpdateService,
-        PaymentInstructionStatusUpdateService $paymentInstructionStatusUpdateService,
+        private AccountStatusUpdateService $accountStatusUpdateService,
+        private RecurringDebitStatusUpdateService $recurringDebitStatusUpdateService,
+        private PaymentInstructionStatusUpdateService $paymentInstructionStatusUpdateService,
     ) {
-        $this->accountStatusUpdateService = $accountStatusUpdateService;
-        $this->recurringDebitStatusUpdateService = $recurringDebitStatusUpdateService;
-        $this->paymentInstructionStatusUpdateService = $paymentInstructionStatusUpdateService;
+        // ..
     }
 
     /**
@@ -40,40 +29,86 @@ final class TransactionCreatedSuccessAction
      */
     public function execute(
         Transaction $transaction,
-        array $responseDTO,
     ): void {
-        // Handle initial deposit activation
-        if ($responseDTO['data']['attributes']['is_initial_deposit']) {
-            // Execute the AccountStatusUpdateService
-            $this->accountStatusUpdateService->execute(
-                account: $transaction->account,
+        // Update the Account and Susu (If transaction isInitialDeposit)
+        match ($this->isInitialDeposit($transaction)) {
+            true => $this->activateAccountAndSusu($transaction),
+            false => null,
+        };
+
+        // Execute the PaymentInstructionStatus
+        $this->updatePaymentInstructionStatus($transaction);
+
+        // Other post-transaction actions go here
+    }
+
+    /**
+     * @param Transaction $transaction
+     * @return bool
+     */
+    private function isInitialDeposit(
+        Transaction $transaction
+    ): bool {
+        return (bool) data_get(
+            target: $transaction->extra_data,
+            key: 'is_initial_deposit',
+            default: false
+        );
+    }
+
+    /**
+     * @throws SystemFailureException
+     */
+    private function activateAccountAndSusu(
+        Transaction $transaction
+    ): void {
+        $account = $transaction->account;
+        $susu = $account->accountable->susu();
+
+        // Update the Account status
+        match ($account->status) {
+            Statuses::ACTIVE->value => null,
+            default => $this->accountStatusUpdateService->execute(
+                account: $account,
                 status: Statuses::ACTIVE->value
-            );
+            ),
+        };
 
-            // Execute the RecurringDebitStatusUpdateService
-            $this->recurringDebitStatusUpdateService->execute(
-                model: $transaction->account->accountable->susu(),
+        // Update the Susu (recurring_debit_status)
+        match ($susu->status) {
+            Statuses::ACTIVE->value => null,
+            default => $this->recurringDebitStatusUpdateService->execute(
+                model: $susu,
                 status: Statuses::ACTIVE->value
-            );
+            ),
+        };
+    }
 
-            //
-        }
+    /**
+     * @throws SystemFailureException
+     */
+    private function updatePaymentInstructionStatus(
+        Transaction $transaction
+    ): void {
+        // Get the PaymentInstruction from Transaction
+        $payment = $transaction->payment;
 
-        // Update payment instruction
-        if ($transaction->payment->transactionCategory->code === TransactionCategoryCode::RECURRING_DEBIT_CODE->value) {
-            if ($transaction->payment->status !== Statuses::ACTIVE->value) {
-                $this->paymentInstructionStatusUpdateService->execute(
-                    paymentInstruction: $transaction->payment,
-                    status: Statuses::ACTIVE->value
-                );
-            }
-        } else {
-            $this->paymentInstructionStatusUpdateService->execute(
-                paymentInstruction: $transaction->payment,
-                status: Statuses::SUCCESS->value
-            );
-        }
+        // Update PaymentInstruction status
+        $targetStatus = match ($payment->transactionCategory->code) {
+            // Set status to (active) if transaction is recurring_debit
+            TransactionCategoryCode::RECURRING_DEBIT_CODE->value => Statuses::ACTIVE->value,
 
-        // Other actions goes here
+            // Set others to success
+            default => Statuses::SUCCESS->value,
+        };
+
+        // Update the PaymentInstruction status
+        match ($payment->status === $targetStatus) {
+            true => null,
+            false => $this->paymentInstructionStatusUpdateService->execute(
+                paymentInstruction: $payment,
+                status: $targetStatus
+            ),
+        };
     }
 }

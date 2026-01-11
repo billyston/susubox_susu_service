@@ -10,7 +10,7 @@ use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
 use App\Domain\Susu\Services\DailySusu\AccountCycle\DailySusuAccountCycleIndexService;
-use App\Interface\Resources\V1\Susu\IndividualSusu\DailySusu\DailySusuAccountCycleResource;
+use App\Interface\Resources\V1\Account\AccountCycle\AccountCycleCollectionResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -48,7 +48,7 @@ final class DailySusuAccountCycleIndexAction
         return ApiResponseBuilder::success(
             code: Response::HTTP_OK,
             message: 'Request successful.',
-            data: DailySusuAccountCycleResource::collection(
+            data: AccountCycleCollectionResource::collection(
                 resource: $accountCycles
             ),
         );

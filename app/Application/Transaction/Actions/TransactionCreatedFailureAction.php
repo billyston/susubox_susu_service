@@ -15,12 +15,10 @@ final class TransactionCreatedFailureAction
 
     /**
      * @param Transaction $transaction
-     * @param array $responseDTO
      * @return void
      */
     public function execute(
         Transaction $transaction,
-        array $responseDTO
     ): void {
     }
 }

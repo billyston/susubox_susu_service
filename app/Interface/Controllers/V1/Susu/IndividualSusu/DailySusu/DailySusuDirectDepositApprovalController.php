@@ -33,10 +33,8 @@ final class DailySusuDirectDepositApprovalController extends Controller
     ): JsonResponse {
         // Execute the DailySusuDirectDepositApprovalAction and return the JsonResponse
         return $dailySusuDirectDepositApprovalAction->execute(
-            customer: $customer,
             dailySusu: $dailySusu,
             paymentInstruction: $paymentInstruction,
-            request: $dailySusuDirectDepositApprovalRequest->validated()
         );
     }
 }

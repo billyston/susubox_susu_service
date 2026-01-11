@@ -13,7 +13,6 @@ use Brick\Money\Money;
 final readonly class RecurringDepositValueObject
 {
     /**
-     * @param int|null $initialDepositFrequency
      * @param Money $initialDeposit
      * @param Money $susuAmount
      * @param Money $amount
@@ -23,9 +22,9 @@ final readonly class RecurringDepositValueObject
      * @param string $endDate
      * @param string $frequency
      * @param bool $rolloverEnabled
+     * @param int|null $initialDepositFrequency
      */
     public function __construct(
-        public ?int $initialDepositFrequency,
         public Money $initialDeposit,
         public Money $susuAmount,
         public Money $amount,
@@ -35,6 +34,7 @@ final readonly class RecurringDepositValueObject
         public string $endDate,
         public string $frequency,
         public bool $rolloverEnabled,
+        public ?int $initialDepositFrequency,
     ) {
         // ..
     }
@@ -53,7 +53,6 @@ final readonly class RecurringDepositValueObject
      * @throws UnknownCurrencyException
      */
     public static function create(
-        ?int $initialDepositFrequency,
         Money $initialDeposit,
         Money $susuAmount,
         string $startDate,
@@ -61,12 +60,12 @@ final readonly class RecurringDepositValueObject
         string $frequency,
         bool $rolloverEnabled,
         ?Money $charge = null,
+        ?int $initialDepositFrequency = null,
     ): self {
         // Get the charge (if any)
         $charge ??= Money::of(0, $susuAmount->getCurrency());
 
         return new self(
-            initialDepositFrequency: $initialDepositFrequency,
             initialDeposit: $initialDeposit,
             susuAmount: $susuAmount,
             amount: $susuAmount,
@@ -76,6 +75,7 @@ final readonly class RecurringDepositValueObject
             endDate: $endDate,
             frequency: $frequency,
             rolloverEnabled: $rolloverEnabled,
+            initialDepositFrequency: $initialDepositFrequency,
         );
     }
 

@@ -8,7 +8,7 @@ use App\Application\Account\DTOs\AccountPauseResponseDTO;
 use App\Domain\Account\Services\AccountPauseByResourceIdService;
 use App\Domain\Customer\Services\CustomerByResourceIdService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Services\SusuBox\Http\Requests\AccountPauseNotificationRequestHandler;
+use App\Services\SusuBox\Http\Requests\Notification\AccountPauseNotificationRequestHandler;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

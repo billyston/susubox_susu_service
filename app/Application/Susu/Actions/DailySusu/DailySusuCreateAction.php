@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\DailySusu;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Susu\DTOs\DailySusu\DailySusuCreateRequestDTO;
+use App\Application\Susu\DTOs\DailySusu\AccountCreate\DailySusuCreateRequestDTO;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Services\DailySusu\DailySusuCreateService;

@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * @return void
+     */
     public function up(
     ): void {
         Schema::create(
@@ -39,8 +42,6 @@ return new class extends Migration
                 $table->timestamp(column: 'completed_at')->nullable();
                 $table->timestamp(column: 'settled_at')->nullable();
 
-                $table->json(column: 'extra_data')->nullable();
-
                 $table->enum(column: 'status', allowed: [
                     Statuses::ACTIVE->value,
                     Statuses::COMPLETED->value,
@@ -58,6 +59,9 @@ return new class extends Migration
             });
     }
 
+    /**
+     * @return void
+     */
     public function down(
     ): void {
         Schema::dropIfExists(

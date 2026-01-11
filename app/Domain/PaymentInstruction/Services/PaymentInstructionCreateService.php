@@ -11,7 +11,6 @@ use App\Domain\PaymentInstruction\Models\PaymentInstruction;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Transaction\Models\TransactionCategory;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -62,10 +61,6 @@ final class PaymentInstructionCreateService
                     'extra_data' => $data['extra_data'] ?? null,
                 ]);
             });
-        } catch (
-            QueryException $queryException
-        ) {
-            throw $queryException;
         } catch (
             Throwable $throwable
         ) {

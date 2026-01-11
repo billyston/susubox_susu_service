@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\BizSusu;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Transaction\ValueObject\DirectDepositValueObject;
+use App\Application\Transaction\ValueObject\DirectDepositVO;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\PaymentInstruction\Services\PaymentInstructionCreateService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
@@ -50,7 +50,7 @@ final class BizSusuDirectDepositCreateAction
         array $request,
     ): JsonResponse {
         // Build the DirectDepositCreateRequestDTO
-        $requestDTO = DirectDepositValueObject::create(
+        $requestDTO = DirectDepositVO::create(
             payload: $request,
             susuAmount: $bizSusu->susu_amount
         );

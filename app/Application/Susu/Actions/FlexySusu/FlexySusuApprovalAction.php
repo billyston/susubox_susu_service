@@ -16,7 +16,7 @@ use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
 use App\Domain\Transaction\Enums\TransactionCategoryCode;
 use App\Domain\Transaction\Services\TransactionCategoryByCodeService;
 use App\Interface\Resources\V1\Susu\IndividualSusu\FlexySusu\FlexySusuResource;
-use App\Services\SusuBox\Http\Requests\DirectDepositApprovalRequestHandler;
+use App\Services\SusuBox\Http\Requests\Payment\DirectDepositApprovalRequestHandler;
 use Brick\Money\Exception\MoneyMismatchException;
 use Brick\Money\Exception\UnknownCurrencyException;
 use Symfony\Component\HttpFoundation\JsonResponse;

@@ -33,10 +33,8 @@ final class FlexySusuDirectDepositApprovalController extends Controller
     ): JsonResponse {
         // Execute the FlexySusuDirectDepositApprovalAction and return the JsonResponse
         return $flexySusuDirectDepositApprovalAction->execute(
-            customer: $customer,
             flexySusu: $flexySusu,
             paymentInstruction: $paymentInstruction,
-            request: $flexySusuDirectDepositApprovalRequest->validated()
         );
     }
 }

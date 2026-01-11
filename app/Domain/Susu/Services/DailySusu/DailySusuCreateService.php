@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Susu\Services\DailySusu;
 
-use App\Application\Susu\DTOs\DailySusu\DailySusuCreateRequestDTO;
+use App\Application\Susu\DTOs\DailySusu\AccountCreate\DailySusuCreateRequestDTO;
 use App\Domain\Account\Models\Account;
 use App\Domain\Account\Models\AccountBalance;
 use App\Domain\Account\Models\AccountCycleDefinition;

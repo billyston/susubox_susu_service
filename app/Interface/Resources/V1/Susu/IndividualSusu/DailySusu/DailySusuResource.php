@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Interface\Resources\V1\Susu\IndividualSusu\DailySusu;
 
+use App\Interface\Resources\V1\Account\AccountCycle\AccountCycleResource;
 use App\Interface\Resources\V1\Account\AccountLockResource;
 use App\Interface\Resources\V1\Account\AccountPauseResource;
 use App\Interface\Resources\V1\Shared\SusuSchemeResource;
@@ -65,7 +66,7 @@ final class DailySusuResource extends JsonResource
                         'commission_amount' => $this->resource->cycleDefinition->commission_amount->getAmount()->__toString(),
                     ],
                 ],
-                'account_cycles' => DailySusuAccountCycleResource::collection($this->resource->cycles),
+                'account_cycles' => AccountCycleResource::collection($this->resource->cycles),
                 'wallet' => [
                     'type' => 'Wallet',
                     'attributes' => [

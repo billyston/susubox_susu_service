@@ -55,7 +55,7 @@ final class SusuBoxServiceDispatcher
             RequestException $exception
         ) {
             // Log the full exception with context
-            Log::error('Exception in PaymentServiceDebitRequestJob', [
+            Log::error('Exception in SusuBoxServiceDispatcher', [
                 'service' => $service,
                 'endpoint' => $endpoint,
                 'payload' => $payload,

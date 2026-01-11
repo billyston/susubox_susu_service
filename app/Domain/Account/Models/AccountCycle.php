@@ -6,11 +6,48 @@ namespace App\Domain\Account\Models;
 
 use App\Domain\Shared\Casts\MoneyCasts;
 use App\Domain\Shared\Models\HasUuid;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
+/**
+ * Class AccountCycle
+ *
+ * Represents a single contribution cycle for an account.
+ * A cycle tracks expected vs completed frequencies, monetary progress,
+ * and lifecycle timestamps (started, completed, settled).
+ *
+ * Cycles are polymorphically linked to cycleable entities
+ * (e.g. DailySusu, BizSusu, GoalGetterSusu, etc.).
+ *
+ * @property int $id
+ * @property string $resource_id
+ *
+ * @property int $account_id
+ * @property string $cycleable_type
+ * @property int $cycleable_id
+ *
+ * @property int $cycle_number
+ * @property int $expected_frequencies
+ * @property int $completed_frequencies
+ *
+ * @property mixed $expected_amount
+ * @property mixed $contributed_amount
+ * @property string $currency
+ *
+ * @property Carbon|null $started_at
+ * @property Carbon|null $completed_at
+ * @property Carbon|null $settled_at
+ *
+ * @property string $status
+ *
+ * @property-read Account $account
+ * @property-read Model $cycleable
+ * @property-read Collection<int, AccountCycleEntry> $entries
+ */
 final class AccountCycle extends Model
 {
     use HasUuid;

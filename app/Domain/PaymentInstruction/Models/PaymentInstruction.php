@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\PaymentInstruction\Models;
 
 use App\Domain\Account\Models\Account;
+use App\Domain\Account\Models\AccountSettlement;
 use App\Domain\Customer\Models\Wallet;
 use App\Domain\Shared\Casts\MoneyCasts;
 use App\Domain\Shared\Models\HasUuid;
@@ -52,6 +53,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property Model $for
  * @property Model $initiator
  * @property Account|null $account
+ * @property AccountSettlement|null $settlement
  * @property Wallet|null $wallet
  * @property TransactionCategory|null $transactionCategory
  * @property Collection<int, Transaction> $transactions
@@ -132,6 +134,17 @@ final class PaymentInstruction extends Model
         return $this->belongsTo(
             related: Account::class,
             foreignKey: 'account_id',
+        );
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function settlement(
+    ): HasMany {
+        return $this->hasMany(
+            related: AccountSettlement::class,
+            foreignKey: 'payment_instruction_id',
         );
     }
 

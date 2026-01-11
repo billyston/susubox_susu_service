@@ -6,14 +6,13 @@ namespace App\Application\Susu\Actions\DailySusu;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Application\Transaction\DTOs\DirectDepositApprovalResponseDTO;
-use App\Domain\Customer\Models\Customer;
 use App\Domain\PaymentInstruction\Models\PaymentInstruction;
 use App\Domain\PaymentInstruction\Services\PaymentInstructionApprovalStatusUpdateService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
 use App\Interface\Resources\V1\PaymentInstruction\DirectDepositResource;
-use App\Services\SusuBox\Http\Requests\DirectDepositApprovalRequestHandler;
+use App\Services\SusuBox\Http\Requests\Payment\DirectDepositApprovalRequestHandler;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -35,18 +34,14 @@ final class DailySusuDirectDepositApprovalAction
     }
 
     /**
-     * @param Customer $customer
      * @param DailySusu $dailySusu
      * @param PaymentInstruction $paymentInstruction
-     * @param array $request
      * @return JsonResponse
      * @throws SystemFailureException
      */
     public function execute(
-        Customer $customer,
         DailySusu $dailySusu,
         PaymentInstruction $paymentInstruction,
-        array $request
     ): JsonResponse {
         // Execute the PaymentInstructionApprovalStatusUpdateService and return the resource
         $paymentInstruction = $this->paymentInstructionApprovalStatusUpdateService->execute(

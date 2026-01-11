@@ -28,14 +28,12 @@ final readonly class DirectDepositApprovalResponseDTO
      * @param PaymentInstruction $paymentInstruction
      * @param Wallet $wallet
      * @param Model $product
-     * @param bool $isInitialDeposit
      * @return self
      */
     public static function fromDomain(
         PaymentInstruction $paymentInstruction,
         Wallet $wallet,
         Model $product,
-        bool $isInitialDeposit = false
     ): self {
         return new self(
             paymentInstruction: $paymentInstruction,

@@ -8,7 +8,7 @@ use App\Application\Account\DTOs\AccountLockResponseDTO;
 use App\Domain\Account\Services\AccountLockByResourceIdService;
 use App\Domain\Customer\Services\CustomerByResourceIdService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Services\SusuBox\Http\Requests\AccountLockNotificationRequestHandler;
+use App\Services\SusuBox\Http\Requests\Notification\AccountLockNotificationRequestHandler;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

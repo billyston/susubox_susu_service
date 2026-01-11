@@ -13,7 +13,7 @@ use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\BizSusu;
 use App\Interface\Resources\V1\PaymentInstruction\DirectDepositResource;
-use App\Services\SusuBox\Http\Requests\DirectDepositApprovalRequestHandler;
+use App\Services\SusuBox\Http\Requests\Payment\DirectDepositApprovalRequestHandler;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
