@@ -9,7 +9,7 @@ use App\Application\Transaction\Interfaces\TransactionCreatedEvent;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Transaction\Enums\TransactionCategoryCode;
 use App\Domain\Transaction\Services\TransactionByResourceIdService;
-use App\Services\SusuBox\Http\Requests\Notification\TransactionCreatedNotificationHandler;
+use App\Services\SusuBox\Http\Requests\Notification\NotificationRequestHandler;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -26,15 +26,15 @@ final class TransactionNotificationListener implements ShouldQueue
     use SerializesModels;
 
     private TransactionByResourceIdService $transactionByResourceIdService;
-    private TransactionCreatedNotificationHandler $dispatcher;
+    private NotificationRequestHandler $dispatcher;
 
     /**
      * @param TransactionByResourceIdService $transactionByResourceIdService
-     * @param TransactionCreatedNotificationHandler $dispatcher
+     * @param NotificationRequestHandler $dispatcher
      */
     public function __construct(
         TransactionByResourceIdService $transactionByResourceIdService,
-        TransactionCreatedNotificationHandler $dispatcher
+        NotificationRequestHandler $dispatcher
     ) {
         $this->transactionByResourceIdService = $transactionByResourceIdService;
         $this->dispatcher = $dispatcher;
@@ -76,6 +76,7 @@ final class TransactionNotificationListener implements ShouldQueue
         // Dispatch the TransactionCreateResponseDTO to SusuBox services
         $this->dispatcher->sendToSusuBoxService(
             service: config('susubox.notification.name'),
+            endpoint: 'transactions',
             data: $responseDTO->toArray(),
         );
     }

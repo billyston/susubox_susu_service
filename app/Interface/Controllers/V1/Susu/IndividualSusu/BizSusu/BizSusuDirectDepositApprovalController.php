@@ -33,10 +33,8 @@ final class BizSusuDirectDepositApprovalController extends Controller
     ): JsonResponse {
         // Execute the BizSusuDirectDepositApprovalAction and return the JsonResponse
         return $bizSusuDirectDepositApprovalAction->execute(
-            customer: $customer,
             bizSusu: $bizSusu,
             paymentInstruction: $paymentInstruction,
-            request: $bizSusuDirectDepositApprovalRequest->validated()
         );
     }
 }

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Transaction\Services;
+namespace App\Application\Account\Services;
 
 use App\Domain\Transaction\Exceptions\InsufficientBalanceException;
 use Brick\Money\Exception\MoneyMismatchException;
 use Brick\Money\Money;
 
-final class BalanceValidationService
+final class AccountBalanceGuardService
 {
     /**
      * @param Money $availableBalance

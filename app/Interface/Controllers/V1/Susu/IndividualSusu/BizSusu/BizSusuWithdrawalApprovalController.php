@@ -27,10 +27,8 @@ final class BizSusuWithdrawalApprovalController extends Controller
     ): JsonResponse {
         // Execute the BizSusuWithdrawalApprovalAction and return the JsonResponse
         return $bizSusuWithdrawalApprovalAction->execute(
-            customer: $customer,
             bizSusu: $bizSusu,
             paymentInstruction: $paymentInstruction,
-            request: $bizSusuWithdrawalApprovalRequest->validated()
         );
     }
 }

@@ -12,22 +12,22 @@ use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
 use App\Interface\Resources\V1\PaymentInstruction\DirectDepositResource;
-use App\Services\SusuBox\Http\Requests\Payment\DirectDepositApprovalRequestHandler;
+use App\Services\SusuBox\Http\Requests\Payment\PaymentRequestHandler;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class FlexySusuDirectDepositApprovalAction
 {
     private PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService;
-    private DirectDepositApprovalRequestHandler $dispatcher;
+    private PaymentRequestHandler $dispatcher;
 
     /**
      * @param PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService
-     * @param DirectDepositApprovalRequestHandler $dispatcher
+     * @param PaymentRequestHandler $dispatcher
      */
     public function __construct(
         PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService,
-        DirectDepositApprovalRequestHandler $dispatcher
+        PaymentRequestHandler $dispatcher
     ) {
         $this->paymentInstructionApprovalStatusUpdateService = $paymentInstructionApprovalStatusUpdateService;
         $this->dispatcher = $dispatcher;
@@ -59,6 +59,7 @@ final class FlexySusuDirectDepositApprovalAction
         // Dispatch to SusuBox Service (Payment Service)
         $this->dispatcher->sendToSusuBoxService(
             service: config('susubox.payment.name'),
+            endpoint: 'direct-debits',
             data: $responseDTO->toArray(),
         );
 

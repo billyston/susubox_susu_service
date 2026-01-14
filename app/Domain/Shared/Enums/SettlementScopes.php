@@ -7,6 +7,7 @@ enum SettlementScopes: string
     case SELECTED_COMPLETED = 'selected_completed';
     case ALL_COMPLETED = 'all_completed';
     case ALL_INCLUDING_RUNNING = 'all_including_running';
+    case AUTO_SETTLEMENT = 'auto_settlement';
 
     /**
      * @return array

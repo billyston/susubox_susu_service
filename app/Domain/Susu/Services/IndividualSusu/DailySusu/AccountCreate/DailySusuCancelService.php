@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Susu\Services\DailySusu;
+namespace App\Domain\Susu\Services\IndividualSusu\DailySusu\AccountCreate;
 
 use App\Domain\Shared\Exceptions\CancellationNotAllowedException;
 use App\Domain\Shared\Exceptions\SystemFailureException;

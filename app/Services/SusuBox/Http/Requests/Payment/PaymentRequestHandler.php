@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Services\SusuBox\Http\Requests\Notification;
+namespace App\Services\SusuBox\Http\Requests\Payment;
 
 use App\Services\SusuBox\Http\SusuBoxServiceDispatcher;
 
-final readonly class AccountCycleCompletedNotificationRequestHandler
+final readonly class PaymentRequestHandler
 {
     /**
      * @param SusuBoxServiceDispatcher $dispatcher
@@ -17,16 +17,15 @@ final readonly class AccountCycleCompletedNotificationRequestHandler
 
     /**
      * @param string $service
+     * @param string $endpoint
      * @param array $data
      * @return array
      */
     public function sendToSusuBoxService(
         string $service,
+        string $endpoint,
         array $data
     ): array {
-        // Endpoint with or without parameter (e.g. param_name/123)
-        $endpoint = 'account/susu/cycle-completed';
-
         // Send the request to the chosen service
         return $this->dispatcher->send(
             service: $service,

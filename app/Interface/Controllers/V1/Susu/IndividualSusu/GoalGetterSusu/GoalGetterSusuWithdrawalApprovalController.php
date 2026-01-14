@@ -33,10 +33,8 @@ final class GoalGetterSusuWithdrawalApprovalController extends Controller
     ): JsonResponse {
         // Execute the GoalGetterSusuWithdrawalApprovalAction and return the JsonResponse
         return $goalGetterSusuWithdrawalApprovalAction->execute(
-            customer: $customer,
             goalGetterSusu: $goalGetterSusu,
             paymentInstruction: $paymentInstruction,
-            request: $goalGetterSusuWithdrawalApprovalRequest->validated()
         );
     }
 }

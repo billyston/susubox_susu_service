@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Susu\Services\DailySusu\AccountSettlement;
+namespace App\Domain\Susu\Services\IndividualSusu\DailySusu\AccountCycle;
 
 use App\Domain\Account\Models\Account;
 use App\Domain\Account\Models\AccountCycle;

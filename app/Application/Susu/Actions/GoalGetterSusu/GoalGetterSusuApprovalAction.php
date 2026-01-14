@@ -16,7 +16,7 @@ use App\Domain\Susu\Models\IndividualSusu\GoalGetterSusu;
 use App\Domain\Transaction\Enums\TransactionCategoryCode;
 use App\Domain\Transaction\Services\TransactionCategoryByCodeService;
 use App\Interface\Resources\V1\Susu\IndividualSusu\GoalGetterSusu\GoalGetterSusuResource;
-use App\Services\SusuBox\Http\Requests\Payment\RecurringDepositApprovalRequestHandler;
+use App\Services\SusuBox\Http\Requests\Payment\PaymentRequestHandler;
 use Brick\Money\Exception\MoneyMismatchException;
 use Brick\Money\Exception\UnknownCurrencyException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,19 +27,19 @@ final class GoalGetterSusuApprovalAction
     private PaymentInstructionCreateService $paymentInstructionCreateService;
     private PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService;
     private TransactionCategoryByCodeService $transactionCategoryByCodeGetService;
-    private RecurringDepositApprovalRequestHandler $dispatcher;
+    private PaymentRequestHandler $dispatcher;
 
     /**
      * @param PaymentInstructionCreateService $paymentInstructionCreateService
      * @param PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService
      * @param TransactionCategoryByCodeService $transactionCategoryByCodeGetService
-     * @param RecurringDepositApprovalRequestHandler $dispatcher
+     * @param PaymentRequestHandler $dispatcher
      */
     public function __construct(
         PaymentInstructionCreateService $paymentInstructionCreateService,
         PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService,
         TransactionCategoryByCodeService $transactionCategoryByCodeGetService,
-        RecurringDepositApprovalRequestHandler $dispatcher
+        PaymentRequestHandler $dispatcher
     ) {
         $this->paymentInstructionCreateService = $paymentInstructionCreateService;
         $this->paymentInstructionApprovalStatusUpdateService = $paymentInstructionApprovalStatusUpdateService;
@@ -91,6 +91,7 @@ final class GoalGetterSusuApprovalAction
         // Dispatch to SusuBox Service (Payment Service)
         $this->dispatcher->sendToSusuBoxService(
             service: config('susubox.payment.name'),
+            endpoint: 'recurring-debits',
             data: $responseDTO->toArray(),
         );
 

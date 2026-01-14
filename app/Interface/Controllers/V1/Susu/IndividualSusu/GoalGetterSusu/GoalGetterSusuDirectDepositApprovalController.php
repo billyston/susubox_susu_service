@@ -33,10 +33,8 @@ final class GoalGetterSusuDirectDepositApprovalController extends Controller
     ): JsonResponse {
         // Execute the GoalGetterSusuDirectDepositApprovalAction and return the JsonResponse
         return $goalGetterSusuDirectDepositApprovalAction->execute(
-            customer: $customer,
             goalGetterSusu: $goalGetterSusu,
             paymentInstruction: $paymentInstruction,
-            request: $goalGetterSusuDirectDepositApprovalRequest->validated()
         );
     }
 }

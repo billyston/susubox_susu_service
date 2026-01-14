@@ -40,6 +40,7 @@ return new class extends Migration
                     SettlementScopes::SELECTED_COMPLETED->value,
                     SettlementScopes::ALL_COMPLETED->value,
                     SettlementScopes::ALL_INCLUDING_RUNNING->value,
+                    SettlementScopes::AUTO_SETTLEMENT->value,
                 ])->index();
                 $table->bigInteger(column: 'principal_amount');
                 $table->bigInteger(column: 'charge_amount');

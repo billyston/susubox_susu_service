@@ -12,7 +12,7 @@ use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
-use App\Domain\Susu\Services\DailySusu\DailySusuSettlementStatusUpdateService;
+use App\Domain\Susu\Services\IndividualSusu\DailySusu\AccountSettlement\DailySusuSettlementStatusUpdateService;
 use App\Interface\Resources\V1\Account\AccountLockResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;

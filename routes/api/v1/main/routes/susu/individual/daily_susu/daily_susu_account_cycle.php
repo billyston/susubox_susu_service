@@ -20,7 +20,7 @@ Route::group([
         parameters: [
             'customer',
         ]
-    );
+    )->middleware(middleware: ['rate_limiter:1,30']);
 
     // Get daily (single) susu route
     Route::get(

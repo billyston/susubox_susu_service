@@ -8,7 +8,7 @@ use App\Application\Account\DTOs\AccountPauseResponseDTO;
 use App\Domain\Account\Services\AccountPauseByResourceIdService;
 use App\Domain\Customer\Services\CustomerByResourceIdService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Services\SusuBox\Http\Requests\Notification\AccountPauseNotificationRequestHandler;
+use App\Services\SusuBox\Http\Requests\Notification\NotificationRequestHandler;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -38,14 +38,14 @@ final class AccountPauseResumeNotificationJob implements ShouldQueue
     /**
      * @param CustomerByResourceIdService $customerByResourceIdService
      * @param AccountPauseByResourceIdService $accountPauseByResourceIdService
-     * @param AccountPauseNotificationRequestHandler $dispatcher
+     * @param NotificationRequestHandler $dispatcher
      * @return void
      * @throws SystemFailureException
      */
     public function handle(
         CustomerByResourceIdService $customerByResourceIdService,
         AccountPauseByResourceIdService $accountPauseByResourceIdService,
-        AccountPauseNotificationRequestHandler $dispatcher,
+        NotificationRequestHandler $dispatcher,
     ): void {
         // Execute the CustomerByResourceIdService and return the resource
         $customer = $customerByResourceIdService->execute(
@@ -67,6 +67,7 @@ final class AccountPauseResumeNotificationJob implements ShouldQueue
         // Dispatch the AccountPauseNotificationRequestHandler to SusuBox services
         $dispatcher->sendToSusuBoxService(
             service: config('susubox.notification.name'),
+            endpoint: 'account/susu/pause',
             data: $responseDTO->toArray(),
         );
     }

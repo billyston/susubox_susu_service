@@ -12,18 +12,18 @@ use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
 use App\Interface\Resources\V1\Susu\IndividualSusu\DailySusu\DailySusuSettlementResource;
-use App\Services\SusuBox\Http\Requests\Payment\WithdrawalApprovalRequestHandler;
+use App\Services\SusuBox\Http\Requests\Payment\PaymentRequestHandler;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class DailySusuAccountSettlementApprovalAction
 {
     private PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService;
-    private WithdrawalApprovalRequestHandler $dispatcher;
+    private PaymentRequestHandler $dispatcher;
 
     public function __construct(
         PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService,
-        WithdrawalApprovalRequestHandler $dispatcher,
+        PaymentRequestHandler $dispatcher,
     ) {
         $this->paymentInstructionApprovalStatusUpdateService = $paymentInstructionApprovalStatusUpdateService;
         $this->dispatcher = $dispatcher;
@@ -55,6 +55,7 @@ final class DailySusuAccountSettlementApprovalAction
         // Dispatch to SusuBox Service (Payment Service)
         $this->dispatcher->sendToSusuBoxService(
             service: config('susubox.payment.name'),
+            endpoint: 'payouts',
             data: $responseDTO->toArray(),
         );
 

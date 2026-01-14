@@ -2,55 +2,45 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Susu\ValueObjects\DailySusu;
+namespace App\Application\Account\ValueObjects;
 
+use App\Domain\Account\Models\AccountCycle;
+use App\Domain\Shared\Enums\SettlementScopes;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Transaction\Enums\TransactionType;
-use Brick\Money\Exception\MoneyMismatchException;
 use Brick\Money\Money;
 
-final class DailySusuSettlementCalculationVO
+final class AccountAutoSettlementCalculationVO
 {
     /**
      * @param Money $principal
      * @param Money $charges
      * @param Money $total
-     * @param array $cycleResourceIDs
-     * @param string $settlementScope
      */
     public function __construct(
         public Money $principal,
         public Money $charges,
         public Money $total,
-        public array $cycleResourceIDs,
-        public string $settlementScope
     ) {
         // ..
     }
 
     /**
-     * @param Money $principal
+     * @param AccountCycle $accountCycle
      * @param Money $charges
-     * @param array $cycleResourceIDs
-     * @param string $settlementScope
      * @return self
-     * @throws MoneyMismatchException
      */
     public static function create(
-        Money $principal,
+        AccountCycle $accountCycle,
         Money $charges,
-        array $cycleResourceIDs,
-        string $settlementScope
     ): self {
-        // Calculate the total
-        $total = $principal->minus($charges);
+        // Extract the main values
+        $principal = $accountCycle->contributed_amount;
 
         return new self(
-            principal: $principal,
+            principal: $accountCycle->contributed_amount,
             charges: $charges,
-            total: $total,
-            cycleResourceIDs: $cycleResourceIDs,
-            settlementScope: $settlementScope
+            total: $principal->minus($charges),
         );
     }
 
@@ -70,8 +60,7 @@ final class DailySusuSettlementCalculationVO
             'accepted_terms' => true,
 
             'extra_data' => [
-                'settlement_scope' => $this->settlementScope,
-                'cycle_resource_ids' => $this->cycleResourceIDs,
+                'settlement_scope' => SettlementScopes::AUTO_SETTLEMENT->value,
             ],
         ];
     }

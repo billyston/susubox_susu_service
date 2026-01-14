@@ -36,7 +36,7 @@ final class AccountCycleResource extends JsonResource
 
             // Included resource
             'included' => [
-                'account_cycle_entries' => $this->resource->entries,
+                'account_cycle_entries' => AccountCycleEntryResource::collection($this->resource->entries),
             ],
         ];
     }

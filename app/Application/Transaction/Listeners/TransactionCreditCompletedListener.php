@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Transaction\Listeners;
 
-use App\Application\Susu\Jobs\IndividualSusu\DailySusu\DailySusuCycleCreateJob;
+use App\Application\Susu\Handlers\IndividualSusu\IndividualAccountCreditHandler;
 use App\Application\Transaction\Interfaces\TransactionCreatedEvent;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\GroupSusu\GroupAccount;
@@ -21,7 +21,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Bus;
 
 final class TransactionCreditCompletedListener implements ShouldQueue
 {
@@ -33,9 +32,11 @@ final class TransactionCreditCompletedListener implements ShouldQueue
 
     /**
      * @param TransactionByResourceIdService $transactionByResourceIdService
+     * @param IndividualAccountCreditHandler $individualAccountCreditHandler
      */
     public function __construct(
         private readonly TransactionByResourceIdService $transactionByResourceIdService,
+        private readonly IndividualAccountCreditHandler $individualAccountCreditHandler,
     ) {
         // ..
     }
@@ -88,10 +89,10 @@ final class TransactionCreditCompletedListener implements ShouldQueue
 
         // Resolve and handle the $susu type
         match (true) {
-            $susu instanceof DailySusu => $this->dailySusuDispatchableHandler(transaction: $transaction),
-            $susu instanceof BizSusu => logger('Biz Susu', $susu->toArray()),
-            $susu instanceof GoalGetterSusu => logger('Goal Getter Susu', $susu->toArray()),
-            $susu instanceof FlexySusu => logger('Flexy Susu', $susu->toArray()),
+            $susu instanceof DailySusu => $this->individualAccountCreditHandler->dailySusuDispatchableHandler(transaction: $transaction),
+            $susu instanceof BizSusu => $this->individualAccountCreditHandler->bizSusuDispatchableHandler(transaction: $transaction),
+            $susu instanceof GoalGetterSusu => $this->individualAccountCreditHandler->goalGetterSusuDispatchableHandler(transaction: $transaction),
+            $susu instanceof FlexySusu => $this->individualAccountCreditHandler->flexySusuDispatchableHandler(transaction: $transaction),
 
             default => null
         };
@@ -107,18 +108,5 @@ final class TransactionCreditCompletedListener implements ShouldQueue
         Transaction $transaction
     ): void {
         // ..
-    }
-
-    /**
-     * @param Transaction $transaction
-     * @return void
-     */
-    private function dailySusuDispatchableHandler(
-        Transaction $transaction
-    ): void {
-        // Chain the dependable jobs
-        Bus::chain([
-            new DailySusuCycleCreateJob(resourceID: $transaction->resource_id),
-        ])->dispatch();
     }
 }

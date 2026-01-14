@@ -16,7 +16,7 @@ use App\Domain\Susu\Models\IndividualSusu\DailySusu;
 use App\Domain\Transaction\Enums\TransactionCategoryCode;
 use App\Domain\Transaction\Services\TransactionCategoryByCodeService;
 use App\Interface\Resources\V1\Susu\IndividualSusu\DailySusu\DailySusuResource;
-use App\Services\SusuBox\Http\Requests\Payment\RecurringDepositApprovalRequestHandler;
+use App\Services\SusuBox\Http\Requests\Payment\PaymentRequestHandler;
 use Brick\Money\Exception\MoneyMismatchException;
 use Brick\Money\Exception\UnknownCurrencyException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,19 +27,19 @@ final class DailySusuApprovalAction
     private TransactionCategoryByCodeService $transactionCategoryByCodeGetService;
     private PaymentInstructionCreateService $paymentInstructionCreateService;
     private PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService;
-    private RecurringDepositApprovalRequestHandler $dispatcher;
+    private PaymentRequestHandler $dispatcher;
 
     /**
      * @param PaymentInstructionCreateService $paymentInstructionCreateService
      * @param PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService
-     * @param RecurringDepositApprovalRequestHandler $dispatcher
+     * @param PaymentRequestHandler $dispatcher
      * @param TransactionCategoryByCodeService $transactionCategoryByCodeGetService
      */
     public function __construct(
         PaymentInstructionCreateService $paymentInstructionCreateService,
         PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService,
         TransactionCategoryByCodeService $transactionCategoryByCodeGetService,
-        RecurringDepositApprovalRequestHandler $dispatcher,
+        PaymentRequestHandler $dispatcher,
     ) {
         $this->paymentInstructionCreateService = $paymentInstructionCreateService;
         $this->paymentInstructionApprovalStatusUpdateService = $paymentInstructionApprovalStatusUpdateService;
@@ -66,13 +66,13 @@ final class DailySusuApprovalAction
 
         // Build the RecurringDepositValueObject
         $debitValues = RecurringDepositValueObject::create(
-            initialDepositFrequency: $dailySusu->initial_deposit_frequency,
             initialDeposit: $dailySusu->initial_deposit,
             susuAmount: $dailySusu->susu_amount,
             startDate: $dailySusu->start_date,
             endDate: $dailySusu->end_date,
             frequency: $dailySusu->frequency->code,
-            rolloverEnabled: $dailySusu->rollover_enabled
+            rolloverEnabled: $dailySusu->rollover_enabled,
+            initialDepositFrequency: $dailySusu->initial_deposit_frequency,
         );
 
         // Execute the PaymentInstructionCreateService and return the payment instruction resource
@@ -92,6 +92,7 @@ final class DailySusuApprovalAction
         // Dispatch to SusuBox Service (Payment Service)
         $this->dispatcher->sendToSusuBoxService(
             service: config('susubox.payment.name'),
+            endpoint: 'recurring-debits',
             data: $responseDTO->toArray(),
         );
 

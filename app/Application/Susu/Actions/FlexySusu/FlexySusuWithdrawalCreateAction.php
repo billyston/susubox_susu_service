@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Susu\Actions\FlexySusu;
 
+use App\Application\Account\Services\AccountBalanceGuardService;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Transaction\Services\BalanceValidationService;
 use App\Application\Transaction\ValueObject\WithdrawalValueObject;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\PaymentInstruction\Services\PaymentInstructionCreateService;
@@ -23,21 +23,21 @@ use Symfony\Component\HttpFoundation\Response;
 final class FlexySusuWithdrawalCreateAction
 {
     private TransactionCategoryByCodeService $transactionCategoryByCodeGetService;
-    private BalanceValidationService $balanceValidationService;
+    private AccountBalanceGuardService $accountBalanceGuardService;
     private PaymentInstructionCreateService $paymentInstructionCreateService;
 
     /**
      * @param TransactionCategoryByCodeService $transactionCategoryByCodeGetService
-     * @param BalanceValidationService $balanceValidationService
+     * @param AccountBalanceGuardService $accountBalanceGuardService
      * @param PaymentInstructionCreateService $paymentInstructionCreateService
      */
     public function __construct(
         TransactionCategoryByCodeService $transactionCategoryByCodeGetService,
-        BalanceValidationService $balanceValidationService,
+        AccountBalanceGuardService $accountBalanceGuardService,
         PaymentInstructionCreateService $paymentInstructionCreateService
     ) {
         $this->transactionCategoryByCodeGetService = $transactionCategoryByCodeGetService;
-        $this->balanceValidationService = $balanceValidationService;
+        $this->accountBalanceGuardService = $accountBalanceGuardService;
         $this->paymentInstructionCreateService = $paymentInstructionCreateService;
     }
 
@@ -62,8 +62,8 @@ final class FlexySusuWithdrawalCreateAction
             availableBalance: $flexySusu->account->accountBalance->available_balance,
         );
 
-        // Execute the BalanceValidationService
-        $this->balanceValidationService->execute(
+        // Execute the AccountBalanceGuardService
+        $this->accountBalanceGuardService->execute(
             availableBalance: $flexySusu->account->accountBalance->available_balance,
             debitAmount: $requestDTO->amount
         );

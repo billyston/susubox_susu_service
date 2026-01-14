@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Susu\Services\DailySusu;
+namespace App\Domain\Susu\Services\IndividualSusu\DailySusu\AccountSettlement;
 
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;

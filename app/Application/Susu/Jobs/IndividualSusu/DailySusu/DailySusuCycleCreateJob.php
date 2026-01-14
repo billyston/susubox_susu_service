@@ -7,7 +7,7 @@ namespace App\Application\Susu\Jobs\IndividualSusu\DailySusu;
 use App\Application\Susu\DTOs\DailySusu\AccountCreate\DailySusuCycleResponseDTO;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Susu\Services\DailySusu\DailySusuCycleCreateService;
+use App\Domain\Susu\Services\IndividualSusu\DailySusu\AccountCycle\DailySusuAccountCycleCreateService;
 use App\Domain\Transaction\Enums\TransactionType;
 use App\Domain\Transaction\Models\Transaction;
 use App\Domain\Transaction\Services\TransactionByResourceIdService;
@@ -39,14 +39,14 @@ final class DailySusuCycleCreateJob implements ShouldQueue
      */
     public function handle(
         TransactionByResourceIdService $transactionByResourceIdService,
-        DailySusuCycleCreateService $dailySusuCycleCreateService
+        DailySusuAccountCycleCreateService $dailySusuCycleCreateService
     ): void {
         // Execute the TransactionByResourceIdService and return the resource
         $transaction = $transactionByResourceIdService->execute(
             resourceID: $this->resourceID,
         );
 
-        // Resolve and handle the DailySusuCycleCreateService
+        // Resolve and handle the DailySusuAccountCycleCreateService
         match (true) {
             $transaction->status !== Statuses::SUCCESS->value => null,
             $transaction->transaction_type !== TransactionType::CREDIT->value => null,
@@ -64,7 +64,7 @@ final class DailySusuCycleCreateJob implements ShouldQueue
      */
     private function dailySusuCycleCreate(
         Transaction $transaction,
-        DailySusuCycleCreateService $dailySusuCycleCreateService
+        DailySusuAccountCycleCreateService $dailySusuCycleCreateService
     ): void {
         // Get the DailySusu
         $dailySusu = $transaction->account->accountable->susu();

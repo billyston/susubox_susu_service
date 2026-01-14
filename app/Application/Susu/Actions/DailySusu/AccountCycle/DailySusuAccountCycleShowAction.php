@@ -10,7 +10,7 @@ use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
-use App\Domain\Susu\Services\DailySusu\AccountCycle\DailySusuAccountCycleShowService;
+use App\Domain\Susu\Services\IndividualSusu\DailySusu\AccountCycle\DailySusuAccountCycleShowService;
 use App\Interface\Resources\V1\Account\AccountCycle\AccountCycleResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;

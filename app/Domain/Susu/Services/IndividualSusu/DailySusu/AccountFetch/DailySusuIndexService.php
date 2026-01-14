@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Susu\Services\DailySusu;
+namespace App\Domain\Susu\Services\IndividualSusu\DailySusu\AccountFetch;
 
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;

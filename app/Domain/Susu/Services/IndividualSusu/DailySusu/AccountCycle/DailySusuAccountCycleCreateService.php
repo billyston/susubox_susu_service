@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Susu\Services\DailySusu;
+namespace App\Domain\Susu\Services\IndividualSusu\DailySusu\AccountCycle;
 
 use App\Application\Account\Events\AccountCycleCompletedEvent;
 use App\Application\Susu\DTOs\DailySusu\AccountCreate\DailySusuCycleResponseDTO;
@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-final class DailySusuCycleCreateService
+final class DailySusuAccountCycleCreateService
 {
     /**
      * @throws Throwable

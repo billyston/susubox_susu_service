@@ -73,11 +73,11 @@ The SusuBox susu service API.
 - [ ] Validate approve direct deposit
 
 ###### DailySusu Settlements
-- [ ] Create settle pending
-- [ ] Create settle all pending
-- [ ] Create zero-out settlement
-- [ ] Cancel settlement process
-- [ ] Approve settlement
+- [x] Create settle pending
+- [x] Create settle all pending
+- [x] Create zero-out settlement
+- [x] Cancel settlement process
+- [x] Approve settlement
 - [ ] Validate create settlement
 - [ ] Validate cancel settlement
 - [ ] Validate approve settlement
@@ -92,6 +92,9 @@ The SusuBox susu service API.
 
 ###### DailySusu Unlock Account
 - [x] Initiate the account_unlock background job
+
+###### DailySusu auto settlement
+- [x] Initiate auto settlement feature
 
 ###### DailySusu activate auto settlement
 - [ ] Initiate and approve the auto settlement feature
@@ -410,6 +413,7 @@ The SusuBox susu service API.
 - [ ] Implement the transaction reconciliation feature
 
 ## General
+- [ ] Pass the proper fees and charges on settlements / withdrawals
 - [ ] Move all jobs that publishes job into the services / shared folder
 - [ ] Do not hard code 'service_category' in approval DTOs
 - [ ] When payment_instruction is cancelled, approval_status->cancelled, status->terminated

@@ -33,10 +33,8 @@ final class FlexySusuWithdrawalApprovalController extends Controller
     ): JsonResponse {
         // Execute the FlexySusuWithdrawalApprovalAction and return the JsonResponse
         return $flexySusuWithdrawalApprovalAction->execute(
-            customer: $customer,
             flexySusu: $flexySusu,
             paymentInstruction: $paymentInstruction,
-            request: $flexySusuWithdrawalApprovalRequest->validated()
         );
     }
 }

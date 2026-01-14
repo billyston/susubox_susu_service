@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Susu\Actions\GoalGetterSusu;
 
+use App\Application\Account\Services\AccountBalanceGuardService;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Transaction\Services\BalanceValidationService;
 use App\Application\Transaction\ValueObject\WithdrawalValueObject;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\PaymentInstruction\Services\PaymentInstructionCreateService;
@@ -23,17 +23,17 @@ use Symfony\Component\HttpFoundation\Response;
 final class GoalGetterSusuWithdrawalCreateAction
 {
     private TransactionCategoryByCodeService $transactionCategoryByCodeGetService;
-    private BalanceValidationService $balanceValidationService;
+    private AccountBalanceGuardService $balanceValidationService;
     private PaymentInstructionCreateService $paymentInstructionCreateService;
 
     /**
      * @param TransactionCategoryByCodeService $transactionCategoryByCodeGetService
-     * @param BalanceValidationService $balanceValidationService
+     * @param AccountBalanceGuardService $balanceValidationService
      * @param PaymentInstructionCreateService $paymentInstructionCreateService
      */
     public function __construct(
         TransactionCategoryByCodeService $transactionCategoryByCodeGetService,
-        BalanceValidationService $balanceValidationService,
+        AccountBalanceGuardService $balanceValidationService,
         PaymentInstructionCreateService $paymentInstructionCreateService
     ) {
         $this->transactionCategoryByCodeGetService = $transactionCategoryByCodeGetService;
@@ -62,7 +62,7 @@ final class GoalGetterSusuWithdrawalCreateAction
             availableBalance: $goalGetterSusu->account->accountBalance->available_balance,
         );
 
-        // Execute the BalanceValidationService
+        // Execute the AccountBalanceGuardService
         $this->balanceValidationService->execute(
             availableBalance: $goalGetterSusu->account->accountBalance->available_balance,
             debitAmount: $requestDTO->amount

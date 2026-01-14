@@ -8,7 +8,7 @@ use App\Application\Account\DTOs\AccountLockResponseDTO;
 use App\Domain\Account\Services\AccountLockByResourceIdService;
 use App\Domain\Customer\Services\CustomerByResourceIdService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Services\SusuBox\Http\Requests\Notification\AccountLockNotificationRequestHandler;
+use App\Services\SusuBox\Http\Requests\Notification\NotificationRequestHandler;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -38,14 +38,14 @@ final class AccountLockNotificationJob implements ShouldQueue
     /**
      * @param CustomerByResourceIdService $customerByResourceIdService
      * @param AccountLockByResourceIdService $accountLockByResourceIdService
-     * @param AccountLockNotificationRequestHandler $dispatcher
+     * @param NotificationRequestHandler $dispatcher
      * @return void
      * @throws SystemFailureException
      */
     public function handle(
         CustomerByResourceIdService $customerByResourceIdService,
         AccountLockByResourceIdService $accountLockByResourceIdService,
-        AccountLockNotificationRequestHandler $dispatcher,
+        NotificationRequestHandler $dispatcher,
     ): void {
         // Execute the CustomerByResourceIdService and return the resource
         $customer = $customerByResourceIdService->execute(
@@ -67,6 +67,7 @@ final class AccountLockNotificationJob implements ShouldQueue
         // Dispatch the AccountLockNotificationRequestHandler to SusuBox services
         $dispatcher->sendToSusuBoxService(
             service: config('susubox.notification.name'),
+            endpoint: 'account/susu/lock',
             data: $responseDTO->toArray(),
         );
     }

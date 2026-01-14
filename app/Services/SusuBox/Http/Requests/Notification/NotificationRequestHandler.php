@@ -4,7 +4,7 @@ namespace App\Services\SusuBox\Http\Requests\Notification;
 
 use App\Services\SusuBox\Http\SusuBoxServiceDispatcher;
 
-final readonly class AccountPauseNotificationRequestHandler
+final readonly class NotificationRequestHandler
 {
     /**
      * @param SusuBoxServiceDispatcher $dispatcher
@@ -17,16 +17,15 @@ final readonly class AccountPauseNotificationRequestHandler
 
     /**
      * @param string $service
+     * @param string $endpoint
      * @param array $data
      * @return array
      */
     public function sendToSusuBoxService(
         string $service,
+        string $endpoint,
         array $data
     ): array {
-        // Endpoint with or without parameter (e.g. param_name/123)
-        $endpoint = 'account/susu/pause';
-
         // Send the request to the chosen service
         return $this->dispatcher->send(
             service: $service,

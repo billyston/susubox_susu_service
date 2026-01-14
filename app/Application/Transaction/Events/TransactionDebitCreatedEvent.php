@@ -19,7 +19,7 @@ final class TransactionDebitCreatedEvent implements TransactionCreatedEvent
      * @param string $transactionResourceId
      */
     public function __construct(
-        private readonly string $transactionResourceId
+        public readonly string $transactionResourceId
     ) {
         //..
     }

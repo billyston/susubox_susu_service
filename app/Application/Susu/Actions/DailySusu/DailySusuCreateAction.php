@@ -8,7 +8,7 @@ use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Application\Susu\DTOs\DailySusu\AccountCreate\DailySusuCreateRequestDTO;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Susu\Services\DailySusu\DailySusuCreateService;
+use App\Domain\Susu\Services\IndividualSusu\DailySusu\AccountCreate\DailySusuCreateService;
 use App\Interface\Resources\V1\Susu\IndividualSusu\DailySusu\DailySusuResource;
 use Brick\Money\Exception\UnknownCurrencyException;
 use Symfony\Component\HttpFoundation\JsonResponse;

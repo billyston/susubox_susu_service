@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Transaction\Listeners;
 
+use App\Application\Susu\Handlers\IndividualSusu\IndividualAccountDebitHandler;
 use App\Application\Transaction\Interfaces\TransactionCreatedEvent;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\GroupSusu\GroupAccount;
@@ -31,9 +32,11 @@ final class TransactionDebitCompletedListener implements ShouldQueue
 
     /**
      * @param TransactionByResourceIdService $transactionByResourceIdService
+     * @param IndividualAccountDebitHandler $individualAccountDebitHandler
      */
     public function __construct(
         private readonly TransactionByResourceIdService $transactionByResourceIdService,
+        private readonly IndividualAccountDebitHandler $individualAccountDebitHandler,
     ) {
         // ..
     }
@@ -86,10 +89,10 @@ final class TransactionDebitCompletedListener implements ShouldQueue
 
         // Resolve and handle the $susu type
         match (true) {
-            $susu instanceof DailySusu => logger('Daily Susu Settlements: ', [$susu->toArray(), $transaction->toArray()]),
-            $susu instanceof BizSusu => logger('Biz Susu Withdrawals: ', [$susu->toArray(), $transaction->toArray()]),
-            $susu instanceof GoalGetterSusu => logger('Goal Getter Susu Withdrawals: ', [$susu->toArray(), $transaction->toArray()]),
-            $susu instanceof FlexySusu => logger('Flexy Susu Withdrawals: ', [$susu->toArray(), $transaction->toArray()]),
+            $susu instanceof DailySusu => $this->individualAccountDebitHandler->dailySusuDispatchableHandler(transaction: $transaction),
+            $susu instanceof BizSusu => $this->individualAccountDebitHandler->bizSusuDispatchableHandler(transaction: $transaction),
+            $susu instanceof GoalGetterSusu => $this->individualAccountDebitHandler->goalGetterSusuDispatchableHandler(transaction: $transaction),
+            $susu instanceof FlexySusu => $this->individualAccountDebitHandler->flexySusuDispatchableHandler(transaction: $transaction),
 
             default => null
         };

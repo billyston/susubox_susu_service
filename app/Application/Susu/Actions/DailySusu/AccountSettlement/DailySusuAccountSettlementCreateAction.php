@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Susu\Actions\DailySusu\AccountSettlement;
 
+use App\Application\Account\Services\AccountBalanceGuardService;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Application\Susu\DTOs\DailySusu\AccountSettlement\DailySusuAccountSettlementRequestDTO;
 use App\Application\Susu\Services\DailySusu\DailySusuSettlementCalculationService;
@@ -11,8 +12,8 @@ use App\Domain\Customer\Models\Customer;
 use App\Domain\PaymentInstruction\Services\PaymentInstructionCreateService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
-use App\Domain\Susu\Services\DailySusu\AccountSettlement\DailySusuAccountCycleSelectionService;
-use App\Domain\Susu\Services\DailySusu\AccountSettlement\DailySusuSettlementService;
+use App\Domain\Susu\Services\IndividualSusu\DailySusu\AccountCycle\DailySusuAccountCycleSelectionService;
+use App\Domain\Susu\Services\IndividualSusu\DailySusu\AccountSettlement\DailySusuAccountSettlementCreateService;
 use App\Domain\Transaction\Enums\TransactionCategoryCode;
 use App\Domain\Transaction\Services\TransactionCategoryByCodeService;
 use App\Interface\Resources\V1\Susu\IndividualSusu\DailySusu\DailySusuSettlementResource;
@@ -26,29 +27,33 @@ final class DailySusuAccountSettlementCreateAction
 {
     private DailySusuAccountCycleSelectionService $dailySusuAccountCycleSelectionService;
     private DailySusuSettlementCalculationService $dailySusuSettlementCalculationService;
+    private AccountBalanceGuardService $balanceValidationService;
     private TransactionCategoryByCodeService $transactionCategoryByCodeGetService;
     private PaymentInstructionCreateService $paymentInstructionCreateService;
-    private DailySusuSettlementService $dailySusuSettlementService;
+    private DailySusuAccountSettlementCreateService $dailySusuSettlementService;
 
     /**
      * @param DailySusuAccountCycleSelectionService $dailySusuAccountCycleSelectionService
      * @param DailySusuSettlementCalculationService $dailySusuSettlementCalculationService
+     * @param AccountBalanceGuardService $balanceValidationService
      * @param TransactionCategoryByCodeService $transactionCategoryByCodeGetService
      * @param PaymentInstructionCreateService $paymentInstructionCreateService
-     * @param DailySusuSettlementService $dailySusuSettlementService
+     * @param DailySusuAccountSettlementCreateService $dailySusuAccountSettlementCreateService
      */
     public function __construct(
         DailySusuAccountCycleSelectionService $dailySusuAccountCycleSelectionService,
         DailySusuSettlementCalculationService $dailySusuSettlementCalculationService,
+        AccountBalanceGuardService $balanceValidationService,
         TransactionCategoryByCodeService $transactionCategoryByCodeGetService,
         PaymentInstructionCreateService $paymentInstructionCreateService,
-        DailySusuSettlementService $dailySusuSettlementService,
+        DailySusuAccountSettlementCreateService $dailySusuAccountSettlementCreateService,
     ) {
         $this->dailySusuAccountCycleSelectionService = $dailySusuAccountCycleSelectionService;
         $this->dailySusuSettlementCalculationService = $dailySusuSettlementCalculationService;
+        $this->balanceValidationService = $balanceValidationService;
         $this->transactionCategoryByCodeGetService = $transactionCategoryByCodeGetService;
         $this->paymentInstructionCreateService = $paymentInstructionCreateService;
-        $this->dailySusuSettlementService = $dailySusuSettlementService;
+        $this->dailySusuSettlementService = $dailySusuAccountSettlementCreateService;
     }
 
     /**
@@ -83,6 +88,12 @@ final class DailySusuAccountSettlementCreateAction
             uniteCharge: $dailySusu->susu_amount,
             accountCycles: $accountCycles,
             requestDTO: $requestDTO
+        );
+
+        // Execute the AccountBalanceGuardService
+        $this->balanceValidationService->execute(
+            availableBalance: $dailySusu->account->accountBalance->available_balance,
+            debitAmount: $settlementCalculations->principal
         );
 
         // Execute the TransactionCreateDebitService and return the resource

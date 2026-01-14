@@ -39,14 +39,10 @@ final class DailySusuSettlementCalculationService
             $totalCharges = $totalCharges->plus($uniteCharge);
         }
 
-        // Calculate the total
-        $total = $principal->minus($uniteCharge);
-
         // Return the DailySusuSettlementCalculationVO
-        return new DailySusuSettlementCalculationVO(
+        return DailySusuSettlementCalculationVO::create(
             principal: $principal,
             charges: $totalCharges,
-            total: $total,
             cycleResourceIDs: $cycleResourceIDs,
             settlementScope: $requestDTO->scope->value
         );

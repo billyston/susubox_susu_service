@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Susu\Services\DailySusu;
+namespace App\Domain\Susu\Services\IndividualSusu\DailySusu\AccountCreate;
 
 use App\Application\Susu\DTOs\DailySusu\AccountCreate\DailySusuCreateRequestDTO;
 use App\Domain\Account\Models\Account;

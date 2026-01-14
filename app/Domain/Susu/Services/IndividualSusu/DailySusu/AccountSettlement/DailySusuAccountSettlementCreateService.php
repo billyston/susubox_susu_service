@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Susu\Services\DailySusu\AccountSettlement;
+namespace App\Domain\Susu\Services\IndividualSusu\DailySusu\AccountSettlement;
 
 use App\Application\Susu\ValueObjects\DailySusu\DailySusuSettlementCalculationVO;
 use App\Domain\Account\Models\Account;
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-final class DailySusuSettlementService
+final class DailySusuAccountSettlementCreateService
 {
     /**
      * @throws Throwable

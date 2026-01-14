@@ -16,7 +16,7 @@ use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
 use App\Domain\Transaction\Enums\TransactionCategoryCode;
 use App\Domain\Transaction\Services\TransactionCategoryByCodeService;
 use App\Interface\Resources\V1\Susu\IndividualSusu\FlexySusu\FlexySusuResource;
-use App\Services\SusuBox\Http\Requests\Payment\DirectDepositApprovalRequestHandler;
+use App\Services\SusuBox\Http\Requests\Payment\PaymentRequestHandler;
 use Brick\Money\Exception\MoneyMismatchException;
 use Brick\Money\Exception\UnknownCurrencyException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,19 +27,19 @@ final class FlexySusuApprovalAction
     private PaymentInstructionCreateService $paymentInstructionCreateService;
     private PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService;
     private TransactionCategoryByCodeService $transactionCategoryByCodeGetService;
-    private DirectDepositApprovalRequestHandler $dispatcher;
+    private PaymentRequestHandler $dispatcher;
 
     /**
      * @param PaymentInstructionCreateService $paymentInstructionCreateService
      * @param PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService
      * @param TransactionCategoryByCodeService $transactionCategoryByCodeGetService
-     * @param DirectDepositApprovalRequestHandler $dispatcher
+     * @param PaymentRequestHandler $dispatcher
      */
     public function __construct(
         PaymentInstructionCreateService $paymentInstructionCreateService,
         PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService,
         TransactionCategoryByCodeService $transactionCategoryByCodeGetService,
-        DirectDepositApprovalRequestHandler $dispatcher
+        PaymentRequestHandler $dispatcher
     ) {
         $this->paymentInstructionCreateService = $paymentInstructionCreateService;
         $this->paymentInstructionApprovalStatusUpdateService = $paymentInstructionApprovalStatusUpdateService;
@@ -88,6 +88,7 @@ final class FlexySusuApprovalAction
         // Dispatch to SusuBox Service (Payment Service)
         $this->dispatcher->sendToSusuBoxService(
             service: config('susubox.payment.name'),
+            endpoint: 'direct-debits',
             data: $responseDTO->toArray(),
         );
 

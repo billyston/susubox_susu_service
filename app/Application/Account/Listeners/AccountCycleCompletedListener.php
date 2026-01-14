@@ -5,22 +5,19 @@ declare(strict_types=1);
 namespace App\Application\Account\Listeners;
 
 use App\Application\Account\Events\AccountCycleCompletedEvent;
-use App\Application\Susu\Jobs\IndividualSusu\DailySusu\DailySusuAccountCycleCompletedJob;
-use App\Application\Susu\Jobs\IndividualSusu\DailySusu\DailySusuAutoSettlementJob;
+use App\Application\Susu\Handlers\IndividualSusu\IndividualAccountCycleCompletedHandler;
 use App\Domain\Account\Models\AccountCycle;
 use App\Domain\Account\Services\AccountCycleByResourceIdService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\GroupSusu\GroupAccount;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
 use App\Domain\Susu\Models\IndividualSusu\IndividualAccount;
-use App\Domain\Transaction\Models\Transaction;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Bus;
 
 final class AccountCycleCompletedListener implements ShouldQueue
 {
@@ -32,9 +29,11 @@ final class AccountCycleCompletedListener implements ShouldQueue
 
     /**
      * @param AccountCycleByResourceIdService $accountCycleByResourceIdService
+     * @param IndividualAccountCycleCompletedHandler $individualAccountCycleCompletedHandler
      */
     public function __construct(
-        private readonly AccountCycleByResourceIdService $accountCycleByResourceIdService
+        private readonly AccountCycleByResourceIdService $accountCycleByResourceIdService,
+        private readonly IndividualAccountCycleCompletedHandler $individualAccountCycleCompletedHandler
     ) {
         //..
     }
@@ -75,7 +74,7 @@ final class AccountCycleCompletedListener implements ShouldQueue
 
     /**
      * @param IndividualAccount $individualAccount
-     * @param Transaction $transaction
+     * @param AccountCycle $accountCycle
      * @return void
      */
     private function individualAccountResolver(
@@ -87,7 +86,7 @@ final class AccountCycleCompletedListener implements ShouldQueue
 
         // Resolve and handle the $susu type
         match (true) {
-            $susu instanceof DailySusu => $this->dailySusuDispatchableHandler(accountCycle: $accountCycle),
+            $susu instanceof DailySusu => $this->individualAccountCycleCompletedHandler->dailySusuDispatchableHandler(accountCycle: $accountCycle),
 
             default => null
         };
@@ -95,7 +94,7 @@ final class AccountCycleCompletedListener implements ShouldQueue
 
     /**
      * @param GroupAccount $groupAccount
-     * @param Transaction $transaction
+     * @param AccountCycle $accountCycle
      * @return void
      */
     private function groupAccountResolver(
@@ -103,19 +102,5 @@ final class AccountCycleCompletedListener implements ShouldQueue
         AccountCycle $accountCycle
     ): void {
         // ..
-    }
-
-    /**
-     * @param Transaction $transaction
-     * @return void
-     */
-    private function dailySusuDispatchableHandler(
-        AccountCycle $accountCycle
-    ): void {
-        // Chain the dependable jobs
-        Bus::chain([
-            new DailySusuAccountCycleCompletedJob(accountCycleResourceID: $accountCycle->resource_id),
-            new DailySusuAutoSettlementJob(accountCycleResourceID: $accountCycle->resource_id),
-        ])->dispatch();
     }
 }

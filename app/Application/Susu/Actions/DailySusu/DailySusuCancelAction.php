@@ -8,7 +8,7 @@ use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Domain\Shared\Exceptions\CancellationNotAllowedException;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
-use App\Domain\Susu\Services\DailySusu\DailySusuCancelService;
+use App\Domain\Susu\Services\IndividualSusu\DailySusu\AccountCreate\DailySusuCancelService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
