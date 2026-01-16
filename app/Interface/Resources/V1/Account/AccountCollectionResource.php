@@ -43,9 +43,9 @@ final class AccountCollectionResource extends JsonResource
                 'susu_scheme' => [
                     'type' => 'SusuScheme',
                     'attributes' => [
-                        'name' => $this->resource->accountable->susuScheme->name,
-                        'alias' => $this->resource->accountable->susuScheme->alias,
-                        'code' => $this->resource->accountable->susuScheme->code,
+                        'name' => $this->resource->accountable->scheme->name,
+                        'alias' => $this->resource->accountable->scheme->alias,
+                        'code' => $this->resource->accountable->scheme->code,
                     ],
                 ],
             ],

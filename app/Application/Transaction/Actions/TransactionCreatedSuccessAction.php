@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Transaction\Actions;
 
-use App\Domain\Account\Services\AccountStatusUpdateService;
+use App\Domain\Account\Services\Account\AccountStatusUpdateService;
 use App\Domain\PaymentInstruction\Services\PaymentInstructionStatusUpdateService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;

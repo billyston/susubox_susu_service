@@ -7,7 +7,7 @@ namespace App\Application\Susu\Actions\BizSusu;
 use App\Application\Account\Jobs\AccountLockNotificationJob;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Domain\Account\Models\AccountLock;
-use App\Domain\Account\Services\AccountLockStatusUpdateService;
+use App\Domain\Account\Services\AccountLock\AccountLockStatusUpdateService;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;

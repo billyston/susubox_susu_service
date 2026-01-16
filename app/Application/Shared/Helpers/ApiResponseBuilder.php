@@ -109,8 +109,19 @@ final class ApiResponseBuilder
             'code' => $code,
             'message' => $message,
             'description' => $description,
-            'data' => data_get(target: $data, key: 'data'),
-            'data_meta' => data_get(target: $data, key: 'meta'),
+            'data' => $data->items(),
+            'meta' => [
+                'current_page' => $data->currentPage(),
+                'per_page'     => $data->perPage(),
+                'total'        => $data->total(),
+                'last_page'    => $data->lastPage(),
+            ],
+            'links' => [
+                'first' => $data->url(1),
+                'last'  => $data->url($data->lastPage()),
+                'prev'  => $data->previousPageUrl(),
+                'next'  => $data->nextPageUrl(),
+            ],
         ]);
     }
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Account\Services;
+namespace App\Domain\Account\Services\Account;
 
 use App\Domain\Account\Models\Account;
 use App\Domain\Account\Models\AccountBalance;

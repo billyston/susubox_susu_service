@@ -38,17 +38,17 @@ final class AccountResource extends JsonResource
             ],
 
             // Included resource
-            'included' => [
-                'susu' => $this->resolveSusuResource($this->resource->accountable),
-                'susu_scheme' => [
-                    'type' => 'SusuScheme',
-                    'attributes' => [
-                        'name' => $this->resource->accountable->susuScheme->name,
-                        'alias' => $this->resource->accountable->susuScheme->alias,
-                        'code' => $this->resource->accountable->susuScheme->code,
-                    ],
-                ],
-            ],
+//            'included' => [
+//                'susu' => $this->resolveSusuResource($this->resource->accountable),
+//                'scheme' => [
+//                    'type' => 'SusuScheme',
+//                    'attributes' => [
+//                        'name' => $this->resource->accountable->scheme->name,
+//                        'alias' => $this->resource->accountable->scheme->alias,
+//                        'code' => $this->resource->accountable->scheme->code,
+//                    ],
+//                ],
+//            ],
         ];
     }
 

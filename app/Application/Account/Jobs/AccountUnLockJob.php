@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Account\Jobs;
 
-use App\Domain\Account\Services\AccountLockByResourceIdService;
-use App\Domain\Account\Services\AccountLockStatusUpdateService;
+use App\Domain\Account\Services\AccountLock\AccountLockByResourceIdService;
+use App\Domain\Account\Services\AccountLock\AccountLockStatusUpdateService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use Illuminate\Bus\Batchable;

@@ -7,7 +7,7 @@ namespace App\Application\Account\Listeners;
 use App\Application\Account\Events\AccountCycleCompletedEvent;
 use App\Application\Susu\Handlers\IndividualSusu\IndividualAccountCycleCompletedHandler;
 use App\Domain\Account\Models\AccountCycle;
-use App\Domain\Account\Services\AccountCycleByResourceIdService;
+use App\Domain\Account\Services\AccountCycle\AccountCycleByResourceIdService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\GroupSusu\GroupAccount;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;

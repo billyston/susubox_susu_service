@@ -6,7 +6,7 @@ namespace App\Application\Account\Actions;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Domain\Account\Models\Account;
-use App\Domain\Account\Services\AccountBalanceService;
+use App\Domain\Account\Services\Account\AccountBalanceService;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Interface\Resources\V1\Account\AccountBalanceResource;

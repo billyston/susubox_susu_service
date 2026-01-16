@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Account\Services;
+namespace App\Domain\Account\Services\AccountPause;
 
 use App\Application\Account\DTOs\AccountPauseRequestDTO;
 use App\Application\Shared\Helpers\Helpers;

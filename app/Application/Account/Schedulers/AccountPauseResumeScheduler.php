@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Account\Schedulers;
 
 use App\Application\Account\Jobs\AccountPauseResumeJob;
-use App\Domain\Account\Services\AccountPauseDueDateService;
+use App\Domain\Account\Services\AccountPause\AccountPauseDueDateService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;

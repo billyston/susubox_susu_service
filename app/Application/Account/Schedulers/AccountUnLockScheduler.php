@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Account\Schedulers;
 
 use App\Application\Account\Jobs\AccountUnLockJob;
-use App\Domain\Account\Services\AccountUnlockDueDateService;
+use App\Domain\Account\Services\AccountLock\AccountUnlockDueDateService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;

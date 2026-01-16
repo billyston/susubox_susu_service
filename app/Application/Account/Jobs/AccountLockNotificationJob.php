@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Account\Jobs;
 
 use App\Application\Account\DTOs\AccountLockResponseDTO;
-use App\Domain\Account\Services\AccountLockByResourceIdService;
+use App\Domain\Account\Services\AccountLock\AccountLockByResourceIdService;
 use App\Domain\Customer\Services\CustomerByResourceIdService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Services\SusuBox\Http\Requests\Notification\NotificationRequestHandler;

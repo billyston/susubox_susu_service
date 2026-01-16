@@ -146,7 +146,7 @@ The SusuBox susu service API.
     [ ] Get all DailySusu statistics
 
 ###### DailySusu Others
-    [ ] Apply the configured / discounted fees on settlements
+    [ ] Apply the default / discounted fees on settlements
 
 
 

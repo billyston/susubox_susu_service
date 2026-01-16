@@ -6,7 +6,7 @@ namespace App\Application\Susu\Actions\BizSusu;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Domain\Account\Models\AccountPause;
-use App\Domain\Account\Services\AccountPauseStatusUpdateService;
+use App\Domain\Account\Services\AccountPause\AccountPauseStatusUpdateService;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;

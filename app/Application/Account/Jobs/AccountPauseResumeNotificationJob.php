@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Account\Jobs;
 
 use App\Application\Account\DTOs\AccountPauseResponseDTO;
-use App\Domain\Account\Services\AccountPauseByResourceIdService;
+use App\Domain\Account\Services\AccountPause\AccountPauseByResourceIdService;
 use App\Domain\Customer\Services\CustomerByResourceIdService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Services\SusuBox\Http\Requests\Notification\NotificationRequestHandler;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Account\Actions;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Domain\Account\Services\AccountIndexService;
+use App\Domain\Account\Services\Account\AccountIndexService;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Interface\Resources\V1\Account\AccountCollectionResource;

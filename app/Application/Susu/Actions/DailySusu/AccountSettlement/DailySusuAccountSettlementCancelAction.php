@@ -6,7 +6,7 @@ namespace App\Application\Susu\Actions\DailySusu\AccountSettlement;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Domain\Account\Models\AccountSettlement;
-use App\Domain\Account\Services\AccountSettlementStatusUpdateService;
+use App\Domain\Account\Services\AccountAutoDebit\AccountSettlementStatusUpdateService;
 use App\Domain\PaymentInstruction\Services\PaymentInstructionCancelService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;

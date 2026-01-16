@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Account\Jobs;
 
-use App\Domain\Account\Services\AccountPauseByResourceIdService;
-use App\Domain\Account\Services\AccountPauseStatusUpdateService;
+use App\Domain\Account\Services\AccountPause\AccountPauseByResourceIdService;
+use App\Domain\Account\Services\AccountPause\AccountPauseStatusUpdateService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use Illuminate\Bus\Batchable;

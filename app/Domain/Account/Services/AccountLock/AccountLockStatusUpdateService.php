@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Account\Services;
+namespace App\Domain\Account\Services\AccountLock;
 
-use App\Domain\Account\Models\Account;
+use App\Domain\Account\Models\AccountLock;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
@@ -12,30 +12,30 @@ use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 use Throwable;
 
-final class AccountStatusUpdateService
+final class AccountLockStatusUpdateService
 {
     /**
-     * @param Account $account
+     * @param AccountLock $accountLock
      * @param string $status
-     * @return Account
+     * @return AccountLock
      * @throws SystemFailureException
      */
     public static function execute(
-        Account $account,
+        AccountLock $accountLock,
         string $status,
-    ): Account {
+    ): AccountLock {
         try {
             // Execute the database transaction
             return DB::transaction(
                 function () use (
-                    $account,
+                    $accountLock,
                     $status
                 ) {
                     // Execute the update query
-                    $account->update(['status' => $status]);
+                    $accountLock->update(['status' => $status]);
 
                     // Return the account resource
-                    return $account->refresh();
+                    return $accountLock->refresh();
                 }
             );
         } catch (
@@ -50,8 +50,8 @@ final class AccountStatusUpdateService
             Throwable $throwable
         ) {
             // Log the full exception with context
-            Log::error('Exception in AccountStatusUpdateService', [
-                'account' => $account,
+            Log::error('Exception in AccountLockStatusUpdateService', [
+                'account_lock' => $accountLock,
                 'status' => $status,
                 'exception' => [
                     'message' => $throwable->getMessage(),
@@ -62,7 +62,7 @@ final class AccountStatusUpdateService
 
             // Throw the SystemFailureException
             throw new SystemFailureException(
-                message: 'A system failure occurred while updating the account status.',
+                message: 'There was a system failure while updating the account lock status.',
             );
         }
     }

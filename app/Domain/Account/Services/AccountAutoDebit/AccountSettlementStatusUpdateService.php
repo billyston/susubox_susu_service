@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Account\Services;
+namespace App\Domain\Account\Services\AccountAutoDebit;
 
 use App\Domain\Account\Models\AccountSettlement;
 use App\Domain\Shared\Exceptions\SystemFailureException;

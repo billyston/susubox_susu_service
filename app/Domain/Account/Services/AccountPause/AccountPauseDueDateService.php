@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Account\Services;
+namespace App\Domain\Account\Services\AccountPause;
 
 use App\Domain\Account\Models\AccountLock;
 use App\Domain\Shared\Enums\Statuses;

@@ -7,6 +7,8 @@ namespace App\Application\Transaction\DTOs;
 use App\Domain\Customer\Models\Wallet;
 use App\Domain\PaymentInstruction\Models\PaymentInstruction;
 use App\Domain\Transaction\Enums\TransactionCategoryCode;
+use Brick\Money\Exception\UnknownCurrencyException;
+use Brick\Money\Money;
 use Illuminate\Database\Eloquent\Model;
 
 final readonly class SettlementApprovalResponseDTO
@@ -44,6 +46,7 @@ final readonly class SettlementApprovalResponseDTO
 
     /**
      * @return array[]
+     * @throws UnknownCurrencyException
      */
     public function toArray(
     ): array {
@@ -60,7 +63,7 @@ final readonly class SettlementApprovalResponseDTO
                         'type' => 'PaymentInstruction',
                         'attributes' => [
                             'resource_id' => $this->paymentInstruction->resource_id,
-                            'charges' => $this->paymentInstruction->charge->getAmount()->__toString(),
+                            'charges' => Money::of(0.00, 'GHS'),
                             'amount' => $this->paymentInstruction->total->getAmount()->__toString(),
                         ],
                     ],

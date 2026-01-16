@@ -6,7 +6,7 @@ namespace App\Application\Susu\Actions\BizSusu;
 
 use App\Application\Account\DTOs\AccountPauseRequestDTO;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Domain\Account\Services\AccountPauseCreateService;
+use App\Domain\Account\Services\AccountPause\AccountPauseCreateService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\BizSusu;
 use App\Interface\Resources\V1\Account\AccountPauseResource;

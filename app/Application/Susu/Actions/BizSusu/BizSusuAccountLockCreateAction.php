@@ -6,7 +6,7 @@ namespace App\Application\Susu\Actions\BizSusu;
 
 use App\Application\Account\DTOs\AccountLockRequestDTO;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Domain\Account\Services\AccountLockCreateService;
+use App\Domain\Account\Services\AccountLock\AccountLockCreateService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\BizSusu;
 use App\Interface\Resources\V1\Account\AccountLockResource;

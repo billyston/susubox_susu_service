@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Account\Jobs;
 
-use App\Domain\Account\Services\AccountPauseByResourceIdService;
+use App\Domain\Account\Services\AccountPause\AccountPauseByResourceIdService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Transaction\Services\RecurringDebitStatusUpdateService;

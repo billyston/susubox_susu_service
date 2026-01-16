@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\IndividualSusu\DailySusu\AccountAutoSettlement;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Domain\Account\Services\AccountAutoDebitService;
+use App\Domain\Account\Services\AccountAutoDebit\AccountAutoDebitService;
 use App\Domain\Shared\Enums\Initiators;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;

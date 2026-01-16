@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Susu\Jobs\IndividualSusu\DailySusu;
 
 use App\Application\Susu\DTOs\DailySusu\AccountCycle\DailySusuAccountCycleCompletedResponseDTO;
-use App\Domain\Account\Services\AccountCycleByResourceIdService;
+use App\Domain\Account\Services\AccountCycle\AccountCycleByResourceIdService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Services\SusuBox\Http\Requests\Notification\NotificationRequestHandler;
 use Illuminate\Bus\Batchable;

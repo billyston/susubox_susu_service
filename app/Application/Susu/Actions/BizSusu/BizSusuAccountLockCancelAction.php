@@ -6,7 +6,7 @@ namespace App\Application\Susu\Actions\BizSusu;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Domain\Account\Models\AccountLock;
-use App\Domain\Account\Services\AccountLockStatusUpdateService;
+use App\Domain\Account\Services\AccountLock\AccountLockStatusUpdateService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use Symfony\Component\HttpFoundation\JsonResponse;

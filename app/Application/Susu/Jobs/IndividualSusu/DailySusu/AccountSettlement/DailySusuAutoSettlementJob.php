@@ -6,8 +6,8 @@ namespace App\Application\Susu\Jobs\IndividualSusu\DailySusu\AccountSettlement;
 
 use App\Application\Account\ValueObjects\AccountAutoSettlementCalculationVO;
 use App\Application\Transaction\DTOs\SettlementApprovalResponseDTO;
-use App\Domain\Account\Services\AccountAutoSettlementCreateService;
-use App\Domain\Account\Services\AccountCycleByResourceIdService;
+use App\Domain\Account\Services\AccountAutoDebit\AccountAutoSettlementCreateService;
+use App\Domain\Account\Services\AccountCycle\AccountCycleByResourceIdService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Services\SusuBox\Http\Requests\Payment\PaymentRequestHandler;
