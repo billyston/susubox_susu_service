@@ -38,7 +38,6 @@ return new class extends Migration
 
                 $table->boolean(column: 'rollover_enabled')->default(value: false);
                 $table->boolean(column: 'is_collateralized')->default(value: false);
-                $table->boolean(column: 'auto_settlement')->default(value: false);
 
                 $table->enum(column: 'recurring_debit_status', allowed: [
                     Statuses::ACTIVE->value,
@@ -46,10 +45,12 @@ return new class extends Migration
                     Statuses::PAUSED->value,
                     Statuses::STOPPED->value,
                 ])->default(value: Statuses::PENDING->value);
+
                 $table->enum(column: 'settlement_status', allowed: [
                     Statuses::ACTIVE->value,
                     Statuses::LOCKED->value,
                 ])->default(value: Statuses::ACTIVE->value);
+                $table->boolean(column: 'auto_settlement')->default(value: false);
 
                 $table->json(column: 'extra_data')->nullable();
             });

@@ -37,105 +37,116 @@ The SusuBox susu service API.
 
 
 
-
 ## DailySusu
-- [x] Create DailySusu model and migration
-- [x] Configure DailySusu relations
 
-###### Create DailySusu
-- [x] Create account
-- [x] Cancel create account
-- [x] Approve account
-- [x] Activate account
-- [ ] Validate create account
-- [ ] Validate cancel account
-- [ ] Validate approve account
+###### DailySusu Model / Migration configuration
+    [x] Create DailySusu model and migration
+    [x] Configure DailySusu relations
+
+###### DailySusu Create 
+    [x] Create account
+    [x] Cancel create account
+    [x] Approve account
+    [x] Activate account
+    [ ] Validate create account
+    [ ] Validate cancel account
+    [ ] Validate approve account
 
 ###### DailySusu Activation (initial deposit)
-- [x] Set recurring_debit_status (active)
-- [x] Set account status (active)
+    [x] Set recurring_debit_status (active)
+    [x] Set account status (active)
+    [x] Account activation completed notification
 
 ###### DailySusu Re-Activation (if initial deposit failed)
-- [ ] Initiate and approve account re-activation
-- [ ] Validate the account re-activation
-
-###### Get DailySusu
-- [x] Get all accounts for customer
-- [x] Get single account for customer
-- [ ] Validate get account
+    [ ] Initiate and approve account re-activation
+    [ ] Validate account re-activation
 
 ###### DailySusu Direct Deposit
-- [x] Create direct deposit (only in frequencies) 
-- [x] Cancel direct deposit 
-- [x] Approve direct deposit 
-- [ ] Validate create direct deposit
-- [ ] Validate cancel direct deposit
-- [ ] Validate approve direct deposit
+    [x] Create direct deposit (only in frequencies) 
+    [x] Cancel direct deposit 
+    [x] Approve direct deposit 
+    [x] Initiate direct deposit payment
+    [x] Direct deposit completed notification
+    [ ] Validate create direct deposit
+    [ ] Validate cancel direct deposit
+    [ ] Validate approve direct deposit
+
+###### DailySusu account cycle (collection)
+    [x] Implement the account cycle feature
+    [x] Implement the account cycle entries feature
+    [x] Implement the account cycle close feature
+    [ ] Start new cycle after (all_including_running) is settled if any
 
 ###### DailySusu Settlements
-- [x] Create settle pending
-- [x] Create settle all pending
-- [x] Create zero-out settlement
-- [x] Cancel settlement process
-- [x] Approve settlement
-- [ ] Validate create settlement
-- [ ] Validate cancel settlement
-- [ ] Validate approve settlement
-
-###### DailySusu Lock Account
-- [x] Create lock account
-- [x] Cancel lock account process
-- [x] Approve lock account
-- [ ] Validate create lock account
-- [ ] Validate cancel lock account
-- [ ] Validate approve lock account
-
-###### DailySusu Unlock Account
-- [x] Initiate the account_unlock background job
-
-###### DailySusu auto settlement
-- [x] Initiate auto settlement feature
+    [x] Create selected_completed
+    [x] Create all_completed
+    [x] Create all_including_running
+    [x] Cancel settlement process
+    [x] Approve settlement
+    [ ] Validate create settlement
+    [ ] Validate cancel settlement
+    [ ] Validate approve settlement
 
 ###### DailySusu activate auto settlement
-- [ ] Initiate and approve the auto settlement feature
-- [ ] Validate the auto settlement
-- [ ] Initiate auto settlement (After successful deposit)
+    [x] Initiate and approve the auto settlement feature
+    [x] Activate the auto settlement (Set status to true)
+    [ ] Send auto settlement activated notification
+    [ ] Validate the auto settlement
 
 ###### DailySusu de-activate auto settlement
-- [ ] Initiate and approve the de-activate auto settlement
-- [ ] Validate the de-activate auto settlement
-- [ ] De-activate the auto settlement (Set status to false)
+    [x] Initiate and approve the de-activate auto settlement
+    [x] De-activate the auto settlement (Set status to false)
+    [ ] Send auto settlement de-activated notification
+    [ ] Validate the de-activate auto settlement
 
-###### DailySusu pause recurring debits
-- [ ] Create pause debit
-- [ ] Cancel pause debit process
-- [ ] Approve pause debit process
-- [ ] Validate create pause debit
-- [ ] Validate cancel pause debit
-- [ ] Validate approve pause debit
+###### DailySusu auto settlement
+    [x] Initiate auto settlement feature (after successful credit transaction)
 
-###### DailySusu resume recurring debits
-- [ ] Initiate and approve resume recurring debits
-- [ ] Validate resume recurring debits
-- [ ] Implement DailySusu resume recurring debits
+###### DailySusu Lock Account
+    [x] Create lock account
+    [x] Cancel lock account process
+    [x] Approve lock account
+    [ ] Validate create lock account
+    [ ] Validate cancel lock account
+    [ ] Validate approve lock account
 
-###### DailySusu failed debit rollover 
-- [ ] Initiate and approve failed debit rollover feature
-- [ ] Validate the failed debit rollover action
-- [ ] Implement DailySusu failed debit rollover feature
+###### DailySusu Unlock Account
+    [x] Initiate the account_unlock background job
+
+###### DailySusu pause recurring debits (In consideration)
+    [ ] Create pause debit
+    [ ] Cancel pause debit process
+    [ ] Approve pause debit process
+    [ ] Validate create pause debit
+    [ ] Validate cancel pause debit
+    [ ] Validate approve pause debit
+
+###### DailySusu resume recurring debits (In consideration)
+    [ ] Initiate and approve resume recurring debits
+    [ ] Validate resume recurring debits
+    [ ] Implement DailySusu resume recurring debits
+
+###### DailySusu failed debit rollover (In consideration)
+    [ ] Initiate and approve failed debit rollover feature
+    [ ] Validate the failed debit rollover action
+    [ ] Implement DailySusu failed debit rollover feature
 
 ###### DailySusu close account (In consideration)
-- [ ] Initiate and approve close DailySusu account
-- [ ] Validate the close DailySusu account
-- [ ] Implement DailySusu close DailySusu account
+    [ ] Initiate and approve close DailySusu account
+    [ ] Validate the close DailySusu account
+    [ ] Implement DailySusu close DailySusu account
+
+###### DailySusu Get
+    [x] Get all accounts for customer
+    [x] Get single account for customer
+    [ ] Validate get account
 
 ###### DailySusu statistics
-- [ ] Build all DailySusu statistics
-- [ ] Get all DailySusu statistics
+    [ ] Build all DailySusu statistics
+    [ ] Get all DailySusu statistics
 
-###### DailySusu transactions
-- [ ] Get all transactions
-- [ ] Get single transaction
+###### DailySusu Others
+    [ ] Apply the configured / discounted fees on settlements
 
 
 
@@ -389,22 +400,28 @@ The SusuBox susu service API.
 
 
 ## Transactions
-- [x] Create account transaction
-- [x] TransactionStatus from Payment Service should match Susu Service 
-- [x] All transactions must have a TransactionType (debit or credit)
-- [ ] Get all transactions for account
-- [ ] Get single transaction for account
 
-## Transactions Post Actions
-- [ ] Handle TransactionCreatedSuccessAction
-- [ ] Handle initial_deposit
-- [ ] Handle subsequent debit
-- [ ] Handle susu type actions (process auto settlement, close goal)
-- [ ] Dispatch TransactionSuccessNotification
+##### Transaction create
+    [x] Create account transaction
+    [x] TransactionStatus from Payment Service should match Susu Service 
+    [x] All transactions must have a TransactionType (debit or credit)
+
+##### Transactions Post Actions
+    [x] Handle TransactionCreatedSuccessAction
+    [ ] Handle TransactionCreatedFailureAction
+    [x] Handle initial_deposit
+    [x] Handle subsequent debit
+    [x] Dispatch TransactionSuccessNotification
+
+##### Transactions Types Actions
+    [ ] Handle TransactionCreatedFailureAction
+    [ ] Dispatch TransactionFailureNotification
+
+##### Transaction Get
+    [ ] Get all transactions for account
+    [ ] Get single transaction for account
 
 
-- [ ] Handle TransactionCreatedFailureAction
-- [ ] Dispatch TransactionFailureNotification
 
 ## PIN Authorization Middleware
 - [ ] Implement the PIN Authorization Middleware

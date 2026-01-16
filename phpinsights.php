@@ -129,8 +129,13 @@ return [
         ],
         SlevomatCodingStandard\Sniffs\Functions\FunctionLengthSniff::class => [
             'maxLinesLength' => 80,
-        ]
+        ],
+        NunoMaduro\PhpInsights\Domain\Insights\CyclomaticComplexityIsHigh::class => [
+            'maxComplexity' => 10,
+        ],
     ],
+
+
 
     /*
     |--------------------------------------------------------------------------

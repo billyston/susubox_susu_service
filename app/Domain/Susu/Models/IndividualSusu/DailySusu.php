@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Susu\Models\IndividualSusu;
 
 use App\Domain\Account\Models\Account;
+use App\Domain\Account\Models\AccountAutoDebit;
 use App\Domain\Account\Models\AccountCycle;
 use App\Domain\Account\Models\AccountCycleDefinition;
 use App\Domain\Account\Models\AccountLock;
@@ -15,6 +16,7 @@ use App\Domain\Shared\Casts\MoneyCasts;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Models\Frequency;
 use App\Domain\Shared\Models\HasUuid;
+use Brick\Money\Money;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -26,47 +28,52 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 /**
  * Class DailySusu
  *
+ * Represents a daily susu (savings) plan for an individual account.
+ * Handles cycles, auto-debit events, locks, pauses, and related financial data.
+ *
  * @property int $id
  * @property string $resource_id
- *
  * @property int $individual_account_id
- * @property int $wallet_id
- * @property int $frequency_id
+ * @property int|null $wallet_id
+ * @property int|null $frequency_id
  *
- * @property mixed $susu_amount
- * @property mixed|null $initial_deposit
- * @property mixed|null $initial_deposit_frequency
  * @property string $currency
+ * @property Money $susu_amount
+ * @property Money $initial_deposit
+ * @property int|null $initial_deposit_frequency
  *
- * @property Carbon|string $start_date
- * @property Carbon|string $end_date
- *
- * @property int $cycle_length
- * @property int $expected_frequencies
- * @property mixed $expected_cycle_amount
- * @property mixed $expected_settlement_amount
- *
- * @property int|null $commission_frequencies
- * @property mixed|null $commission_amount
+ * @property Carbon|null $start_date
+ * @property Carbon|null $end_date
  *
  * @property bool $rollover_enabled
  * @property bool $is_collateralized
- * @property bool $auto_settlement
+ * @property string|null $recurring_debit_status
+ * @property string|null $settlement_status
+ * @property bool|null $auto_settlement
  *
- * @property string $recurring_debit_status
- * @property string $settlement_status
+ * @property string|null $action
+ * @property bool|null $from_state
+ * @property bool|null $to_state
+ * @property Carbon|null $requested_at
+ * @property Carbon|null $effective_at
+ * @property string|null $initiator
+ * @property int|null $initiator_id
  *
- * @property array|null $extra_data
+ * @property array $extra_data
  *
  * @property-read IndividualAccount $individual
- * @property-read Customer $customer
- * @property-read Account $account
- * @property-read Wallet $wallet
- * @property-read Frequency $frequency
- *
- * @property-read AccountCycleDefinition $cycleDefinition
- * @property-read Collection<int, AccountLock> $accountLocks
- * @property-read Collection<int, AccountPause> $accountPauses
+ * @property-read Customer|null $customer
+ * @property-read Account|HasOneThrough $account
+ * @property-read Wallet|null $wallet
+ * @property-read Frequency|null $frequency
+ * @property-read AccountCycleDefinition|null $cycleDefinition
+ * @property-read Collection|AccountCycle[] $cycles
+ * @property-read Collection|AccountLock[] $accountLocks
+ * @property-read AccountLock|null $activeAccountLock
+ * @property-read Collection|AccountPause[] $accountPauses
+ * @property-read AccountPause|null $activeAccountPause
+ * @property-read Collection|AccountAutoDebit[] $autoDebits
+ * @property-read AccountAutoDebit|null $lastAutoDebitEvent
  */
 final class DailySusu extends Model
 {
@@ -98,11 +105,19 @@ final class DailySusu extends Model
 
         'rollover_enabled',
         'is_collateralized',
-        'auto_settlement',
         'recurring_debit_status',
+
         'settlement_status',
+        'auto_settlement',
 
         'extra_data',
+        'action',
+        'from_state',
+        'to_state',
+        'requested_at',
+        'effective_at',
+        'initiator',
+        'initiator_id',
     ];
 
     /**
@@ -273,6 +288,27 @@ final class DailySusu extends Model
     public function charge(
     ): ?string {
         return $this->individual->scheme->charges->value;
+    }
+
+    /**
+     * @return MorphMany
+     */
+    public function autoDebits(
+    ): MorphMany {
+        return $this->morphMany(
+            related: AccountAutoDebit::class,
+            name: 'debitable'
+        );
+    }
+
+    /**
+     * @return AccountAutoDebit|null
+     */
+    public function lastAutoDebitEvent(
+    ): ?AccountAutoDebit {
+        return $this->autoDebitEvents()
+            ->latest('id')
+            ->first();
     }
 
     /**
