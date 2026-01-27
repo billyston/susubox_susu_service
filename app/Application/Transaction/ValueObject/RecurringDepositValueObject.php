@@ -9,6 +9,7 @@ use App\Domain\Transaction\Enums\TransactionType;
 use Brick\Money\Exception\MoneyMismatchException;
 use Brick\Money\Exception\UnknownCurrencyException;
 use Brick\Money\Money;
+use Illuminate\Support\Carbon;
 
 final readonly class RecurringDepositValueObject
 {
@@ -18,8 +19,8 @@ final readonly class RecurringDepositValueObject
      * @param Money $amount
      * @param Money $charge
      * @param Money $total
-     * @param string $startDate
-     * @param string $endDate
+     * @param Carbon $startDate
+     * @param Carbon $endDate
      * @param string $frequency
      * @param bool $rolloverEnabled
      * @param int|null $initialDepositFrequency
@@ -30,8 +31,8 @@ final readonly class RecurringDepositValueObject
         public Money $amount,
         public Money $charge,
         public Money $total,
-        public string $startDate,
-        public string $endDate,
+        public Carbon $startDate,
+        public Carbon $endDate,
         public string $frequency,
         public bool $rolloverEnabled,
         public ?int $initialDepositFrequency,
@@ -43,8 +44,8 @@ final readonly class RecurringDepositValueObject
      * @param int|null $initialDepositFrequency
      * @param Money $initialDeposit
      * @param Money $susuAmount
-     * @param string $startDate
-     * @param string $endDate
+     * @param Carbon $startDate
+     * @param Carbon $endDate
      * @param string $frequency
      * @param bool $rolloverEnabled
      * @param Money|null $charge
@@ -55,8 +56,8 @@ final readonly class RecurringDepositValueObject
     public static function create(
         Money $initialDeposit,
         Money $susuAmount,
-        string $startDate,
-        string $endDate,
+        Carbon $startDate,
+        Carbon $endDate,
         string $frequency,
         bool $rolloverEnabled,
         ?Money $charge = null,

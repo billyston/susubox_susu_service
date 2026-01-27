@@ -9,55 +9,53 @@ use App\Domain\Customer\Models\Wallet;
 use App\Domain\PaymentInstruction\Models\PaymentInstruction;
 use App\Domain\Shared\Casts\MoneyCasts;
 use Carbon\Carbon;
-use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Class Transaction
+ * Transaction Model
  *
- * @property string $id
+ * This model represents a single financial transaction within the system.
+ * A transaction is the atomic record of value movement and can be either
+ * a credit or a debit against a wallet or account.
+ *
+ * @property int $id
  * @property string $resource_id
- * @property string $account_id
- * @property string $payment_instruction_id
- * @property string $transaction_category_id
- * @property string $transaction_type
- * @property string $wallet_id
  *
- * Monetary fields (casted via MoneyCasts):
+ * @property int|null $account_id
+ * @property int|null $wallet_id
+ * @property int|null $payment_instruction_id
+ * @property int|null $transaction_category_id
+ *
+ * @property string $transaction_type
+ * @property string|null $reference_number
+ * @property string|null $frequencies
+ *
  * @property mixed $amount
  * @property mixed $charge
  * @property mixed $total
- *
- * @property string|null $reference_number
- * @property string|null $frequencies
  * @property string $currency
- * @property string $wallet
+ *
+ * @property string|null $wallet
  * @property string|null $description
  * @property string|null $narration
- * @property string|Carbon $date
- * @property string|int $status_code
- * @property string $status
- * @property array $getMetadata
  *
- * Extra data:
+ * @property string|Carbon|null $date
+ * @property string|null $status_code
+ * @property string|null $status
+ *
  * @property array|null $extra_data
  *
- * Relationships:
- * @property TransactionCategory $category
- * @property Account $account
- * @property Wallet $walletRelation
- * @property PaymentInstruction $payment
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  *
- * @method static Builder|Transaction whereResourceId($value)
- * @method static Builder|Transaction whereAccountId($value)
- * @method static Builder|Transaction wherePaymentInstructionId($value)
- * @method static Builder|Transaction whereTransactionCategoryId($value)
- * @method static Builder|Transaction whereWalletId($value)
- * @method static Builder|Transaction whereStatus($value)
+ * @property-read TransactionCategory|null $category
+ * @property-read Account|null $account
+ * @property-read Wallet|null $walletRelation
+ * @property-read PaymentInstruction|null $payment
  *
- * @mixin Eloquent
+ * @mixin Builder
  */
 final class Transaction extends Model
 {

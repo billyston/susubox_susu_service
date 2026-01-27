@@ -51,9 +51,9 @@ final class AccountCycleDefinition extends Model
         'expected_frequencies',
         'expected_cycle_amount',
         'expected_settlement_amount',
-        'currency',
-
         'commission_amount',
+
+        'currency',
     ];
 
     /**

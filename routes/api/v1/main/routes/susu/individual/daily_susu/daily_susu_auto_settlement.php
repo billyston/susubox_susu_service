@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Interface\Controllers\V1\Susu\IndividualSusu\DailySusu\AccountAutoSettlement\DailySusuAccountAutoSettlementController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\DailySusu\AutoSettlement\DailySusuAutoSettlementController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
@@ -12,7 +12,7 @@ Route::group([
     // Create account lock request route
     Route::post(
         uri: '',
-        action: DailySusuAccountAutoSettlementController::class,
+        action: DailySusuAutoSettlementController::class,
     )->name(
         name: 'initiate'
     )->whereUuid(

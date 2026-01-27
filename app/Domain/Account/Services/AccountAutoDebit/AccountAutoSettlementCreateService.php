@@ -58,7 +58,7 @@ final class AccountAutoSettlementCreateService
                         'total' => $requestVO['total'],
                         'transaction_type' => $requestVO['transaction_type'],
                         'accepted_terms' => $requestVO['accepted_terms'],
-                        'approval_status' => $requestVO['approval_status'] ?? Statuses::APPROVED->value,
+                        'approval_status' => Statuses::APPROVED->value,
                         'status' => Statuses::PENDING->value,
                         'extra_data' => $requestVO['extra_data'] ?? null,
                     ]);

@@ -6,44 +6,41 @@ namespace App\Domain\Account\Models;
 
 use App\Domain\Shared\Models\HasUuid;
 use App\Domain\Transaction\Models\Transaction;
-use Eloquent;
-use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Support\Carbon;
 use Random\RandomException;
 
 /**
  * Class Account
  *
- * @property string $id
+ * Represents a customer-facing financial account. An account is a polymorphic
+ * wrapper around specific account types (DailySusu, BizSusu, etc.) and is the
+ * anchor for balances, transactions, and performance statistics.
+ *
+ * @property int $id
  * @property string $resource_id
  * @property string $accountable_type
- * @property string $accountable_id
+ * @property int $accountable_id
  * @property string $account_name
  * @property string $account_number
  * @property Carbon|null $account_activity_period
  * @property bool $accepted_terms
  * @property string $status
  *
- * Relationships:
- * @property Model $accountable
- * @property Collection<int, Transaction> $transactions
- * @property AccountBalance $accountBalance
+ * @property-read Model|MorphTo $accountable
+ * @property-read Collection|Transaction[] $transactions
+ * @property-read Collection|AccountSettlement[] $settlements
+ * @property-read AccountBalance|null $accountBalance
  *
- * @method static Builder|Account whereResourceId($value)
- * @method static Builder|Account whereAccountableType($value)
- * @method static Builder|Account whereAccountableId($value)
- * @method static Builder|Account whereAccountName($value)
- * @method static Builder|Account whereAccountNumber($value)
- * @method static Builder|Account whereAccountActivityPeriod($value)
- * @method static Builder|Account whereAcceptedTerms($value)
- * @method static Builder|Account whereStatus($value)
+ * @property-read AccountTransactionStatsView|null $transactionStats
+ * @property-read AccountTransactionGapStatsView|null $transactionGapStats
+ * @property-read AccountPerformanceView|null $transactionPerformance
  *
- * @mixin Eloquent
+ * @property-read mixed|null $scheme
  */
 final class Account extends Model
 {
@@ -95,12 +92,56 @@ final class Account extends Model
     }
 
     /**
+     * @return HasMany
+     */
+    public function settlements(
+    ): HasMany {
+        return $this->hasMany(
+            related: AccountSettlement::class,
+            foreignKey: 'account_id'
+        );
+    }
+
+    /**
      * @return HasOne
      */
     public function accountBalance(
     ): HasOne {
         return $this->hasOne(
             related: AccountBalance::class,
+            foreignKey: 'account_id'
+        );
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function transactionStats(
+    ): HasOne {
+        return $this->hasOne(
+            related: AccountTransactionStatsView::class,
+            foreignKey: 'account_id'
+        );
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function transactionGapStats(
+    ): HasOne {
+        return $this->hasOne(
+            related: AccountTransactionGapStatsView::class,
+            foreignKey: 'account_id'
+        );
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function transactionPerformance(
+    ): HasOne {
+        return $this->hasOne(
+            related: AccountPerformanceView::class,
             foreignKey: 'account_id'
         );
     }

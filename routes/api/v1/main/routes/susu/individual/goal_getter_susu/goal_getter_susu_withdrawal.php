@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Interface\Controllers\V1\Susu\IndividualSusu\GoalGetterSusu\GoalGetterSusuWithdrawalApprovalController;
-use App\Interface\Controllers\V1\Susu\IndividualSusu\GoalGetterSusu\GoalGetterSusuWithdrawalCancelController;
-use App\Interface\Controllers\V1\Susu\IndividualSusu\GoalGetterSusu\GoalGetterSusuWithdrawalCreateController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\GoalGetterSusu\Withdrawal\GoalGetterSusuWithdrawalApprovalController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\GoalGetterSusu\Withdrawal\GoalGetterSusuWithdrawalCancelController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\GoalGetterSusu\Withdrawal\GoalGetterSusuWithdrawalCreateController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Account\Listeners;
 
 use App\Application\Account\Events\AccountCycleCompletedEvent;
-use App\Application\Susu\Handlers\IndividualSusu\IndividualAccountCycleCompletedHandler;
+use App\Application\Susu\Handlers\IndividualSusu\IndividualCycleCompletedHandler;
 use App\Domain\Account\Models\AccountCycle;
 use App\Domain\Account\Services\AccountCycle\AccountCycleByResourceIdService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
@@ -29,11 +29,11 @@ final class AccountCycleCompletedListener implements ShouldQueue
 
     /**
      * @param AccountCycleByResourceIdService $accountCycleByResourceIdService
-     * @param IndividualAccountCycleCompletedHandler $individualAccountCycleCompletedHandler
+     * @param IndividualCycleCompletedHandler $individualAccountCycleCompletedHandler
      */
     public function __construct(
         private readonly AccountCycleByResourceIdService $accountCycleByResourceIdService,
-        private readonly IndividualAccountCycleCompletedHandler $individualAccountCycleCompletedHandler
+        private readonly IndividualCycleCompletedHandler $individualAccountCycleCompletedHandler
     ) {
         //..
     }

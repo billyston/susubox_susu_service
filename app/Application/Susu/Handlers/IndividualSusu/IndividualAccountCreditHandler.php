@@ -2,7 +2,7 @@
 
 namespace App\Application\Susu\Handlers\IndividualSusu;
 
-use App\Application\Susu\Jobs\IndividualSusu\DailySusu\DailySusuCycleCreateJob;
+use App\Application\Susu\Jobs\IndividualSusu\DailySusu\Cycle\DailySusuCycleCreateJob;
 use App\Domain\Transaction\Models\Transaction;
 use Illuminate\Support\Facades\Bus;
 

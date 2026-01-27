@@ -1,0 +1,42 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Interface\Controllers\V1\Susu\IndividualSusu\GoalGetterSusu\DirectDeposit;
+
+use App\Application\Susu\Actions\IndividualSusu\GoalGetterSusu\DirectDeposit\GoalGetterSusuDirectDepositCreateAction;
+use App\Domain\Customer\Models\Customer;
+use App\Domain\Shared\Exceptions\SystemFailureException;
+use App\Domain\Susu\Models\IndividualSusu\GoalGetterSusu;
+use App\Interface\Controllers\Shared\Controller;
+use App\Interface\Requests\V1\Susu\IndividualSusu\GoalGetterSusu\DirectDeposit\GoalGetterSusuDirectDepositCreateRequest;
+use Brick\Money\Exception\MoneyMismatchException;
+use Brick\Money\Exception\UnknownCurrencyException;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
+final class GoalGetterSusuDirectDepositCreateController extends Controller
+{
+    /**
+     * @param Customer $customer
+     * @param GoalGetterSusu $goalGetterSusu
+     * @param GoalGetterSusuDirectDepositCreateRequest $goalGetterSusuDirectDepositCreateRequest
+     * @param GoalGetterSusuDirectDepositCreateAction $goalGetterSusuDirectDepositCreateAction
+     * @return JsonResponse
+     * @throws SystemFailureException
+     * @throws UnknownCurrencyException
+     * @throws MoneyMismatchException
+     */
+    public function __invoke(
+        Customer $customer,
+        GoalGetterSusu $goalGetterSusu,
+        GoalGetterSusuDirectDepositCreateRequest $goalGetterSusuDirectDepositCreateRequest,
+        GoalGetterSusuDirectDepositCreateAction $goalGetterSusuDirectDepositCreateAction
+    ): JsonResponse {
+        // Execute the GoalGetterSusuDirectDepositCreateAction and return the JsonResponse
+        return $goalGetterSusuDirectDepositCreateAction->execute(
+            customer: $customer,
+            goalGetterSusu: $goalGetterSusu,
+            request: $goalGetterSusuDirectDepositCreateRequest->validated()
+        );
+    }
+}

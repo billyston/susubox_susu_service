@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Interface\Controllers\V1\Susu\IndividualSusu\FlexySusu\FlexySusuWithdrawalApprovalController;
-use App\Interface\Controllers\V1\Susu\IndividualSusu\FlexySusu\FlexySusuWithdrawalCancelController;
-use App\Interface\Controllers\V1\Susu\IndividualSusu\FlexySusu\FlexySusuWithdrawalCreateController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\FlexySusu\Withdrawal\FlexySusuWithdrawalApprovalController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\FlexySusu\Withdrawal\FlexySusuWithdrawalCancelController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\FlexySusu\Withdrawal\FlexySusuWithdrawalCreateController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([

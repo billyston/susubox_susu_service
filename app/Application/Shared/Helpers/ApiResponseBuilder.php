@@ -70,6 +70,28 @@ final class ApiResponseBuilder
 
     /**
      * @param int $code
+     * @param string|null $message
+     * @param string|null $description
+     * @param mixed|null $data
+     * @return JsonResponse
+     */
+    public static function toArray(
+        int $code,
+        string $message = null,
+        ?string $description = null,
+        mixed $data = null,
+    ): JsonResponse {
+        return response()->json([
+            'version' => '1.0',
+            'code' => $code,
+            'message' => $message,
+            'description' => $description,
+            'data' => $data['data'] ?? null,
+        ]);
+    }
+
+    /**
+     * @param int $code
      * @param string $message
      * @param string|null $description
      * @return JsonResponse

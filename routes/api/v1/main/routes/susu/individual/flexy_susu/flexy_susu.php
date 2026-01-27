@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Interface\Controllers\V1\Susu\IndividualSusu\FlexySusu\FlexySusuApprovalController;
-use App\Interface\Controllers\V1\Susu\IndividualSusu\FlexySusu\FlexySusuCancelController;
-use App\Interface\Controllers\V1\Susu\IndividualSusu\FlexySusu\FlexySusuCreateController;
-use App\Interface\Controllers\V1\Susu\IndividualSusu\FlexySusu\FlexySusuIndexController;
-use App\Interface\Controllers\V1\Susu\IndividualSusu\FlexySusu\FlexySusuShowController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\FlexySusu\Account\FlexySusuApprovalController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\FlexySusu\Account\FlexySusuCancelController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\FlexySusu\Account\FlexySusuCreateController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\FlexySusu\Account\FlexySusuIndexController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\FlexySusu\Account\FlexySusuShowController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([

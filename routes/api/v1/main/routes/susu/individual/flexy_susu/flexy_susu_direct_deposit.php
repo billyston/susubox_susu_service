@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Interface\Controllers\V1\Susu\IndividualSusu\FlexySusu\FlexySusuDirectDepositApprovalController;
-use App\Interface\Controllers\V1\Susu\IndividualSusu\FlexySusu\FlexySusuDirectDepositCancelController;
-use App\Interface\Controllers\V1\Susu\IndividualSusu\FlexySusu\FlexySusuDirectDepositCreateController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\FlexySusu\DirectDeposit\FlexySusuDirectDepositApprovalController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\FlexySusu\DirectDeposit\FlexySusuDirectDepositCancelController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\FlexySusu\DirectDeposit\FlexySusuDirectDepositCreateController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Interface\Controllers\V1\Susu\IndividualSusu\BizSusu\BizSusuApprovalController;
-use App\Interface\Controllers\V1\Susu\IndividualSusu\BizSusu\BizSusuCancelController;
-use App\Interface\Controllers\V1\Susu\IndividualSusu\BizSusu\BizSusuCreateController;
-use App\Interface\Controllers\V1\Susu\IndividualSusu\BizSusu\BizSusuIndexController;
-use App\Interface\Controllers\V1\Susu\IndividualSusu\BizSusu\BizSusuShowController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\BizSusu\Account\BizSusuApprovalController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\BizSusu\Account\BizSusuCancelController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\BizSusu\Account\BizSusuCreateController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\BizSusu\Account\BizSusuIndexController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\BizSusu\Account\BizSusuShowController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([

@@ -2,7 +2,7 @@
 
 namespace App\Application\Susu\Handlers\IndividualSusu;
 
-use App\Application\Susu\Jobs\IndividualSusu\DailySusu\AccountSettlement\DailySusuSettlementCompletedJob;
+use App\Application\Susu\Jobs\IndividualSusu\DailySusu\Settlement\DailySusuSettlementCompletedJob;
 use App\Domain\Transaction\Models\Transaction;
 use Illuminate\Support\Facades\Bus;
 

@@ -21,9 +21,6 @@ final class AccountTransactionResource extends JsonResource
     public function toArray(
         Request $request
     ): array {
-        // Get the payment_instruction
-        $payment = $this->resource->payment;
-
         // Return the resource array
         return [
             // Resource type and id

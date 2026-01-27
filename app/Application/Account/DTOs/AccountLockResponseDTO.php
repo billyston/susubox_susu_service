@@ -26,6 +26,7 @@ final readonly class AccountLockResponseDTO
 
     /**
      * @param AccountLock $accountLock
+     * @param Account $account
      * @param Customer $customer
      * @return self
      */

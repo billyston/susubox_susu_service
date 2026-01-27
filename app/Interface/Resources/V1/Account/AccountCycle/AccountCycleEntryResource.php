@@ -19,7 +19,7 @@ final class AccountCycleEntryResource extends JsonResource
         // Return the resource array
         return [
             // Resource type and id
-            'type' => 'AccountCycle',
+            'type' => 'AccountCycleEntries',
 
             // Resource exposed attributes
             'attributes' => [

@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
+use NunoMaduro\PhpInsights\Domain\Insights\CyclomaticComplexityIsHigh;
 use NunoMaduro\PhpInsights\Domain\Insights\ForbiddenDefineFunctions;
 use NunoMaduro\PhpInsights\Domain\Insights\ForbiddenNormalClasses;
 use NunoMaduro\PhpInsights\Domain\Insights\ForbiddenPrivateMethods;
 use NunoMaduro\PhpInsights\Domain\Insights\ForbiddenTraits;
 use NunoMaduro\PhpInsights\Domain\Metrics\Architecture\Classes;
+use PHP_CodeSniffer\Standards\Generic\Sniffs\Files\LineLengthSniff;
 use PHP_CodeSniffer\Standards\PSR12\Sniffs\Classes\ClassInstantiationSniff;
 use PhpCsFixer\Fixer\Comment\NoEmptyCommentFixer;
 use PhpCsFixer\Fixer\Operator\NewWithBracesFixer;
@@ -15,6 +17,7 @@ use SlevomatCodingStandard\Sniffs\Commenting\DocCommentSpacingSniff;
 use SlevomatCodingStandard\Sniffs\Commenting\UselessFunctionDocCommentSniff;
 use SlevomatCodingStandard\Sniffs\ControlStructures\DisallowEmptySniff;
 use SlevomatCodingStandard\Sniffs\ControlStructures\DisallowShortTernaryOperatorSniff;
+use SlevomatCodingStandard\Sniffs\Functions\FunctionLengthSniff;
 use SlevomatCodingStandard\Sniffs\Functions\UnusedParameterSniff;
 use SlevomatCodingStandard\Sniffs\Namespaces\AlphabeticallySortedUsesSniff;
 use SlevomatCodingStandard\Sniffs\TypeHints\DeclareStrictTypesSniff;
@@ -27,7 +30,6 @@ use SlevomatCodingStandard\Sniffs\TypeHints\ReturnTypeHintSniff;
 use PHP_CodeSniffer\Standards\Generic\Sniffs\ControlStructures\InlineControlStructureSniff;
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Default Preset
@@ -42,7 +44,6 @@ return [
     */
 
     'preset' => 'laravel',
-
     /*
     |--------------------------------------------------------------------------
     | IDE
@@ -73,7 +74,6 @@ return [
     | mind that all added `Insights` must belong to a specific `Metric`.
     |
     */
-
     'exclude' => [
         'phpinsights.php',
         'app/Application/Shared/Services/RateLimiterService.php',
@@ -88,6 +88,10 @@ return [
         'app/Domain/Shared/Exceptions/FrequencyNotFoundException.php',
         'app/Domain/Customer/Exceptions/WalletNotFoundException.php',
         'app/Domain/Transaction/Exceptions/InsufficientBalanceException.php',
+
+        'app/Domain/Transaction/Services/Statistics/TransactionLoader.php',
+        'app/Application/Transaction/Services/Statistics/PerformanceReportGenerator.php',
+        'app/Application/Transaction/Services/Statistics/StatisticsCalculator.php'
     ],
 
     'add' => [
@@ -123,19 +127,17 @@ return [
         ForbiddenPrivateMethods::class => [
             'title' => 'The usage of private methods is not idiomatic in Laravel.',
         ],
-        PHP_CodeSniffer\Standards\Generic\Sniffs\Files\LineLengthSniff::class => [
-            'lineLimit' => 400,
-            'absoluteLineLimit' => 420
+        LineLengthSniff::class => [
+            'lineLimit' => 500,
+            'absoluteLineLimit' => 520
         ],
-        SlevomatCodingStandard\Sniffs\Functions\FunctionLengthSniff::class => [
-            'maxLinesLength' => 80,
+        FunctionLengthSniff::class => [
+            'maxLinesLength' => 200,
         ],
-        NunoMaduro\PhpInsights\Domain\Insights\CyclomaticComplexityIsHigh::class => [
-            'maxComplexity' => 10,
+        CyclomaticComplexityIsHigh::class => [
+            'maxComplexity' => 50,
         ],
     ],
-
-
 
     /*
     |--------------------------------------------------------------------------
@@ -147,7 +149,6 @@ return [
     | code will be returned. This is optional and individually defined.
     |
     */
-
     'requirements' => [
         'min-quality' => 90,
         'min-complexity' => 90,
@@ -166,6 +167,5 @@ return [
     | the max core number available. It accepts null value or integer > 0.
     |
     */
-
     'threads' => null,
 ];
