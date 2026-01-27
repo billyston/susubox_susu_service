@@ -36,14 +36,14 @@ final class AccountTransactionStatisticsAction
         array $request,
         Account $account,
     ): JsonResponse {
-        // Execute the AccountAutoDebitService
+        // Execute the AccountTransactionStatsService
         $statistics = $this->accountTransactionStatsService->execute(
             account: $account,
             from: isset($request['from_date']) ? Carbon::parse($request['from_date']) : null,
             to: isset($request['to_date']) ? Carbon::parse($request['to_date']) : null,
         );
 
-        // Build the AccountLockResponseDTO
+        // Build the AccountTransactionStatisticsResponseDTO
         $responseDTO = AccountTransactionStatisticsResponseDTO::fromDomain(
             statistics: $statistics,
             request: $request,

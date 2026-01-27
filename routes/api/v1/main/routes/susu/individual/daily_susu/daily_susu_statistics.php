@@ -11,10 +11,10 @@ Route::group([
 ], function (): void {
     // Get daily susu statistics request route
     Route::get(
-        uri: '',
+        uri: 'cycles',
         action: DailySusuStatisticsController::class,
     )->name(
-        name: 'show'
+        name: 'cycles.show'
     )->whereUuid(
         parameters: [
             'customer',

@@ -23,7 +23,6 @@ final class AccountCycleDefinitionResource extends JsonResource
 
             // Resource exposed attributes
             'attributes' => [
-                'resource_id' => $this->resource->resource_id,
                 'cycle_length' => $this->resource->cycle_length,
                 'commission_frequencies' => $this->resource->commission_frequencies,
                 'settlement_frequencies' => $this->resource->settlement_frequencies,

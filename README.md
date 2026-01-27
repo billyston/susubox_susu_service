@@ -137,7 +137,8 @@ The SusuBox susu service API.
     [ ] Validate get account
 
 ###### DailySusu statistics
-    [ ] Build all DailySusu statistics
+    [x] Build all DailySusu cycle statistics
+    [ ] Build all DailySusu settlement statistics
     [ ] Get all DailySusu statistics
 
 ###### DailySusu Others
@@ -421,5 +422,6 @@ The SusuBox susu service API.
     [ ] Review all the response messages
     [ ] Provide descriptions for all api responses
     [ ] Review all the exceptions and give proper messaging
+    [ ] Remove (delete) all views migrations and models which are not being used 
     [x] All $variable, function and method names should follow CamelCase
     [x] All APIResource, ResponseDTO toArray and DB fields names must follow snake_case
