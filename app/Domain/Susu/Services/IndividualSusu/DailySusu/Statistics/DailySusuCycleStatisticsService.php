@@ -17,14 +17,14 @@ use Illuminate\Support\Carbon;
 final class DailySusuCycleStatisticsService
 {
     protected Collection $cycles;
-    protected array $insights = [];
-    protected array $recommendations = [];
+    protected array $insights;
+    protected array $recommendations;
 
     private Account $account;
     private ?CarbonInterface $from;
     private ?CarbonInterface $to;
-    private array $statistics = [];
-    private array $performance = [];
+    private array $statistics;
+    private array $performance;
 
     /**
      * @param Account $account
@@ -123,7 +123,7 @@ final class DailySusuCycleStatisticsService
     ): void {
         $cycles = $this->cycles;
 
-        $currentCycle = $cycles->firstWhere('status', Statuses::ACTIVE);
+        $currentCycle = $cycles->firstWhere('status', Statuses::ACTIVE->value);
 
         $expectedAmount = $this->sumMoney(
             $cycles,
@@ -140,39 +140,29 @@ final class DailySusuCycleStatisticsService
         $expectedFrequencies = $cycles->sum('expected_frequencies');
         $completedFrequencies = $cycles->sum('completed_frequencies');
 
-        $amountCompletionRate = $expectedAmount->isZero()
-            ? 0
-            : round(
-                $contributedAmount
-                    ->getAmount()
-                    ->dividedBy(
-                        $expectedAmount->getAmount(),
-                        4,
-                        RoundingMode::HALF_UP
-                    )
-                    ->toFloat() * 100,
-                2
-            );
+        $amountCompletionRate = $expectedAmount->isZero() ? 0 : round(
+            $contributedAmount
+                ->getAmount()
+                ->dividedBy($expectedAmount->getAmount(), 4, RoundingMode::HALF_UP)
+                ->toFloat() * 100,
+            2
+        );
 
-        $frequencyCompletionRate = $expectedFrequencies > 0
-            ? round($completedFrequencies / $expectedFrequencies * 100, 2)
-            : 0;
+        $frequencyCompletionRate = $expectedFrequencies > 0 ? round($completedFrequencies / $expectedFrequencies * 100, 2) : 0;
 
         $this->statistics = [
             'cycles' => [
                 'total' => $cycles->count(),
-                'active' => $cycles->where('status', Statuses::ACTIVE)->count(),
-                'completed' => $cycles->where('status', Statuses::COMPLETED)->count(),
-                'settled' => $cycles->where('status', Statuses::SETTLED)->count(),
-                'rolled_over' => $cycles->where('status', Statuses::ROLLED_OVER)->count(),
+                'active' => $cycles->where('status', Statuses::ACTIVE->value)->count(),
+                'completed' => $cycles->where('status', Statuses::COMPLETED->value)->count(),
+                'settled' => $cycles->where('status', Statuses::SETTLED->value)->count(),
+                'rolled_over' => $cycles->where('status', Statuses::ROLLED_OVER->value)->count(),
             ],
 
             'amounts' => [
                 'expected' => $expectedAmount,
                 'contributed' => $contributedAmount,
-                'outstanding' => $outstandingAmount->isNegative()
-                    ? Money::zero($expectedAmount->getCurrency())
-                    : $outstandingAmount,
+                'outstanding' => $outstandingAmount->isNegative() ? Money::zero($expectedAmount->getCurrency()) : $outstandingAmount,
                 'completion_rate' => $amountCompletionRate,
             ],
 
@@ -193,7 +183,7 @@ final class DailySusuCycleStatisticsService
     protected function buildPerformance(
     ): void {
         $completedCycles = $this->cycles
-            ->where('status', Statuses::COMPLETED)
+            ->where('status', Statuses::COMPLETED->value)
             ->sortByDesc('completed_at')
             ->values();
 
@@ -215,31 +205,45 @@ final class DailySusuCycleStatisticsService
      */
     protected function buildInsights(
     ): void {
-        $disciplineScore = $this->performance['discipline_score'];
-        $amountCompletion = $this->statistics['amounts']['completion_rate'];
+        $completedCycles = $this->cycles->where('status', Statuses::COMPLETED->value);
+        $hasActiveCycle = (bool) $this->statistics['current_cycle'];
 
-        if ($disciplineScore >= 85) {
-            $this->insights[] = [
+        // Historical discipline (completed cycles only)
+        if ($completedCycles->count() >= 3 && $this->performance['discipline_score'] >= 85) {
+            $this->insights = [
+                'scope' => 'historical',
                 'type' => 'positive',
-                'message' => 'You are very consistent with your savings.',
+                'message' => 'You have consistently completed your savings cycles.',
             ];
 
-            $this->recommendations[] =
-                'You may consider increasing your savings amount in your next cycle.';
+            $this->recommendations = ['You may consider increasing your savings amount in your next cycle.'];
         }
 
-        if ($amountCompletion < 70) {
-            $this->insights[] = [
-                'type' => 'warning',
-                'message' => 'Your contributions are behind schedule.',
-            ];
+        // Current cycle pacing
+        if ($hasActiveCycle) {
+            $currentCycle = $this->statistics['current_cycle'];
 
-            $this->recommendations[] =
-                'A slight increase in contribution frequency can help you complete this cycle on time.';
+            if ($currentCycle->completed_frequencies === 1) {
+                $this->insights = [
+                    'scope' => 'current_cycle',
+                    'type' => 'info',
+                    'message' => 'Your new cycle has just started. Stay consistent to maintain your streak.',
+                ];
+            }
+
+            if ($this->statistics['frequencies']['completion_rate'] < 70 && $currentCycle->completed_frequencies > 0) {
+                $this->insights = [
+                    'scope' => 'current_cycle',
+                    'type' => 'warning',
+                    'message' => 'Your current cycle is progressing slower than expected.',
+                ];
+            }
         }
 
-        if ($this->statistics['current_cycle'] && $this->statistics['frequencies']['remaining'] === 0) {
-            $this->insights[] = [
+        // Near completion
+        if ($hasActiveCycle && $this->statistics['frequencies']['remaining'] === 0) {
+            $this->insights = [
+                'scope' => 'current_cycle',
                 'type' => 'info',
                 'message' => 'You are very close to completing your current cycle.',
             ];

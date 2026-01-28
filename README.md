@@ -138,10 +138,11 @@ The SusuBox susu service API.
 
 ###### DailySusu statistics
     [x] Build all DailySusu cycle statistics
-    [ ] Build all DailySusu settlement statistics
+    [x] Build all DailySusu settlement statistics
     [ ] Get all DailySusu statistics
 
 ###### DailySusu Others
+    [ ] Cleanup the DailySusu API resources (Collections / Single)
     [ ] Apply the default / discounted fees on settlements
 
 ## BizSusu

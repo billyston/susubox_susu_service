@@ -5,14 +5,15 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\IndividualSusu\DailySusu\Statistics;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Susu\DTOs\IndividualSusu\DailySusu\Statistics\DailySusuStatisticsResponseDTO;
+use App\Application\Susu\DTOs\IndividualSusu\DailySusu\Statistics\DailySusuCycleStatisticsResponseDTO;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
 use App\Domain\Susu\Services\IndividualSusu\DailySusu\Statistics\DailySusuCycleStatisticsService;
+use Brick\Money\Exception\MoneyMismatchException;
 use Illuminate\Support\Carbon;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-final class DailySusuStatisticsAction
+final class DailySusuCycleStatisticsAction
 {
     private DailySusuCycleStatisticsService $susuCycleStatisticsService;
 
@@ -29,6 +30,7 @@ final class DailySusuStatisticsAction
      * @param DailySusu $dailySusu
      * @param array $request
      * @return JsonResponse
+     * @throws MoneyMismatchException
      */
     public function execute(
         DailySusu $dailySusu,
@@ -41,8 +43,8 @@ final class DailySusuStatisticsAction
             to: isset($request['to_date']) ? Carbon::parse($request['to_date']) : null,
         );
 
-        // Build the DailySusuStatisticsResponseDTO
-        $responseDTO = DailySusuStatisticsResponseDTO::fromDomain(
+        // Build the DailySusuCycleStatisticsResponseDTO
+        $responseDTO = DailySusuCycleStatisticsResponseDTO::fromDomain(
             statistics: $statistics,
             request: $request,
         );

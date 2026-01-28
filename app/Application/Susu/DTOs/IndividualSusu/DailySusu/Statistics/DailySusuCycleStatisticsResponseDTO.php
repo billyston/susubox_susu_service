@@ -6,7 +6,7 @@ namespace App\Application\Susu\DTOs\IndividualSusu\DailySusu\Statistics;
 
 use App\Domain\Susu\Services\IndividualSusu\DailySusu\Statistics\DailySusuCycleStatisticsService;
 
-final readonly class DailySusuStatisticsResponseDTO
+final readonly class DailySusuCycleStatisticsResponseDTO
 {
     /**
      * @param DailySusuCycleStatisticsService $statistics
@@ -93,12 +93,12 @@ final readonly class DailySusuStatisticsResponseDTO
                     ] : null,
                     'insights' => [
                         'type' => 'CycleInsights',
-                        'attributes' => $this->statistics->getInsights()[0],
+                        'attributes' => $this->statistics->getInsights(),
                     ],
                     'recommendations' => [
                         'type' => 'CycleRecommendations',
                         'attributes' => [
-                            'recommendations' => $this->statistics->getRecommendations()[0],
+//                            'recommendations' => $this->statistics->getRecommendations(),
                         ],
                     ],
                 ],

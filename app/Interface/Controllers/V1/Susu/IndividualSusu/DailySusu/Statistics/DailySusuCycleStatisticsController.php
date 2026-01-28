@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Interface\Controllers\V1\Susu\IndividualSusu\DailySusu\Statistics;
 
-use App\Application\Susu\Actions\IndividualSusu\DailySusu\Statistics\DailySusuStatisticsAction;
+use App\Application\Susu\Actions\IndividualSusu\DailySusu\Statistics\DailySusuCycleStatisticsAction;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
 use App\Interface\Controllers\Shared\Controller;
@@ -12,13 +12,13 @@ use Brick\Money\Exception\MoneyMismatchException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-final class DailySusuStatisticsController extends Controller
+final class DailySusuCycleStatisticsController extends Controller
 {
     /**
      * @param Request $request
      * @param Customer $customer
      * @param DailySusu $dailySusu
-     * @param DailySusuStatisticsAction $dailySusuAccountStatsAction
+     * @param DailySusuCycleStatisticsAction $dailySusuCycleStatisticsAction
      * @return JsonResponse
      * @throws MoneyMismatchException
      */
@@ -26,10 +26,10 @@ final class DailySusuStatisticsController extends Controller
         Request $request,
         Customer $customer,
         DailySusu $dailySusu,
-        DailySusuStatisticsAction $dailySusuAccountStatsAction
+        DailySusuCycleStatisticsAction $dailySusuCycleStatisticsAction
     ): JsonResponse {
-        // Execute the DailySusuStatisticsAction and return the JsonResponse
-        return $dailySusuAccountStatsAction->execute(
+        // Execute the DailySusuCycleStatisticsAction and return the JsonResponse
+        return $dailySusuCycleStatisticsAction->execute(
             dailySusu: $dailySusu,
             request: $request->all()
         );

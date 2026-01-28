@@ -91,7 +91,8 @@ return [
 
         'app/Domain/Transaction/Services/Statistics/TransactionLoader.php',
         'app/Application/Transaction/Services/Statistics/PerformanceReportGenerator.php',
-        'app/Application/Transaction/Services/Statistics/StatisticsCalculator.php'
+        'app/Application/Transaction/Services/Statistics/StatisticsCalculator.php',
+        'app/Domain/Susu/Services/IndividualSusu/DailySusu/Statistics/DailySusuCycleStatisticsService.php',
     ],
 
     'add' => [
