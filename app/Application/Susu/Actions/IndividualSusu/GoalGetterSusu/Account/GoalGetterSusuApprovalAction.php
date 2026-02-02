@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\IndividualSusu\GoalGetterSusu\Account;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Transaction\DTOs\RecurringDepositApprovalResponseDTO;
+use App\Application\Transaction\DTOs\RecurringDeposit\RecurringDepositApprovalResponseDTO;
 use App\Application\Transaction\ValueObject\RecurringDepositValueObject;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\PaymentInstruction\Services\PaymentInstructionApprovalStatusUpdateService;

@@ -53,7 +53,7 @@ The SusuBox susu service API.
     [x] Account activation completed notification
 
 ###### DailySusu Re-Activation (if initial deposit failed)
-    [ ] Initiate and approve account re-activation
+    [x] Initiate and approve account re-activation
     [ ] Validate account re-activation
 
 ###### DailySusu Direct Deposit
@@ -139,7 +139,8 @@ The SusuBox susu service API.
 ###### DailySusu statistics
     [x] Build all DailySusu cycle statistics
     [x] Build all DailySusu settlement statistics
-    [ ] Get all DailySusu statistics
+    [x] Get all DailySusu statistics
+    [ ] Cleanup / extend the DailySusu statistics (Cycle, Settlement to be more detailed)
 
 ###### DailySusu Others
     [ ] Cleanup the DailySusu API resources (Collections / Single)
@@ -424,5 +425,6 @@ The SusuBox susu service API.
     [ ] Provide descriptions for all api responses
     [ ] Review all the exceptions and give proper messaging
     [ ] Remove (delete) all views migrations and models which are not being used 
+    [ ] Modify all Domain DB services to have a standard and proper logging
     [x] All $variable, function and method names should follow CamelCase
     [x] All APIResource, ResponseDTO toArray and DB fields names must follow snake_case

@@ -4,43 +4,49 @@ declare(strict_types=1);
 
 namespace App\Domain\PaymentInstruction\Services;
 
+use App\Domain\Account\Models\Account;
 use App\Domain\PaymentInstruction\Models\PaymentInstruction;
+use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-final class PaymentInstructionByResourceIdService
+final class PaymentInstructionFailedRecurringDepositService
 {
     /**
-     * @param string $resourceID
+     * @param Account $account
      * @return PaymentInstruction
      * @throws SystemFailureException
      */
     public static function execute(
-        string $resourceID,
+        Account $account,
     ): PaymentInstruction {
         try {
             // Run the query inside a database transaction
-            $paymentInstruction = DB::transaction(
-                fn () => PaymentInstruction::query()
-                    ->where('resource_id', $resourceID)
-                    ->first()
-            );
+            $failedInitial = $account->payments()
+                ->where('extra_data->is_initial_deposit', true)
+                ->where('status', Statuses::FAILED->value)
+                ->latest()
+                ->first();
 
             // Throw exception if no record is found
-            if (! $paymentInstruction) {
-                throw new SystemFailureException("There is no payment instruction record found for resource id: {$resourceID}.");
+            if (! $failedInitial) {
+                throw new ModelNotFoundException('The payment instruction was not found.');
             }
 
             // Return the record if found
-            return $paymentInstruction;
+            return $failedInitial;
+        } catch (
+            ModelNotFoundException $exception
+        ) {
+            throw $exception;
         } catch (
             Throwable $throwable
         ) {
             // Log the full exception with context
-            Log::error('Exception in PaymentInstructionByResourceIdService', [
-                'resource_id' => $resourceID,
+            Log::error('Exception in PaymentInstructionFailedRecurringDepositService', [
+                'account' => $account,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),

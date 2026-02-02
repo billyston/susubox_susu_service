@@ -46,6 +46,8 @@ final class PaymentInstructionCancelService
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),
                     'line' => $throwable->getLine(),
+                    'code' => $throwable->getCode(),
+                    'trace' => $throwable->getTraceAsString(),
                 ],
             ]);
 

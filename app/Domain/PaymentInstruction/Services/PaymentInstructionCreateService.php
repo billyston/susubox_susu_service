@@ -66,10 +66,16 @@ final class PaymentInstructionCreateService
         ) {
             // Log the full exception with context
             Log::error('Exception in PaymentInstructionCreateService', [
+                'account' => $account,
+                'wallet' => $wallet,
+                'customer' => $customer,
+                'data' => $data,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),
                     'line' => $throwable->getLine(),
+                    'code' => $throwable->getCode(),
+                    'trace' => $throwable->getTraceAsString(),
                 ],
             ]);
 

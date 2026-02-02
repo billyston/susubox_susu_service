@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Transaction\DTOs;
+namespace App\Application\Transaction\DTOs\RecurringDeposit;
 
 use App\Domain\PaymentInstruction\Models\PaymentInstruction;
 use App\Domain\Transaction\Enums\TransactionCategoryCode;
@@ -35,6 +35,20 @@ final readonly class RecurringDepositApprovalResponseDTO
      */
     public function toArray(
     ): array {
+        // Build payment instruction attributes first
+        $paymentInstructionAttributes = [
+            'resource_id' => $this->paymentInstruction->resource_id,
+            'initial_deposit' => $this->paymentInstruction->getMetadata()['initial_deposit']['amount'],
+            'charges' => $this->paymentInstruction->charge->getAmount()->__toString(),
+            'amount' => $this->paymentInstruction->total->getAmount()->__toString(),
+        ];
+
+        // Only include internal_reference if it exists
+        if (! empty($this->paymentInstruction->internal_reference)) {
+            $paymentInstructionAttributes['internal_reference'] =
+                $this->paymentInstruction->internal_reference;
+        }
+
         return [
             'data' => [
                 'type' => 'RecurringDebit',
@@ -46,12 +60,7 @@ final readonly class RecurringDepositApprovalResponseDTO
                 'relationships' => [
                     'payment_instruction' => [
                         'type' => 'PaymentInstruction',
-                        'attributes' => [
-                            'resource_id' => $this->paymentInstruction->resource_id,
-                            'initial_deposit' => $this->paymentInstruction->getMetadata()['initial_deposit']['amount'],
-                            'charges' => $this->paymentInstruction->charge->getAmount()->__toString(),
-                            'amount' => $this->paymentInstruction->total->getAmount()->__toString(),
-                        ],
+                        'attributes' => $paymentInstructionAttributes,
                     ],
                     'product' => [
                         'type' => 'Product',

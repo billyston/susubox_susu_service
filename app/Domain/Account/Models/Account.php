@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Account\Models;
 
+use App\Domain\PaymentInstruction\Models\PaymentInstruction;
 use App\Domain\Shared\Models\HasUuid;
 use App\Domain\Transaction\Models\Transaction;
 use Carbon\Carbon;
@@ -78,6 +79,14 @@ final class Account extends Model
     public function accountable(
     ): MorphTo {
         return $this->morphTo();
+    }
+
+    public function payments(
+    ): HasMany {
+        return $this->hasMany(
+            related: PaymentInstruction::class,
+            foreignKey: 'account_id'
+        );
     }
 
     /**

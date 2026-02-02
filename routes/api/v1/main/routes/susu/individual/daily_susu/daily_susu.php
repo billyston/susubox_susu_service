@@ -6,6 +6,7 @@ use App\Interface\Controllers\V1\Susu\IndividualSusu\DailySusu\Account\DailySusu
 use App\Interface\Controllers\V1\Susu\IndividualSusu\DailySusu\Account\DailySusuCancelController;
 use App\Interface\Controllers\V1\Susu\IndividualSusu\DailySusu\Account\DailySusuCreateController;
 use App\Interface\Controllers\V1\Susu\IndividualSusu\DailySusu\Account\DailySusuIndexController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\DailySusu\Account\DailySusuReactivationController;
 use App\Interface\Controllers\V1\Susu\IndividualSusu\DailySusu\Account\DailySusuShowController;
 use Illuminate\Support\Facades\Route;
 
@@ -44,6 +45,19 @@ Route::group([
         action: DailySusuApprovalController::class
     )->name(
         name: 'daily_susu.approval'
+    )->whereUuid(
+        parameters: [
+            'customer',
+            'daily_susu',
+        ]
+    );
+
+    // Daily susu activation route (after initial deposit failed)
+    Route::post(
+        uri: '{daily_susu}/reactivation',
+        action: DailySusuReactivationController::class
+    )->name(
+        name: 'daily_susu.activation'
     )->whereUuid(
         parameters: [
             'customer',

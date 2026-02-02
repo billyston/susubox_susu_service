@@ -46,6 +46,7 @@ final class PaymentInstructionStatusUpdateService
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),
                     'line' => $throwable->getLine(),
+                    'trace' => $throwable->getTraceAsString(),
                 ],
             ]);
 
