@@ -7,7 +7,7 @@ namespace App\Application\Susu\Actions\IndividualSusu\DailySusu\Account;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Application\Transaction\DTOs\RecurringDeposit\RecurringDepositApprovalResponseDTO;
 use App\Domain\PaymentInstruction\Services\PaymentInstructionApprovalStatusUpdateService;
-use App\Domain\PaymentInstruction\Services\PaymentInstructionFailedRecurringDepositService;
+use App\Domain\PaymentInstruction\Services\PaymentInstructionRecurringDepositGetService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
@@ -18,21 +18,21 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class DailySusuReactivationAction
 {
-    private PaymentInstructionFailedRecurringDepositService $paymentInstructionFailedRecurringDepositService;
+    private PaymentInstructionRecurringDepositGetService $paymentInstructionRecurringDepositGetService;
     private PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService;
     private PaymentRequestHandler $dispatcher;
 
     /**
-     * @param PaymentInstructionFailedRecurringDepositService $paymentInstructionFailedRecurringDepositService
+     * @param PaymentInstructionRecurringDepositGetService $paymentInstructionRecurringDepositGetService
      * @param PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService
      * @param PaymentRequestHandler $dispatcher
      */
     public function __construct(
-        PaymentInstructionFailedRecurringDepositService $paymentInstructionFailedRecurringDepositService,
+        PaymentInstructionRecurringDepositGetService $paymentInstructionRecurringDepositGetService,
         PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService,
         PaymentRequestHandler $dispatcher,
     ) {
-        $this->paymentInstructionFailedRecurringDepositService = $paymentInstructionFailedRecurringDepositService;
+        $this->paymentInstructionRecurringDepositGetService = $paymentInstructionRecurringDepositGetService;
         $this->paymentInstructionApprovalStatusUpdateService = $paymentInstructionApprovalStatusUpdateService;
         $this->dispatcher = $dispatcher;
     }
@@ -45,9 +45,10 @@ final class DailySusuReactivationAction
     public function execute(
         DailySusu $dailySusu,
     ): JsonResponse {
-        // Execute the PaymentInstructionFailedRecurringDepositService
-        $paymentInstruction = $this->paymentInstructionFailedRecurringDepositService->execute(
-            account: $dailySusu->individual->account
+        // Execute the PaymentInstructionRecurringDepositGetService
+        $paymentInstruction = $this->paymentInstructionRecurringDepositGetService->execute(
+            account: $dailySusu->individual->account,
+            status: Statuses::FAILED->value,
         );
 
         // Build the RecurringDepositApprovalResponseDTO

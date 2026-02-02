@@ -250,7 +250,7 @@ final class DailySusu extends Model
     /**
      * @return MorphMany
      */
-    public function accountPauses(
+    public function pauses(
     ): MorphMany {
         return $this->morphMany(
             related: AccountPause::class,
@@ -263,7 +263,7 @@ final class DailySusu extends Model
      */
     public function activeAccountPause(
     ): ?AccountPause {
-        return $this->accountPauses()
+        return $this->pauses()
             ->where('status', Statuses::ACTIVE->value)
             ->where(function ($query) {
                 $query->whereNull('paused_at')
@@ -320,7 +320,7 @@ final class DailySusu extends Model
             $dailySusu->accountLocks()->delete();
         });
         DailySusu::deleting(function (DailySusu $dailySusu) {
-            $dailySusu->accountPauses()->delete();
+            $dailySusu->pauses()->delete();
         });
     }
 }

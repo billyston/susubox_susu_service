@@ -6,37 +6,38 @@ namespace App\Domain\PaymentInstruction\Services;
 
 use App\Domain\Account\Models\Account;
 use App\Domain\PaymentInstruction\Models\PaymentInstruction;
-use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-final class PaymentInstructionFailedRecurringDepositService
+final class PaymentInstructionRecurringDepositGetService
 {
     /**
      * @param Account $account
+     * @param string $status
      * @return PaymentInstruction
      * @throws SystemFailureException
      */
     public static function execute(
         Account $account,
+        string $status,
     ): PaymentInstruction {
         try {
             // Run the query inside a database transaction
-            $failedInitial = $account->payments()
+            $initialPaymentInstruction = $account->payments()
                 ->where('extra_data->is_initial_deposit', true)
-                ->where('status', Statuses::FAILED->value)
+                ->where('status', $status)
                 ->latest()
                 ->first();
 
             // Throw exception if no record is found
-            if (! $failedInitial) {
+            if (! $initialPaymentInstruction) {
                 throw new ModelNotFoundException('The payment instruction was not found.');
             }
 
             // Return the record if found
-            return $failedInitial;
+            return $initialPaymentInstruction;
         } catch (
             ModelNotFoundException $exception
         ) {
@@ -45,7 +46,7 @@ final class PaymentInstructionFailedRecurringDepositService
             Throwable $throwable
         ) {
             // Log the full exception with context
-            Log::error('Exception in PaymentInstructionFailedRecurringDepositService', [
+            Log::error('Exception in PaymentInstructionRecurringDepositGetService', [
                 'account' => $account,
                 'exception' => [
                     'message' => $throwable->getMessage(),

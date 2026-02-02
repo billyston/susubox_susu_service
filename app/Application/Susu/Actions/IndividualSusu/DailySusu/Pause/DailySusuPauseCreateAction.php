@@ -17,6 +17,9 @@ final class DailySusuPauseCreateAction
 {
     private AccountPauseCreateService $accountPauseCreateService;
 
+    /**
+     * @param AccountPauseCreateService $accountPauseCreateService
+     */
     public function __construct(
         AccountPauseCreateService $accountPauseCreateService
     ) {

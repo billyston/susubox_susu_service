@@ -43,7 +43,7 @@ final class DailySusuPauseCancelAction
         return ApiResponseBuilder::success(
             code: Response::HTTP_OK,
             message: 'Request successful.',
-            description: 'The account lock process has been canceled successfully.',
+            description: 'The account pause process has been canceled successfully.',
         );
     }
 }

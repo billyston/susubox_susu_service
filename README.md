@@ -109,15 +109,17 @@ The SusuBox susu service API.
     [x] Initiate the account_unlock background job
 
 ###### DailySusu pause recurring debits (In consideration)
-    [ ] Create pause debit
-    [ ] Cancel pause debit process
-    [ ] Approve pause debit process
+    [x] Create pause debit
+    [x] Cancel pause debit process
+    [x] Approve pause debit process
+    [ ] Initiate the pause debit notification
     [ ] Validate create pause debit
     [ ] Validate cancel pause debit
     [ ] Validate approve pause debit
 
 ###### DailySusu resume recurring debits (In consideration)
     [ ] Initiate and approve resume recurring debits
+    [ ] Initiate the resume pause debit notification
     [ ] Validate resume recurring debits
     [ ] Implement DailySusu resume recurring debits
 

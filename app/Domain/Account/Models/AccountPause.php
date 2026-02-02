@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Account\Models;
 
+use App\Domain\Shared\Models\HasUuid;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -39,6 +40,8 @@ use Illuminate\Support\Carbon;
  */
 final class AccountPause extends Model
 {
+    use HasUuid;
+
     protected $guarded = ['id'];
 
     protected $casts = [
