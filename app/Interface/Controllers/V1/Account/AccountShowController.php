@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Interface\Controllers\V1\Account;
 
-use App\Application\Account\Actions\AccountShowAction;
+use App\Application\Account\Actions\Account\AccountShowAction;
 use App\Domain\Account\Models\Account;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;

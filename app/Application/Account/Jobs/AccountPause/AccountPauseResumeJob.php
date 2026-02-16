@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Account\Jobs;
+namespace App\Application\Account\Jobs\AccountPause;
 
+use App\Application\Transaction\DTOs\RecurringDeposit\RecurringDepositResponseDTO;
 use App\Domain\Account\Services\AccountPause\AccountPauseByResourceIdService;
-use App\Domain\Account\Services\AccountPause\AccountPauseStatusUpdateService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
+use App\Services\SusuBox\Http\Requests\Payment\PaymentRequestHandler;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -31,34 +32,30 @@ final class AccountPauseResumeJob implements ShouldQueue
 
     /**
      * @param AccountPauseByResourceIdService $accountPauseByResourceIdService
-     * @param AccountPauseStatusUpdateService $accountPauseStatusUpdateService
+     * @param PaymentRequestHandler $dispatcher
      * @return void
      * @throws SystemFailureException
      */
     public function handle(
         AccountPauseByResourceIdService $accountPauseByResourceIdService,
-        AccountPauseStatusUpdateService $accountPauseStatusUpdateService
+        PaymentRequestHandler $dispatcher,
     ): void {
         // Execute the AccountPauseByResourceIdService and return the resource
         $accountPause = $accountPauseByResourceIdService->execute(
             accountPauseResource: $this->resourceID
         );
 
-        // Execute the AccountPauseStatusUpdateService
-        $accountPauseStatusUpdateService->execute(
-            accountPause: $accountPause,
-            status: Statuses::COMPLETED->value
+        // Build the RecurringDepositResponseDTO
+        $responseDTO = RecurringDepositResponseDTO::fromDomain(
+            paymentInstruction: $accountPause->payment,
+            action: Statuses::RESUMED->value
         );
 
-        // Dispatch the AccountPauseResumePostActionsJob
-        AccountPauseResumePostActionsJob::dispatch(
-            accountPauseResource: $accountPause->resource_id,
-        );
-
-        // Dispatch the AccountPauseResumeNotificationJob
-        AccountPauseResumeNotificationJob::dispatch(
-            customerResource: $accountPause->pauseable->individual->customer->resource_id,
-            accountPauseResource: $accountPause->resource_id,
+        // Dispatch to SusuBox Service (Payment Service)
+        $dispatcher->sendToSusuBoxService(
+            service: config('susubox.payment.name'),
+            endpoint: 'recurring-debits/pause',
+            data: $responseDTO->toArray(),
         );
     }
 }

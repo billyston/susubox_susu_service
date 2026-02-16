@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Interface\Controllers\V1\Account\AccountTransaction\AccountTransactionIndexController;
-use App\Interface\Controllers\V1\Account\AccountTransaction\AccountTransactionShowController;
-use App\Interface\Controllers\V1\Account\AccountTransaction\AccountTransactionStatisticsController;
+use App\Interface\Controllers\V1\Account\Transaction\AccountTransactionIndexController;
+use App\Interface\Controllers\V1\Account\Transaction\AccountTransactionShowController;
+use App\Interface\Controllers\V1\Account\Transaction\AccountTransactionStatisticsController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([

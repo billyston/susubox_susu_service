@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Account\Actions\AccountTransaction;
+namespace App\Application\Account\Actions\Transaction;
 
 use App\Application\Account\DTOs\AccountTransaction\AccountTransactionStatisticsResponseDTO;
 use App\Application\Shared\Helpers\ApiResponseBuilder;

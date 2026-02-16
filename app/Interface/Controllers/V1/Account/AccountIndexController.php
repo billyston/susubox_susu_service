@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Interface\Controllers\V1\Account;
 
-use App\Application\Account\Actions\AccountIndexAction;
+use App\Application\Account\Actions\Account\AccountIndexAction;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Interface\Controllers\Shared\Controller;

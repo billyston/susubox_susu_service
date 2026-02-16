@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Account\Jobs;
+namespace App\Application\Account\Jobs\AccountPause;
 
 use App\Domain\Account\Services\AccountPause\AccountPauseByResourceIdService;
 use App\Domain\Shared\Enums\Statuses;

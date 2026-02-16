@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\PaymentInstruction\Models;
 
 use App\Domain\Account\Models\Account;
+use App\Domain\Account\Models\AccountPause;
 use App\Domain\Account\Models\AccountSettlement;
 use App\Domain\Customer\Models\Wallet;
 use App\Domain\Shared\Casts\MoneyCasts;
@@ -139,7 +140,7 @@ final class PaymentInstruction extends Model
     }
 
     /**
-     * @return HasMany
+     * @return HasOne
      */
     public function settlement(
     ): HasOne {
@@ -178,6 +179,17 @@ final class PaymentInstruction extends Model
     ): HasMany {
         return $this->hasMany(
             related: Transaction::class,
+            foreignKey: 'payment_instruction_id',
+        );
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function pauses(
+    ): HasMany {
+        return $this->hasMany(
+            related: AccountPause::class,
             foreignKey: 'payment_instruction_id',
         );
     }

@@ -2,53 +2,48 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Account\Actions;
+namespace App\Application\Account\Actions\Account;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Domain\Account\Models\Account;
-use App\Domain\Account\Services\Account\AccountBalanceService;
+use App\Domain\Account\Services\Account\AccountIndexService;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Interface\Resources\V1\Account\AccountBalanceResource;
+use App\Interface\Resources\V1\Account\AccountCollectionResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-final class AccountBalanceAction
+final class AccountIndexAction
 {
-    private AccountBalanceService $accountBalanceService;
+    private AccountIndexService $accountIndexService;
 
     /**
-     * @param AccountBalanceService $accountBalanceService
+     * @param AccountIndexService $accountIndexService
      */
     public function __construct(
-        AccountBalanceService $accountBalanceService
+        AccountIndexService $accountIndexService
     ) {
-        $this->accountBalanceService = $accountBalanceService;
+        $this->accountIndexService = $accountIndexService;
     }
 
     /**
      * @param Customer $customer
-     * @param Account $account
-     * @param array $request
      * @return JsonResponse
      * @throws SystemFailureException
      */
     public function execute(
         Customer $customer,
-        Account $account,
-        array $request,
     ): JsonResponse {
         // Execute the AccountIndexService and return the collection
-        $accountBalance = $this->accountBalanceService->execute(
-            account: $account,
+        $customerAccounts = $this->accountIndexService->execute(
+            customer: $customer,
         );
 
         // Build and return the JsonResponse
         return ApiResponseBuilder::success(
             code: Response::HTTP_OK,
             message: 'Request successful.',
-            data: new AccountBalanceResource(
-                resource: $accountBalance
+            data: AccountCollectionResource::collection(
+                resource: $customerAccounts
             ),
         );
     }

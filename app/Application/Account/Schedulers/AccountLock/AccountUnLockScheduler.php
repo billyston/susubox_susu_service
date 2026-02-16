@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Account\Schedulers;
+namespace App\Application\Account\Schedulers\AccountLock;
 
 use App\Application\Account\Jobs\AccountUnLockJob;
 use App\Domain\Account\Services\AccountLock\AccountUnlockDueDateService;

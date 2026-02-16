@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Domain\Account\Models;
 
+use App\Domain\PaymentInstruction\Models\PaymentInstruction;
 use App\Domain\Shared\Models\HasUuid;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Carbon;
 
@@ -29,6 +31,7 @@ use Illuminate\Support\Carbon;
  * @property bool|null $accepted_terms
  * @property string $status
  *
+ * @property Model|PaymentInstruction $payment
  * @property Model|MorphTo $pauseable
  *
  * @method static Builder|AccountPause whereResourceId(string $resourceId)
@@ -51,18 +54,32 @@ final class AccountPause extends Model
 
     protected $fillable = [
         'resource_id',
-        'pauseable',
+        'payment_instruction_id',
         'paused_at',
         'resumed_at',
         'accepted_terms',
         'status',
     ];
 
+    /**
+     * @return string
+     */
     public function getRouteKeyName(
     ): string {
         return 'resource_id';
     }
 
+    public function payment(
+    ): BelongsTo {
+        return $this->belongsTo(
+            related: PaymentInstruction::class,
+            foreignKey: 'payment_instruction_id',
+        );
+    }
+
+    /**
+     * @return MorphTo
+     */
     public function pauseable(
     ): MorphTo {
         return $this->morphTo();

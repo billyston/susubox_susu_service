@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Interface\Controllers\V1\Account\AccountTransaction;
+namespace App\Interface\Controllers\V1\Account\Transaction;
 
-use App\Application\Account\Actions\AccountTransaction\AccountTransactionShowAction;
+use App\Application\Account\Actions\Transaction\AccountTransactionShowAction;
 use App\Domain\Account\Models\Account;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Account\Schedulers;
+namespace App\Application\Account\Schedulers\AccountPause;
 
-use App\Application\Account\Jobs\AccountPauseResumeJob;
+use App\Application\Account\Jobs\AccountPause\AccountPauseResumeJob;
 use App\Domain\Account\Services\AccountPause\AccountPauseDueDateService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use Illuminate\Bus\Batchable;

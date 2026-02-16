@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * @return void
+     */
     public function up(
     ): void {
         Schema::create(
@@ -22,6 +25,7 @@ return new class extends Migration
                 $table->uuid(column: 'resource_id')->unique()->index();
 
                 // Polymorphic relation
+                $table->foreignId(column: 'payment_instruction_id')->constrained(table: 'payment_instructions');
                 $table->morphs(name: 'pauseable');
 
                 // Table main attributes
@@ -35,6 +39,7 @@ return new class extends Migration
                     Statuses::APPROVED->value,
                     Statuses::ACTIVE->value,
                     Statuses::CANCELLED->value,
+                    Statuses::FAILED->value,
                     Statuses::SUSPENDED->value,
                     Statuses::COMPLETED->value,
                 ])->default(value: Statuses::PENDING->value);
@@ -44,6 +49,9 @@ return new class extends Migration
             });
     }
 
+    /**
+     * @return void
+     */
     public function down(
     ): void {
         Schema::dropIfExists(

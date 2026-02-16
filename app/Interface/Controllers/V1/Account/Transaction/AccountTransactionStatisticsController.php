@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Interface\Controllers\V1\Account\AccountTransaction;
+namespace App\Interface\Controllers\V1\Account\Transaction;
 
-use App\Application\Account\Actions\AccountTransaction\AccountTransactionStatisticsAction;
+use App\Application\Account\Actions\Transaction\AccountTransactionStatisticsAction;
 use App\Domain\Account\Models\Account;
 use App\Domain\Customer\Models\Customer;
 use App\Interface\Controllers\Shared\Controller;

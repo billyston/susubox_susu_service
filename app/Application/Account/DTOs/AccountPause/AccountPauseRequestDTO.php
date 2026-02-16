@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Account\DTOs;
+namespace App\Application\Account\DTOs\AccountPause;
 
 final readonly class AccountPauseRequestDTO
 {

@@ -2,48 +2,48 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Account\Actions;
+namespace App\Application\Account\Actions\Account;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Domain\Account\Services\Account\AccountIndexService;
-use App\Domain\Customer\Models\Customer;
+use App\Domain\Account\Models\Account;
+use App\Domain\Account\Services\Account\AccountBalanceService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Interface\Resources\V1\Account\AccountCollectionResource;
+use App\Interface\Resources\V1\Account\AccountBalanceResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-final class AccountIndexAction
+final class AccountBalanceAction
 {
-    private AccountIndexService $accountIndexService;
+    private AccountBalanceService $accountBalanceService;
 
     /**
-     * @param AccountIndexService $accountIndexService
+     * @param AccountBalanceService $accountBalanceService
      */
     public function __construct(
-        AccountIndexService $accountIndexService
+        AccountBalanceService $accountBalanceService
     ) {
-        $this->accountIndexService = $accountIndexService;
+        $this->accountBalanceService = $accountBalanceService;
     }
 
     /**
-     * @param Customer $customer
+     * @param Account $account
      * @return JsonResponse
      * @throws SystemFailureException
      */
     public function execute(
-        Customer $customer,
+        Account $account,
     ): JsonResponse {
         // Execute the AccountIndexService and return the collection
-        $customerAccounts = $this->accountIndexService->execute(
-            customer: $customer,
+        $accountBalance = $this->accountBalanceService->execute(
+            account: $account,
         );
 
         // Build and return the JsonResponse
         return ApiResponseBuilder::success(
             code: Response::HTTP_OK,
             message: 'Request successful.',
-            data: AccountCollectionResource::collection(
-                resource: $customerAccounts
+            data: new AccountBalanceResource(
+                resource: $accountBalance
             ),
         );
     }

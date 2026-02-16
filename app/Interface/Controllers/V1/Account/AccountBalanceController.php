@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Interface\Controllers\V1\Account;
 
-use App\Application\Account\Actions\AccountBalanceAction;
+use App\Application\Account\Actions\Account\AccountBalanceAction;
 use App\Domain\Account\Models\Account;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
@@ -30,9 +30,7 @@ final class AccountBalanceController extends Controller
     ): JsonResponse {
         // Execute the AccountBalanceAction and return the JsonResponse
         return $accountBalanceAction->execute(
-            customer: $customer,
             account: $account,
-            request: $request->all()
         );
     }
 }

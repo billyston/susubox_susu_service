@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Account\Actions\AccountTransaction;
+namespace App\Application\Account\Actions\Transaction;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Domain\Account\Models\Account;

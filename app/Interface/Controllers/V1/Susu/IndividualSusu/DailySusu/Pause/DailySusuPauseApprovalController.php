@@ -33,7 +33,6 @@ final class DailySusuPauseApprovalController extends Controller
     ): JsonResponse {
         // Execute the DailySusuPauseApprovalAction and return the JsonResponse
         return $dailySusuPauseApprovalAction->execute(
-            dailySusu: $dailySusu,
             accountPause: $accountPause,
         );
     }

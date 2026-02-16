@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Application\Account\Schedulers\AccountPauseResumeScheduler;
-use App\Application\Account\Schedulers\AccountUnLockScheduler;
+use App\Application\Account\Schedulers\AccountLock\AccountUnLockScheduler;
+use App\Application\Account\Schedulers\AccountPause\AccountPauseResumeScheduler;
 use App\Application\Customer\Commands\CustomerRedisStreamConsumer;
 use App\Domain\Shared\Exceptions\ApiExceptionHandler;
 use App\Interface\Middleware\Shared\CertificateTransparencyPolicy;

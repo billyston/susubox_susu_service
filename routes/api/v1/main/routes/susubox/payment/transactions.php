@@ -6,15 +6,15 @@ use App\Interface\Controllers\V1\Transaction\TransactionCreateController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
-    'prefix' => 'payments/{payment_instruction}/transactions',
-    'as' => 'payments.payment_instruction.transactions.',
+    'prefix' => 'transactions/',
+    'as' => 'transactions.',
 ], function (): void {
     // Create transaction request route
     Route::post(
-        uri: '',
+        uri: '{payment_instruction}',
         action: TransactionCreateController::class,
     )->name(
-        name: 'create'
+        name: 'payment_instruction.create'
     )->whereUuid(
         parameters: [
             'payment_instruction',

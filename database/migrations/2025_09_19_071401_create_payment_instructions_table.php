@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * @return void
+     */
     public function up(
     ): void {
         Schema::create(
@@ -58,6 +61,7 @@ return new class extends Migration
                     Statuses::SUCCESS->value,
                     Statuses::TERMINATED->value,
                     Statuses::FAILED->value,
+                    Statuses::PAUSED->value,
                 ])->index()->default(value: Statuses::PENDING->value);
                 $table->json(column: 'extra_data')->nullable();
 
@@ -66,6 +70,9 @@ return new class extends Migration
             });
     }
 
+    /**
+     * @return void
+     */
     public function down(
     ): void {
         Schema::dropIfExists(

@@ -9,6 +9,7 @@ enum Statuses: string
     case PENDING = 'pending';
     case PROCESSING = 'processing';
     case PAUSED = 'paused';
+    case RESUMED = 'resumed';
     case STOPPED = 'stopped';
     case SUSPENDED = 'suspended';
     case REMOVED = 'removed';

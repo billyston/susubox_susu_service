@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Account\Jobs;
+namespace App\Application\Transaction\Jobs\RecurringDeposit;
 
-use App\Application\Account\DTOs\AccountPauseResponseDTO;
+use App\Application\Account\DTOs\AccountPause\AccountPauseResponseDTO;
 use App\Domain\Account\Services\AccountPause\AccountPauseByResourceIdService;
 use App\Domain\Customer\Services\CustomerByResourceIdService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
@@ -16,7 +16,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-final class AccountPauseResumeNotificationJob implements ShouldQueue
+final class RecurringDepositNotificationJob implements ShouldQueue
 {
     use Batchable;
     use Dispatchable;
@@ -25,12 +25,10 @@ final class AccountPauseResumeNotificationJob implements ShouldQueue
     use SerializesModels;
 
     /**
-     * @param string $customerResource
-     * @param string $accountPauseResource
+     * @param AccountPauseResponseDTO $responseDTO
      */
     public function __construct(
-        public readonly string $customerResource,
-        public readonly string $accountPauseResource,
+        public readonly AccountPauseResponseDTO $responseDTO,
     ) {
         // ...
     }
@@ -43,32 +41,15 @@ final class AccountPauseResumeNotificationJob implements ShouldQueue
      * @throws SystemFailureException
      */
     public function handle(
-        CustomerByResourceIdService $customerByResourceIdService,
-        AccountPauseByResourceIdService $accountPauseByResourceIdService,
         NotificationRequestHandler $dispatcher,
     ): void {
-        // Execute the CustomerByResourceIdService and return the resource
-        $customer = $customerByResourceIdService->execute(
-            customerResource: $this->customerResource
-        );
-
-        // Execute the AccountPauseByResourceIdService and return the resource
-        $accountPause = $accountPauseByResourceIdService->execute(
-            accountPauseResource: $this->accountPauseResource
-        );
-
-        // Build the AccountPauseResponseDTO
-        $responseDTO = AccountPauseResponseDTO::fromDomain(
-            accountPause: $accountPause,
-            account: $accountPause->pauseable->account,
-            customer: $customer,
-        );
+        // Set the endpoint
 
         // Dispatch the AccountPauseNotificationRequestHandler to SusuBox services
         $dispatcher->sendToSusuBoxService(
             service: config('susubox.notification.name'),
             endpoint: 'account/susu/pause',
-            data: $responseDTO->toArray(),
+            data: $this->responseDTO->toArray(),
         );
     }
 }

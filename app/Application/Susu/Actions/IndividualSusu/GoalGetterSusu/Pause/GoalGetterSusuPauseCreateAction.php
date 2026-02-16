@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Susu\Actions\IndividualSusu\GoalGetterSusu\Pause;
 
-use App\Application\Account\DTOs\AccountPauseRequestDTO;
+use App\Application\Account\DTOs\AccountPause\AccountPauseRequestDTO;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Domain\Account\Services\AccountPause\AccountPauseCreateService;
 use App\Domain\Shared\Exceptions\SystemFailureException;

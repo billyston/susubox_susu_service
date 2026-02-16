@@ -39,6 +39,7 @@ final class PaymentInstructionStatusUpdateService
         } catch (
             Throwable $throwable
         ) {
+            // Log the full exception with context
             Log::error('Exception in PaymentInstructionStatusUpdateService', [
                 'payment_instruction' => $paymentInstruction,
                 'status' => $status,
@@ -50,6 +51,7 @@ final class PaymentInstructionStatusUpdateService
                 ],
             ]);
 
+            // Throw the SystemFailureException
             throw new SystemFailureException(
                 message: 'There was a system failure while canceling the payment instruction.',
             );
