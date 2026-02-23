@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Domain\Transaction\Models;
 
 use App\Domain\PaymentInstruction\Models\PaymentInstruction;
-use Eloquent;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,21 +12,36 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * Class TransactionCategory
  *
- * @property string $id
+ * Represents a category or type of financial transaction within the SusuBox system.
+ * Each transaction category defines the nature of the transaction (e.g., credit, debit,
+ * withdrawal, recurring debit) and allows grouping and filtering of transactions for
+ * reporting, auditing, and processing purposes.
+ *
+ * Purpose:
+ * - Categorize transactions for clarity, reporting, and accounting.
+ * - Provide a central reference for transactions across accounts, wallets, and payment instructions.
+ * - Enable descriptive labeling and coding of transactions for audit trails.
+ *
+ * Routing:
+ * - Uses `resource_id` as the route key for public-facing identification.
+ *
+ * Attributes:
+ * @property int $id
  * @property string $resource_id
  * @property string $name
- * @property string $alias
- * @property string $code
+ * @property string|null $alias
+ * @property string|null $code
  *
  * Relationships:
- * @property Collection<int, PaymentInstruction> $paymentInstructions
+ * @property-read Collection|PaymentInstruction[] $paymentInstructions
  *
- * @method static Builder|TransactionCategory whereResourceId($value)
- * @method static Builder|TransactionCategory whereName($value)
- * @method static Builder|TransactionCategory whereAlias($value)
- * @method static Builder|TransactionCategory whereCode($value)
+ * Methods:
+ * - getRouteKeyName(): string
+ *   Returns 'resource_id' for route model binding.
  *
- * @mixin Eloquent
+ * Domain Notes:
+ * - Categories are central to the system for tracking and reporting all money movements.
+ * - Can be referenced by PaymentInstruction and Transaction models.
  */
 final class TransactionCategory extends Model
 {

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Interface\Controllers\V1\Susu\IndividualSusu\DailySusu\Settlement;
 
 use App\Application\Susu\Actions\IndividualSusu\DailySusu\Settlement\DailySusuSettlementShowAction;
-use App\Domain\Account\Models\AccountSettlement;
 use App\Domain\Customer\Models\Customer;
+use App\Domain\PaymentInstruction\Models\Settlement;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
@@ -18,7 +18,7 @@ final class DailySusuSettlementShowController extends Controller
     /**
      * @param Customer $customer
      * @param DailySusu $dailySusu
-     * @param AccountSettlement $accountSettlement
+     * @param Settlement $accountSettlement
      * @param DailySusuSettlementShowAction $dailySusuSettlementShowAction
      * @return JsonResponse
      * @throws SystemFailureException
@@ -27,7 +27,7 @@ final class DailySusuSettlementShowController extends Controller
     public function __invoke(
         Customer $customer,
         DailySusu $dailySusu,
-        AccountSettlement $accountSettlement,
+        Settlement $accountSettlement,
         DailySusuSettlementShowAction $dailySusuSettlementShowAction
     ): JsonResponse {
         // Execute the DailySusuSettlementShowAction and return the JsonResponse

@@ -29,7 +29,7 @@ final class BizSusuLockCancelRequest extends FormRequest
             'data.type' => [
                 'required',
                 'string',
-                'in:AccountLock',
+                'in:AccountPayoutLock',
             ],
         ];
     }

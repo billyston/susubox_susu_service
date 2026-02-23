@@ -5,73 +5,72 @@ declare(strict_types=1);
 namespace App\Domain\Susu\Models\IndividualSusu;
 
 use App\Domain\Account\Models\Account;
-use App\Domain\Account\Models\AccountLock;
-use App\Domain\Customer\Models\Customer;
-use App\Domain\Customer\Models\Wallet;
 use App\Domain\Shared\Casts\MoneyCasts;
-use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Models\HasUuid;
-use Carbon\Carbon;
-use Eloquent;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Carbon;
 
 /**
  * Class FlexySusu
  *
- * @property string $id
+ * Represents a flexible individual-based savings scheme where customers
+ * make direct savings into their account without a fixed cycle.
+ *
+ * The FlexySusu model allows account holders to deposit funds at their
+ * convenience while optionally marking the savings as collateralized.
+ * This scheme is designed for customers seeking flexibility in contribution
+ * timing and amount, while maintaining the benefits of structured record-keeping.
+ *
+ * Key Responsibilities:
+ * - Associates the flexible savings plan with a specific Account.
+ * - Tracks the initial deposit and ongoing contributions.
+ * - Indicates whether the savings are collateralized.
+ * - Maintains payout status and additional configuration in metadata.
+ *
+ * Routing:
+ * - Uses `resource_id` as the route key for public-facing identification.
+ *
+ * Attributes:
+ * @property int $id
  * @property string $resource_id
- * @property string $individual_account_id
- * @property string|null $customer_id
- * @property string $wallet_id
- *
- * Monetary fields (casted via MoneyCasts):
- * @property mixed $initial_deposit
- *
+ * @property int $account_id
+ * @property float|int $initial_deposit
  * @property string $currency
  * @property bool $is_collateralized
- * @property string $withdrawal_status
- *
- * Extra data:
- * @property array|null $extra_data
+ * @property string|null $payout_status
+ * @property array|null $metadata
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  *
  * Relationships:
- * @property IndividualAccount $individual
- * @property Customer|null $customer
- * @property Account|null $account
- * @property Wallet $wallet
+ * @property-read Account $account
  *
- * @method static Builder|FlexySusu whereResourceId($value)
- * @method static Builder|FlexySusu whereIndividualAccountId($value)
- * @method static Builder|FlexySusu whereWalletId($value)
- *
- * @mixin Eloquent
+ * Domain Notes:
+ * - Designed for customers who prefer flexible contribution schedules.
+ * - Metadata can store additional scheme rules, preferences, or notes.
+ * - Payouts can be triggered based on account balance or manual request.
  */
 final class FlexySusu extends Model
 {
     use HasUuid;
 
-    public $timestamps = false;
-
     protected $guarded = ['id'];
 
     protected $casts = [
         'initial_deposit' => MoneyCasts::class,
-        'extra_data' => 'array',
+        'is_collateralized' => 'boolean',
+        'metadata' => 'array',
     ];
 
     protected $fillable = [
         'resource_id',
-        'individual_account_id',
-        'wallet_id',
+        'account_id',
         'initial_deposit',
         'currency',
         'is_collateralized',
-        'withdrawal_status',
-        'extra_data',
+        'payout_status',
+        'metadata',
     ];
 
     /**
@@ -85,96 +84,11 @@ final class FlexySusu extends Model
     /**
      * @return BelongsTo
      */
-    public function individual(
-    ): BelongsTo {
-        return $this->belongsTo(
-            related: IndividualAccount::class,
-            foreignKey: 'individual_account_id',
-        );
-    }
-
-    /**
-     * @return BelongsTo
-     */
-    public function customer(
-    ): BelongsTo {
-        return $this->belongsTo(
-            related: Customer::class,
-            foreignKey: 'customer_id',
-        );
-    }
-
-    /**
-     * @return HasOneThrough
-     */
     public function account(
-    ): HasOneThrough {
-        return $this->hasOneThrough(
-            related: Account::class,
-            through: IndividualAccount::class,
-            firstKey: 'id',
-            secondKey: 'accountable_id',
-            localKey: 'individual_account_id',
-            secondLocalKey: 'id'
-        )->where(
-            column: 'accountable_type',
-            operator: IndividualAccount::class,
-        );
-    }
-
-    /**
-     * @return BelongsTo
-     */
-    public function wallet(
     ): BelongsTo {
         return $this->belongsTo(
-            related: Wallet::class,
-            foreignKey: 'wallet_id',
+            related: Account::class,
+            foreignKey: 'account_id',
         );
-    }
-
-    /**
-     * @return MorphMany
-     */
-    public function accountLocks(
-    ): MorphMany {
-        return $this->morphMany(
-            related: AccountLock::class,
-            name: 'lockable'
-        );
-    }
-
-    /**
-     * @return AccountLock|null
-     */
-    public function activeAccountLock(
-    ): ?AccountLock {
-        return $this->accountLocks()
-            ->where('status', Statuses::ACTIVE->value)
-            ->where(function ($query) {
-                $query->whereNull('unlocked_at')
-                    ->orWhere('unlocked_at', '>', Carbon::now());
-            })
-            ->latest('locked_at')
-            ->first();
-    }
-
-    /**
-     * @return bool
-     */
-    public function isLocked(
-    ): bool {
-        return $this->withdrawal_status === Statuses::LOCKED->value
-            && $this->activeAccountLock() !== null;
-    }
-
-    /**
-     * @return void
-     */
-    protected static function booted(
-    ): void {
-        FlexySusu::deleting(function (FlexySusu $flexySusu) {
-            $flexySusu->accountLocks()->delete();
-        });
     }
 }

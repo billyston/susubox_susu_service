@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Account\Services\AccountPause;
 
-use App\Domain\Account\Models\AccountPause;
+use App\Domain\PaymentInstruction\Models\RecurringDepositPause;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -13,15 +13,15 @@ use Throwable;
 final class AccountPauseStatusUpdateService
 {
     /**
-     * @param AccountPause $accountPause
+     * @param RecurringDepositPause $accountPause
      * @param string $status
-     * @return AccountPause
+     * @return RecurringDepositPause
      * @throws SystemFailureException
      */
     public static function execute(
-        AccountPause $accountPause,
+        RecurringDepositPause $accountPause,
         string $status,
-    ): AccountPause {
+    ): RecurringDepositPause {
         try {
             // Execute the database transaction
             return DB::transaction(

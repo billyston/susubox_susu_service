@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Account\Services\AccountLock;
 
-use App\Domain\Account\Models\AccountLock;
+use App\Domain\Account\Models\AccountPayoutLock;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -14,26 +14,26 @@ final class AccountLockByResourceIdService
 {
     /**
      * @param string $accountLockResource
-     * @return AccountLock
+     * @return AccountPayoutLock
      * @throws SystemFailureException
      */
     public function execute(
         string $accountLockResource
-    ): AccountLock {
+    ): AccountPayoutLock {
         try {
             // Run the query inside a database transaction
             $accountLock = DB::transaction(
-                fn () => AccountLock::query()
+                fn () => AccountPayoutLock::query()
                     ->where('resource_id', $accountLockResource)
                     ->first()
             );
 
-            // Throw exception if no AccountLock is found
+            // Throw exception if no AccountPayoutLock is found
             if (! $accountLock) {
                 throw new SystemFailureException("There is no account lock record found for resource id: {$accountLockResource}.");
             }
 
-            // Return the AccountLock resource if found
+            // Return the AccountPayoutLock resource if found
             return $accountLock;
         } catch (
             Throwable $throwable

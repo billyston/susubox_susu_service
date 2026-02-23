@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Account\Services\AccountLock;
 
-use App\Domain\Account\Models\AccountLock;
+use App\Domain\Account\Models\AccountPayoutLock;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
@@ -15,15 +15,15 @@ use Throwable;
 final class AccountLockStatusUpdateService
 {
     /**
-     * @param AccountLock $accountLock
+     * @param AccountPayoutLock $accountLock
      * @param string $status
-     * @return AccountLock
+     * @return AccountPayoutLock
      * @throws SystemFailureException
      */
     public static function execute(
-        AccountLock $accountLock,
+        AccountPayoutLock $accountLock,
         string $status,
-    ): AccountLock {
+    ): AccountPayoutLock {
         try {
             // Execute the database transaction
             return DB::transaction(

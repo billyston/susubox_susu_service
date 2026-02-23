@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Account\Models;
 
 use App\Domain\Shared\Casts\MoneyCasts;
-use Illuminate\Database\Eloquent\Builder;
+use Brick\Money\Money;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
@@ -13,35 +13,51 @@ use Illuminate\Support\Carbon;
 /**
  * Class AccountBalance
  *
- * @property string $id
- * @property string $resource_id
- * @property string $account_id
+ * Represents the authoritative financial balance record for an Account.
  *
- * Monetary fields (casted via MoneyCasts):
- * @property mixed $ledger_balance
- * @property mixed $available_balance
- * @property mixed $pending_debit_balance
- * @property mixed $pending_credit_balance
+ * The AccountBalance model maintains both the ledger balance and the
+ * available balance of an account in a specific currency. It acts as
+ * the single source of truth for account funds and is typically updated
+ * atomically alongside transactions to ensure financial consistency.
  *
- * @property string|null $last_transaction_id
+ * Key Responsibilities:
+ * - Stores the total ledger balance (all posted transactions).
+ * - Stores the available balance (spendable funds after holds/locks).
+ * - Tracks the last processed transaction for reconciliation integrity.
+ * - Records the timestamp of the last reconciliation.
+ * - Enforces strong money typing via custom money casting.
+ *
+ * Financial Integrity Notes:
+ * - `ledger_balance` reflects the sum of all committed debits and credits.
+ * - `available_balance` reflects funds available for withdrawal or settlement.
+ * - Updates to balances should occur within database transactions to prevent race
+ * conditions and negative balance inconsistencies.
+ *
+ * Routing:
+ * - Uses `resource_id` as the route key for public-facing identification.
+ *
+ * Attributes:
+ * @property int $id
+ * @property int $account_id
+ * @property Money $ledger_balance
+ * @property Money $available_balance
+ * @property string $currency
+ * @property int|null $last_transaction_id
  * @property Carbon|null $last_reconciled_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  *
  * Relationships:
- * @property Account $account
- *
- * @method static Builder|AccountBalance whereAccountId($value)
- * @method static Builder|AccountBalance whereLastTransactionId($value)
- * @method static Builder|AccountBalance whereLastReconciledAt($value)
- *
- * @mixin \Eloquent
+ * @property-read Account $account
  */
 final class AccountBalance extends Model
 {
     protected $guarded = ['id'];
 
     protected $casts = [
-        'ledger_balance' => MoneyCasts::class,
         'available_balance' => MoneyCasts::class,
+        'ledger_balance' => MoneyCasts::class,
+        'last_reconciled_at' => 'timestamp',
     ];
 
     protected $fillable = [

@@ -9,7 +9,7 @@ Route::group([
     'prefix' => 'customers/{customer}/daily-susus/{daily_susu}/auto-settlement',
     'as' => 'customers.customer.daily_susus.daily_susu.auto_settlement.',
 ], function (): void {
-    // Create account lock request route
+    // Auto settlement (toggle) request route
     Route::post(
         uri: '',
         action: DailySusuAutoSettlementController::class,

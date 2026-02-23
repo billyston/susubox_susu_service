@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Shared\Enums\Role;
+use App\Domain\Shared\Enums\Initiators;
 use App\Domain\Shared\Enums\Statuses;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * @return void
+     */
     public function up(
     ): void {
         Schema::create(
@@ -27,23 +30,26 @@ return new class extends Migration
 
                 // Table main attributes
                 $table->enum(column: 'role', allowed: [
-                    Role::ADMIN->value,
-                    Role::ORGANIZER->value,
-                    Role::MEMBER->value,
-                ])->default(value: Role::MEMBER->value);
+                    Initiators::ADMINISTRATOR,
+                    Initiators::ORGANIZER,
+                    Initiators::MEMBER,
+                ])->default(value: Initiators::MEMBER);
                 $table->integer(column: 'slots')->default(value: 1);
                 $table->timestamp(column: 'joined_at')->useCurrent();
                 $table->timestamp(column: 'activated_at')->nullable();
                 $table->enum(column: 'status', allowed: [
-                    Statuses::PENDING->value,
-                    Statuses::ACTIVE->value,
-                    Statuses::INACTIVE->value,
-                    Statuses::SUSPENDED->value,
-                    Statuses::REMOVED->value,
-                ])->default(value: Statuses::PENDING->value);
+                    Statuses::PENDING,
+                    Statuses::ACTIVE,
+                    Statuses::INACTIVE,
+                    Statuses::SUSPENDED,
+                    Statuses::REMOVED,
+                ])->default(value: Statuses::PENDING);
             });
     }
 
+    /**
+     * @return void
+     */
     public function down(
     ): void {
         Schema::dropIfExists(

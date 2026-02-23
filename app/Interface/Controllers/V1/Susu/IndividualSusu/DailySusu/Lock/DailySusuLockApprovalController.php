@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Interface\Controllers\V1\Susu\IndividualSusu\DailySusu\Lock;
 
 use App\Application\Susu\Actions\IndividualSusu\DailySusu\Lock\DailySusuLockApprovalAction;
-use App\Domain\Account\Models\AccountLock;
+use App\Domain\Account\Models\AccountPayoutLock;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
@@ -18,7 +18,7 @@ final class DailySusuLockApprovalController extends Controller
     /**
      * @param Customer $customer
      * @param DailySusu $dailySusu
-     * @param AccountLock $accountLock
+     * @param AccountPayoutLock $accountLock
      * @param DailySusuLockApprovalRequest $dailySusuLockApprovalRequest
      * @param DailySusuLockApprovalAction $dailySusuLockApprovalAction
      * @return JsonResponse
@@ -27,7 +27,7 @@ final class DailySusuLockApprovalController extends Controller
     public function __invoke(
         Customer $customer,
         DailySusu $dailySusu,
-        AccountLock $accountLock,
+        AccountPayoutLock $accountLock,
         DailySusuLockApprovalRequest $dailySusuLockApprovalRequest,
         DailySusuLockApprovalAction $dailySusuLockApprovalAction
     ): JsonResponse {

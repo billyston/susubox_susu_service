@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * @return void
+     */
     public function up(
     ): void {
         Schema::create(
@@ -19,13 +22,12 @@ return new class extends Migration
                 $table->id()->unique();
 
                 // Table related fields
-                $table->foreignId(column: 'account_id')->constrained(table: 'accounts')->unique();
+                $table->foreignId(column: 'account_id')->unique()->constrained(table: 'accounts')->cascadeOnDelete();
 
                 // Table main attributes
                 $table->bigInteger(column: 'ledger_balance')->default(value: 0);
                 $table->bigInteger(column: 'available_balance')->default(value: 0);
                 $table->string(column: 'currency')->default(value: 'GHS');
-
                 $table->string(column: 'last_transaction_id')->nullable();
                 $table->timestamp(column: 'last_reconciled_at')->nullable();
 
@@ -34,6 +36,9 @@ return new class extends Migration
             });
     }
 
+    /**
+     * @return void
+     */
     public function down(
     ): void {
         Schema::dropIfExists(

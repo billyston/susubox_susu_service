@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\IndividualSusu\DailySusu\Settlement;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Domain\Account\Models\AccountSettlement;
 use App\Domain\Customer\Models\Customer;
+use App\Domain\PaymentInstruction\Models\Settlement;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
@@ -31,7 +31,7 @@ final class DailySusuSettlementShowAction
     /**
      * @param Customer $customer
      * @param DailySusu $dailySusu
-     * @param AccountSettlement $accountSettlement
+     * @param Settlement $accountSettlement
      * @return JsonResponse
      * @throws SystemFailureException
      * @throws UnauthorisedAccessException
@@ -39,7 +39,7 @@ final class DailySusuSettlementShowAction
     public function execute(
         Customer $customer,
         DailySusu $dailySusu,
-        AccountSettlement $accountSettlement,
+        Settlement $accountSettlement,
     ): JsonResponse {
         // Execute the DailySusuSettlementShowService and return the resource
         $accountSettlement = $this->dailySusuSettlementShowService->execute(

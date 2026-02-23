@@ -10,10 +10,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * @return void
+     */
     public function up(
     ): void {
         Schema::create(
-            table: 'account_locks',
+            table: 'account_payout_locks',
             callback: function (
                 Blueprint $table
              ) {
@@ -21,22 +24,20 @@ return new class extends Migration
                 $table->id();
                 $table->uuid(column: 'resource_id')->unique()->index();
 
-                // Polymorphic relation
-                $table->morphs(name: 'lockable');
+                // Table related fields
+                $table->foreignId(column: 'account_id')->constrained(table: 'accounts')->cascadeOnDelete();
 
                 // Table main attributes
                 $table->timestamp(column: 'locked_at')->default(value: Carbon::today());
-                $table->timestamp(column: 'unlocked_at')->nullable();
-
+                $table->timestamp(column: 'expires_at')->nullable();
                 $table->boolean(column: 'accepted_terms')->default(value: false);
-
                 $table->enum(column: 'status', allowed: [
                     Statuses::PENDING->value,
                     Statuses::APPROVED->value,
-                    Statuses::ACTIVE->value,
                     Statuses::CANCELLED->value,
+                    Statuses::ACTIVE->value,
                     Statuses::SUSPENDED->value,
-                    Statuses::COMPLETED->value,
+                    Statuses::EXPIRED->value,
                 ])->default(value: Statuses::PENDING->value);
 
                 // Timestamps (created_at / updated_at) fields
@@ -44,10 +45,13 @@ return new class extends Migration
             });
     }
 
+    /**
+     * @return void
+     */
     public function down(
     ): void {
         Schema::dropIfExists(
-            table: 'account_locks'
+            table: 'account_payout_locks'
         );
     }
 };

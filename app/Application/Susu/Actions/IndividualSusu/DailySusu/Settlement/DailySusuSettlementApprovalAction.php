@@ -6,7 +6,7 @@ namespace App\Application\Susu\Actions\IndividualSusu\DailySusu\Settlement;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Application\Transaction\DTOs\SettlementApprovalResponseDTO;
-use App\Domain\Account\Models\AccountSettlement;
+use App\Domain\PaymentInstruction\Models\Settlement;
 use App\Domain\PaymentInstruction\Services\PaymentInstructionApprovalStatusUpdateService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
@@ -32,18 +32,18 @@ final class DailySusuSettlementApprovalAction
 
     /**
      * @param DailySusu $dailySusu
-     * @param AccountSettlement $accountSettlement
+     * @param Settlement $accountSettlement
      * @return JsonResponse
      * @throws SystemFailureException
      * @throws UnknownCurrencyException
      */
     public function execute(
         DailySusu $dailySusu,
-        AccountSettlement $accountSettlement,
+        Settlement $accountSettlement,
     ): JsonResponse {
         // Execute the PaymentInstructionApprovalStatusUpdateService and return the resource
         $paymentInstruction = $this->paymentInstructionApprovalStatusUpdateService->execute(
-            paymentInstruction: $accountSettlement->payment,
+            paymentInstruction: $accountSettlement->paymentInstruction,
             status: Statuses::APPROVED->value,
         );
 

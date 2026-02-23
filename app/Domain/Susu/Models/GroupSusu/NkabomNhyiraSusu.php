@@ -4,35 +4,74 @@ declare(strict_types=1);
 
 namespace App\Domain\Susu\Models\GroupSusu;
 
-use App\Domain\Shared\Models\Duration;
-use App\Domain\Shared\Models\Frequency;
-use Brick\Money\Money;
+use App\Domain\Account\Models\Account;
+use App\Domain\Shared\Models\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
+/**
+ * Class NkabomNhyiraSusu
+ *
+ * Represents a traditional group-based rotational Susu savings scheme
+ * associated with a specific Account.
+ *
+ * The NkabomNhyiraSusu model defines a collective savings structure
+ * where members contribute periodically into a common pool and receive
+ * payouts in rotation based on allocated slots. Each member may hold
+ * one or more slots depending on configured limits.
+ *
+ * This model governs participation rules such as slot limits per member,
+ * payout automation behavior, and configurable group settings stored
+ * within metadata.
+ *
+ * Key Responsibilities:
+ * - Associates the rotational Susu scheme with an Account.
+ * - Defines minimum and maximum slot allocations per member.
+ * - Controls whether payouts are processed automatically.
+ * - Stores flexible operational configuration via metadata.
+ *
+ * Routing:
+ * - Uses `resource_id` as the route key for public-facing identification.
+ *
+ * Attributes:
+ * @property int $id
+ * @property string $resource_id
+ * @property int $account_id
+ * @property int $min_slot_per_member
+ * @property int $max_slot_per_member
+ * @property bool $auto_payout
+ * @property array|null $metadata
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ *
+ * Relationships:
+ * @property-read Account $account
+ *
+ * Domain Notes:
+ * - Each slot represents an entitlement to receive one payout cycle.
+ * - Members may acquire multiple slots within configured limits.
+ * - When `auto_payout` is enabled, disbursements may be triggered automatically upon cycle completion.
+ * - Designed for traditional rotating savings and credit association flows.
+ */
 final class NkabomNhyiraSusu extends Model
 {
-    public $timestamps = false;
+    use HasUuid;
 
     protected $guarded = ['id'];
 
     protected $casts = [
-        'susu_amount' => Money::class,
-        'extra_data' => 'array',
+        'auto_payout' => 'boolean',
+        'metadata' => 'array',
     ];
 
     protected $fillable = [
         'resource_id',
-        'group_account_id',
-        'frequency_id',
-        'cycle_duration_id',
-        'susu_amount',
-        'currency',
-        'member_min_slot',
-        'member_max_slot',
-        'filled_slots',
-        'extra_data',
+        'account_id',
+        'min_slot_per_member',
+        'max_slot_per_member',
+        'auto_payout',
+        'metadata',
     ];
 
     /**
@@ -46,44 +85,11 @@ final class NkabomNhyiraSusu extends Model
     /**
      * @return BelongsTo
      */
-    public function groupAccount(
+    public function account(
     ): BelongsTo {
         return $this->belongsTo(
-            related: GroupAccount::class,
-            foreignKey: 'group_account_id'
-        );
-    }
-
-    /**
-     * @return BelongsTo
-     */
-    public function frequency(
-    ): BelongsTo {
-        return $this->belongsTo(
-            related: Frequency::class,
-            foreignKey: 'frequency_id'
-        );
-    }
-
-    /**
-     * @return BelongsTo
-     */
-    public function cycleDuration(
-    ): BelongsTo {
-        return $this->belongsTo(
-            related: Duration::class,
-            foreignKey: 'cycle_duration_id'
-        );
-    }
-
-    /**
-     * @return HasMany
-     */
-    public function members(
-    ): HasMany {
-        return $this->hasMany(
-            related: NkabomNhyiraSusuMember::class,
-            foreignKey: 'nkabom_nhyira_susu_id',
+            related: Account::class,
+            foreignKey: 'account_id',
         );
     }
 }

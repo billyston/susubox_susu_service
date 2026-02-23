@@ -20,7 +20,7 @@ final class AccountPauseResource extends JsonResource
         // Return the resource array
         return [
             // Resource type and id
-            'type' => 'AccountPause',
+            'type' => 'RecurringDepositPause',
 
             // Resource exposed attributes
             'attributes' => [

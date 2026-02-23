@@ -6,8 +6,8 @@ namespace App\Application\Susu\Actions\IndividualSusu\DailySusu\Pause;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Application\Transaction\DTOs\RecurringDeposit\RecurringDepositResponseDTO;
-use App\Domain\Account\Models\AccountPause;
 use App\Domain\Account\Services\AccountPause\AccountPauseStatusUpdateService;
+use App\Domain\PaymentInstruction\Models\RecurringDepositPause;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Interface\Resources\V1\Account\AccountPauseResource;
@@ -33,12 +33,12 @@ final class DailySusuPauseApprovalAction
     }
 
     /**
-     * @param AccountPause $accountPause
+     * @param RecurringDepositPause $accountPause
      * @return JsonResponse
      * @throws SystemFailureException
      */
     public function execute(
-        AccountPause $accountPause,
+        RecurringDepositPause $accountPause,
     ): JsonResponse {
         // Build the RecurringDepositResponseDTO
         $responseDTO = RecurringDepositResponseDTO::fromDomain(

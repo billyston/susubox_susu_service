@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * @return void
+     */
     public function up(
     ): void {
         Schema::create(
@@ -20,18 +23,19 @@ return new class extends Migration
                 $table->uuid(column: 'resource_id')->unique()->index();
 
                 // Table related fields
-                $table->foreignId(column: 'individual_account_id')->constrained(table: 'individual_accounts')->cascadeOnDelete();
-                $table->foreignId(column: 'wallet_id')->constrained(table: 'wallets');
-                $table->foreignId(column: 'frequency_id')->constrained(table: 'frequencies');
+                $table->foreignId(column: 'account_id')->constrained(table: 'accounts')->cascadeOnDelete();
 
                 // Table main attributes
-                $table->bigInteger(column: 'susu_amount');
-                $table->bigInteger(column: 'initial_deposit');
-                $table->string(column: 'currency')->default(value: 'GHS');
-                $table->json(column: 'extra_data')->nullable();
+                $table->json(column: 'metadata')->nullable();
+
+                // Timestamps (created_at / updated_at) fields
+                $table->timestamps();
             });
     }
 
+    /**
+     * @return void
+     */
     public function down(
     ): void {
         Schema::dropIfExists(

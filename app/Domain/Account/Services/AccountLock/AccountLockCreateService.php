@@ -6,7 +6,7 @@ namespace App\Domain\Account\Services\AccountLock;
 
 use App\Application\Account\DTOs\AccountLockRequestDTO;
 use App\Application\Shared\Helpers\Helpers;
-use App\Domain\Account\Models\AccountLock;
+use App\Domain\Account\Models\AccountPayoutLock;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use Carbon\Carbon;
@@ -23,7 +23,7 @@ final class AccountLockCreateService
     public function execute(
         Model $susuAccount,
         AccountLockRequestDTO $requestDTO
-    ): AccountLock {
+    ): AccountPayoutLock {
         try {
             // Execute the database transaction
             return DB::transaction(function () use (
@@ -35,7 +35,7 @@ final class AccountLockCreateService
                     date: $requestDTO->duration
                 )->days;
 
-                // Create and return the AccountLock
+                // Create and return the AccountPayoutLock
                 return $susuAccount->accountLocks()->create([
                     'locked_at' => Carbon::today(),
                     'unlocked_at' => Helpers::getDateWithOffset(

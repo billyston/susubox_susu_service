@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * @return void
+     */
     public function up(
     ): void {
         Schema::create(
@@ -23,34 +26,29 @@ return new class extends Migration
                 $table->uuid(column: 'resource_id')->unique()->index();
 
                 // Table related fields
-                $table->foreignId(column: 'individual_account_id')->constrained(table: 'individual_accounts')->cascadeOnDelete();
-                $table->foreignId(column: 'wallet_id')->constrained(table: 'wallets');
-                $table->foreignId(column: 'frequency_id')->constrained(table: 'frequencies');
-                $table->foreignId(column: 'duration_id')->constrained(table: 'durations');
+                $table->foreignId(column: 'account_id')->constrained(table: 'accounts')->cascadeOnDelete();
+                $table->foreignId(column: 'duration_id')->constrained(table: 'durations')->cascadeOnDelete();
 
                 // Table main attributes
                 $table->bigInteger(column: 'target_amount');
-                $table->bigInteger(column: 'susu_amount');
-                $table->bigInteger(column: 'initial_deposit');
                 $table->string(column: 'currency')->default(value: 'GHS');
                 $table->date(column: 'start_date')->default(value: Carbon::today());
                 $table->date(column: 'end_date')->default(value: Helpers::getEndCollectionDate());
-                $table->boolean(column: 'rollover_enabled')->default(value: true);
                 $table->boolean(column: 'is_collateralized')->default(value: false);
-                $table->enum(column: 'recurring_debit_status', allowed: [
-                    Statuses::ACTIVE->value,
-                    Statuses::PENDING->value,
-                    Statuses::PAUSED->value,
-                    Statuses::STOPPED->value,
-                ])->default(value: Statuses::PENDING->value);
-                $table->enum(column: 'withdrawal_status', allowed: [
+                $table->enum(column: 'payout_status', allowed: [
                     Statuses::ACTIVE->value,
                     Statuses::LOCKED->value,
                 ])->default(value: Statuses::LOCKED->value);
-                $table->json(column: 'extra_data')->nullable();
+                $table->json(column: 'metadata')->nullable();
+
+                // Timestamps (created_at / updated_at) fields
+                $table->timestamps();
             });
     }
 
+    /**
+     * @return void
+     */
     public function down(
     ): void {
         Schema::dropIfExists(

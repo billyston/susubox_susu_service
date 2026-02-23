@@ -29,7 +29,7 @@ final class GoalGetterSusuPauseCancelRequest extends FormRequest
             'data.type' => [
                 'required',
                 'string',
-                'in:AccountPause',
+                'in:RecurringDepositPause',
             ],
         ];
     }

@@ -40,8 +40,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  */
 final class SusuScheme extends Model
 {
-    public $timestamps = false;
-
     protected $guarded = ['id'];
 
     protected $casts = [];
@@ -67,7 +65,7 @@ final class SusuScheme extends Model
     /**
      * @return HasOne
      */
-    public function charges(
+    public function feeAndCharges(
     ): HasOne {
         return $this->hasOne(
             related: FeesAndCharge::class,

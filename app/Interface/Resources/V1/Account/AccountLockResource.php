@@ -20,7 +20,7 @@ final class AccountLockResource extends JsonResource
         // Return the resource array
         return [
             // Resource type and id
-            'type' => 'AccountLock',
+            'type' => 'AccountPayoutLock',
 
             // Resource exposed attributes
             'attributes' => [

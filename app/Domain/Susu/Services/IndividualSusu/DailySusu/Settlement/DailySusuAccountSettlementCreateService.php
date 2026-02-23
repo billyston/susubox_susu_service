@@ -6,9 +6,9 @@ namespace App\Domain\Susu\Services\IndividualSusu\DailySusu\Settlement;
 
 use App\Application\Susu\ValueObjects\IndividualSusu\DailySusu\Settlement\DailySusuSettlementCalculationVO;
 use App\Domain\Account\Models\Account;
-use App\Domain\Account\Models\AccountSettlement;
-use App\Domain\Account\Models\AccountSettlementCycle;
 use App\Domain\PaymentInstruction\Models\PaymentInstruction;
+use App\Domain\PaymentInstruction\Models\Settlement;
+use App\Domain\PaymentInstruction\Models\SettlementCycle;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -25,7 +25,7 @@ final class DailySusuAccountSettlementCreateService
         iterable $accountCycles,
         PaymentInstruction $paymentInstruction,
         DailySusuSettlementCalculationVO $requestVO
-    ): AccountSettlement {
+    ): Settlement {
         try {
             // Execute the database transaction
             return DB::transaction(function () use (
@@ -34,8 +34,8 @@ final class DailySusuAccountSettlementCreateService
                 $paymentInstruction,
                 $requestVO
             ) {
-                // Create a new AccountSettlement
-                $settlement = AccountSettlement::create([
+                // Create a new Settlement
+                $settlement = Settlement::create([
                     'account_id' => $account->id,
                     'payment_instruction_id' => $paymentInstruction->id,
                     'settlement_scope' => $requestVO->settlementScope,
@@ -47,7 +47,7 @@ final class DailySusuAccountSettlementCreateService
 
                 // Loop through the $accountCycles and link the settlement to account_cycle
                 foreach ($accountCycles as $cycle) {
-                    AccountSettlementCycle::create([
+                    SettlementCycle::create([
                         'account_settlement_id' => $settlement->id,
                         'account_cycle_id' => $cycle->id,
                     ]);

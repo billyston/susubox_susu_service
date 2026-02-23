@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\Shared\Models;
 
-use Eloquent;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,30 +13,53 @@ use Illuminate\Support\Carbon;
 /**
  * Class FeesAndCharge
  *
+ * Represents a configurable fee or charge rule applied to a specific Susu scheme.
+ *
+ * The FeesAndCharge model defines how and when fees are calculated within
+ * the system. It supports different calculation types (e.g., percentage-based
+ * or fixed amount), event-based triggers (e.g., deposit, withdrawal, payout),
+ * and effective date ranges for controlled activation.
+ *
+ * This model enables dynamic pricing and fee management across various
+ * Susu schemes, ensuring flexibility and proper financial governance.
+ *
+ * Purpose:
+ * - Define fee rules tied to a SusuScheme.
+ * - Specify calculation type and fee value.
+ * - Control activation using `is_active` and effective date ranges.
+ * - Support scheme-level overrides through related FeeOverride records.
+ *
+ * Routing:
+ * - Uses `resource_id` as the route key for public-facing identification.
+ *
+ * Attributes:
  * @property int $id
  * @property string $resource_id
  * @property int $susu_scheme_id
  * @property string $event
  * @property string $calculation_type
- * @property float $value
+ * @property string $value
  * @property bool $is_active
  * @property Carbon|null $effective_from
  * @property Carbon|null $effective_to
  *
- * @property SusuScheme $scheme
- * @property Collection|FeeOverride[] $overrides
+ * Relationships:
+ * @property-read SusuScheme $susuScheme
+ * @property-read Collection|FeeOverride[] $feeOverrides
  *
- * @method static Builder|FeesAndCharge whereResourceId(string $resourceId)
- * @method static Builder|FeesAndCharge whereIsActive(bool $active)
- * @method static Builder|FeesAndCharge active()
+ * Methods:
+ * - getRouteKeyName(): string
+ *   Returns 'resource_id' for route model binding.
  *
- * @mixin Eloquent
+ * Domain Notes:
+ * - `calculation_type` may define whether the value is fixed or percentage-based.
+ * - `event` determines when the fee is applied in the transaction lifecycle.
+ * - Effective date fields allow versioned fee configurations over time.
+ * - Overrides allow granular adjustments at account or user level.
  */
 final class FeesAndCharge extends Model
 {
     use HasUuid;
-
-    public $timestamps = false;
 
     protected $guarded = ['id'];
 
@@ -71,7 +92,7 @@ final class FeesAndCharge extends Model
     /**
      * @return BelongsTo
      */
-    public function scheme(
+    public function susuScheme(
     ): BelongsTo {
         return $this->belongsTo(
             related: SusuScheme::class,
@@ -82,7 +103,7 @@ final class FeesAndCharge extends Model
     /**
      * @return HasMany
      */
-    public function overrides(
+    public function feeOverrides(
     ): HasMany {
         return $this->hasMany(
             related: FeeOverride::class,

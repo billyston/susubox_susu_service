@@ -39,7 +39,7 @@ final class DailySusuSettlementIndexService
                     );
                 }
 
-                // Return the AccountSettlement collection
+                // Return the Settlement collection
                 return $dailySusu->account->settlements;
             });
         } catch (

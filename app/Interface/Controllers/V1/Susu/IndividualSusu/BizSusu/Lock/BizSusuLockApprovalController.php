@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Interface\Controllers\V1\Susu\IndividualSusu\BizSusu\Lock;
 
 use App\Application\Susu\Actions\IndividualSusu\BizSusu\Lock\BizSusuLockApprovalAction;
-use App\Domain\Account\Models\AccountLock;
+use App\Domain\Account\Models\AccountPayoutLock;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\BizSusu;
@@ -18,7 +18,7 @@ final class BizSusuLockApprovalController extends Controller
     /**
      * @param Customer $customer
      * @param BizSusu $bizSusu
-     * @param AccountLock $accountLock
+     * @param AccountPayoutLock $accountLock
      * @param BizSusuLockApprovalRequest $bizSusuLockApprovalRequest
      * @param BizSusuLockApprovalAction $bizSusuLockApprovalAction
      * @return JsonResponse
@@ -27,7 +27,7 @@ final class BizSusuLockApprovalController extends Controller
     public function __invoke(
         Customer $customer,
         BizSusu $bizSusu,
-        AccountLock $accountLock,
+        AccountPayoutLock $accountLock,
         BizSusuLockApprovalRequest $bizSusuLockApprovalRequest,
         BizSusuLockApprovalAction $bizSusuLockApprovalAction
     ): JsonResponse {

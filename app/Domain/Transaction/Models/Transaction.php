@@ -8,86 +8,103 @@ use App\Domain\Account\Models\Account;
 use App\Domain\Customer\Models\Wallet;
 use App\Domain\PaymentInstruction\Models\PaymentInstruction;
 use App\Domain\Shared\Casts\MoneyCasts;
+use App\Domain\Shared\Models\HasUuid;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Transaction Model
+ * Class Transaction
  *
- * This model represents a single financial transaction within the system.
- * A transaction is the atomic record of value movement and can be either
- * a credit or a debit against a wallet or account.
+ * Represents a financial transaction in the SusuBox system, capturing all
+ * details of money movement for accounts and wallets. This model handles
+ * both credits and debits, associating them with accounts, wallets, and
+ * payment instructions, and provides rich metadata for reporting and
+ * auditing purposes.
  *
+ * Purpose:
+ * - Track money movement within the platform for accounts and wallets.
+ * - Associate each transaction with a category, account, wallet, and
+ *   optionally a payment instruction.
+ * - Store financial amounts including base amount, charge, and total.
+ * - Record transaction date, status, and additional descriptive metadata.
+ * - Generate clear narrations for each transaction for audit and user
+ *   communication purposes.
+ *
+ * Routing:
+ * - Uses `resource_id` as the route key for public-facing identification.
+ *
+ * Attributes:
  * @property int $id
  * @property string $resource_id
- *
+ * @property int $transaction_category_id
+ * @property int|null $payment_instruction_id
  * @property int|null $account_id
  * @property int|null $wallet_id
- * @property int|null $payment_instruction_id
- * @property int|null $transaction_category_id
- *
  * @property string $transaction_type
- * @property string|null $reference_number
- * @property string|null $frequencies
- *
- * @property mixed $amount
- * @property mixed $charge
- * @property mixed $total
+ * @property string $reference_number
+ * @property float|int $amount
+ * @property float|int $charge
+ * @property float|int $total
  * @property string $currency
- *
- * @property string|null $wallet
  * @property string|null $description
  * @property string|null $narration
- *
- * @property string|Carbon|null $date
+ * @property Carbon $date
  * @property string|null $status_code
  * @property string|null $status
- *
- * @property array|null $extra_data
- *
+ * @property array|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
- * @property-read TransactionCategory|null $category
+ * Relationships:
+ * @property-read TransactionCategory $category
  * @property-read Account|null $account
- * @property-read Wallet|null $walletRelation
- * @property-read PaymentInstruction|null $payment
+ * @property-read Wallet|null $wallet
+ * @property-read PaymentInstruction|null $paymentInstruction
  *
- * @mixin Builder
+ * Methods:
+ * - static narration(TransactionCategory|string $category, float $amount, string $account_number, string $wallet, string $date): string
+ *   Generates a formatted narration describing the transaction, suitable for
+ *   user statements and audit logs.
+ * - getMetadata(): array
+ *   Returns the extra metadata associated with the transaction.
+ *
+ * Domain Notes:
+ * - All monetary values are cast using MoneyCasts for precision.
+ * - Useful for reporting, reconciliations, and end-user account statements.
  */
 final class Transaction extends Model
 {
+    use HasUuid;
+
     protected $guarded = ['id'];
 
     protected $casts = [
         'amount' => MoneyCasts::class,
         'total' => MoneyCasts::class,
         'charge' => MoneyCasts::class,
-        'extra_data' => 'array',
+        'date' => 'datetime',
+        'metadata' => 'array',
     ];
 
     protected $fillable = [
         'resource_id',
-        'account_id',
-        'payment_instruction_id',
         'transaction_category_id',
-        'transaction_type',
+        'payment_instruction_id',
+        'account_id',
         'wallet_id',
+        'transaction_type',
         'reference_number',
-        'frequencies',
         'amount',
         'charge',
         'total',
         'currency',
-        'wallet',
         'description',
         'narration',
         'date',
         'status_code',
         'status',
-        'extra_data',
+        'metadata',
     ];
 
     /**
@@ -134,7 +151,7 @@ final class Transaction extends Model
     /**
      * @return BelongsTo
      */
-    public function payment(
+    public function paymentInstruction(
     ): BelongsTo {
         return $this->belongsTo(
             related: PaymentInstruction::class,

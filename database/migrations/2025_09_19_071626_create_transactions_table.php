@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * @return void
+     */
     public function up(
     ): void {
         Schema::create(
@@ -22,9 +25,9 @@ return new class extends Migration
                 $table->uuid(column: 'resource_id')->unique()->index();
 
                 // Table related fields
-                $table->foreignId(column: 'account_id')->constrained(table: 'accounts');
-                $table->foreignId(column: 'payment_instruction_id')->constrained(table: 'payment_instructions');
                 $table->foreignId(column: 'transaction_category_id')->constrained(table: 'transaction_categories');
+                $table->foreignId(column: 'payment_instruction_id')->constrained(table: 'payment_instructions');
+                $table->foreignId(column: 'account_id')->constrained(table: 'accounts');
                 $table->foreignId(column: 'wallet_id')->constrained(table: 'wallets');
 
                 // Table main attributes
@@ -33,16 +36,13 @@ return new class extends Migration
                     TransactionType::DEBIT->value,
                 ]);
                 $table->string(column: 'reference_number')->index();
-
-                $table->integer(column: 'amount')->default(value: 0);
-                $table->integer(column: 'charge')->default(value: 0);
-                $table->integer(column: 'total')->default(value: 0);
+                $table->bigInteger(column: 'amount')->default(value: 0);
+                $table->bigInteger(column: 'charge')->default(value: 0);
+                $table->bigInteger(column: 'total')->default(value: 0);
                 $table->string(column: 'currency')->default(value: 'GHS');
-
                 $table->string(column: 'description')->nullable();
                 $table->string(column: 'narration')->nullable();
                 $table->dateTime(column: 'date');
-
                 $table->string(column: 'status_code');
                 $table->enum(column: 'status', allowed: [
                     Statuses::SUCCESS->value,
@@ -51,14 +51,16 @@ return new class extends Migration
                     Statuses::REFUNDED->value,
                     Statuses::CANCELLED->value,
                 ]);
-
-                $table->json(column: 'extra_data')->nullable();
+                $table->json(column: 'metadata')->nullable();
 
                 // Timestamps (created_at / updated_at) fields
                 $table->timestamps();
             });
     }
 
+    /**
+     * @return void
+     */
     public function down(
     ): void {
         Schema::dropIfExists(

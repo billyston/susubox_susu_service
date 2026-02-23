@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Account\Services\AccountPause;
 
-use App\Domain\Account\Models\AccountPause;
+use App\Domain\PaymentInstruction\Models\RecurringDepositPause;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -14,26 +14,26 @@ final class AccountPauseByResourceIdService
 {
     /**
      * @param string $accountPauseResource
-     * @return AccountPause
+     * @return RecurringDepositPause
      * @throws SystemFailureException
      */
     public function execute(
         string $accountPauseResource
-    ): AccountPause {
+    ): RecurringDepositPause {
         try {
             // Run the query inside a database transaction
             $AccountPause = DB::transaction(
-                fn () => AccountPause::query()
+                fn () => RecurringDepositPause::query()
                     ->where('resource_id', $accountPauseResource)
                     ->first()
             );
 
-            // Throw exception if no AccountPause is found
+            // Throw exception if no RecurringDepositPause is found
             if (! $AccountPause) {
                 throw new SystemFailureException('There is no account pause record found for resource id: '.$accountPauseResource);
             }
 
-            // Return the AccountPause resource if found
+            // Return the RecurringDepositPause resource if found
             return $AccountPause;
         } catch (
             Throwable $throwable

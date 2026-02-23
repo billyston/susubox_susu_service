@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Account\Models;
+namespace App\Domain\Account\Models\ViewModels;
 
+use App\Domain\Account\Models\Account;
 use App\Domain\Shared\Casts\MoneyCasts;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,6 +26,9 @@ final class AccountTransactionStatsView extends Model
         'last_failed_transaction_date' => 'datetime',
     ];
 
+    /**
+     * @return BelongsTo
+     */
     public function account(
     ): BelongsTo {
         return $this->belongsTo(

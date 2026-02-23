@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace App\Application\Account\DTOs;
 
 use App\Domain\Account\Models\Account;
-use App\Domain\Account\Models\AccountLock;
+use App\Domain\Account\Models\AccountPayoutLock;
 use App\Domain\Customer\Models\Customer;
 use Carbon\Carbon;
 
 final readonly class AccountLockResponseDTO
 {
     /**
-     * @param AccountLock $accountLock
+     * @param AccountPayoutLock $accountLock
      * @param Account $account
      * @param Customer $customer
      */
     public function __construct(
-        public AccountLock $accountLock,
+        public AccountPayoutLock $accountLock,
         public Account $account,
         public Customer $customer,
     ) {
@@ -25,13 +25,13 @@ final readonly class AccountLockResponseDTO
     }
 
     /**
-     * @param AccountLock $accountLock
+     * @param AccountPayoutLock $accountLock
      * @param Account $account
      * @param Customer $customer
      * @return self
      */
     public static function fromDomain(
-        AccountLock $accountLock,
+        AccountPayoutLock $accountLock,
         Account $account,
         Customer $customer
     ): self {
@@ -49,11 +49,11 @@ final readonly class AccountLockResponseDTO
     ): array {
         return [
             'data' => [
-                'type' => 'AccountLock',
+                'type' => 'AccountPayoutLock',
                 'attributes' => [
                     'resource_id' => $this->accountLock->resource_id,
                     'locked_at' => Carbon::parse($this->accountLock->locked_at)->toFormattedDateString(),
-                    'unlocked_at' => Carbon::parse($this->accountLock->unlocked_at)->toFormattedDateString(),
+                    'expires_at' => Carbon::parse($this->accountLock->expires_at)->toFormattedDateString(),
                     'status' => $this->accountLock->status,
                 ],
                 'relationships' => [

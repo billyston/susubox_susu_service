@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\IndividualSusu\DailySusu\Lock;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Domain\Account\Models\AccountLock;
+use App\Domain\Account\Models\AccountPayoutLock;
 use App\Domain\Account\Services\AccountLock\AccountLockStatusUpdateService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
@@ -26,12 +26,12 @@ final class DailySusuLockCancelAction
     }
 
     /**
-     * @param AccountLock $accountLock
+     * @param AccountPayoutLock $accountLock
      * @return JsonResponse
      * @throws SystemFailureException
      */
     public function execute(
-        AccountLock $accountLock,
+        AccountPayoutLock $accountLock,
     ): JsonResponse {
         // Execute the PaymentInstructionCancelService and return the resource
         $this->accountLockStatusUpdateService->execute(

@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * @return void
+     */
     public function up(
     ): void {
         Schema::create(
@@ -21,38 +24,34 @@ return new class extends Migration
                 $table->uuid(column: 'resource_id')->unique()->index();
 
                 // Table related fields
+                $table->foreignId(column: 'account_customer_id')->constrained()->cascadeOnDelete();
                 $table->foreignId(column: 'account_cycle_id')->constrained(table: 'account_cycles')->cascadeOnDelete();
-                $table->foreignId(column: 'transaction_id')->constrained(table: 'transactions')->cascadeOnDelete();
                 $table->foreignId(column: 'payment_instruction_id')->constrained(table: 'payment_instructions')->cascadeOnDelete();
+                $table->foreignId(column: 'transaction_id')->unique()->constrained(table: 'transactions')->cascadeOnDelete();
 
                 // Table main attributes
                 $table->integer(column: 'frequencies');
                 $table->bigInteger(column: 'amount');
                 $table->string(column: 'currency')->default(value: 'GHS');
-
                 $table->enum(column: 'entry_type', allowed: [
                     'initial',
                     'recurring',
                     'direct',
                 ])->index();
-
                 $table->timestamp(column: 'posted_at');
-
                 $table->enum(column: 'status', allowed: [
                     Statuses::SUCCESS->value,
                     Statuses::REVERSED->value,
                 ])->index();
-
-                $table->unique([
-                    'account_cycle_id',
-                    'transaction_id',
-                ]);
 
                 // Timestamps (created_at / updated_at) fields
                 $table->timestamps();
             });
     }
 
+    /**
+     * @return void
+     */
     public function down(
     ): void {
         Schema::dropIfExists(

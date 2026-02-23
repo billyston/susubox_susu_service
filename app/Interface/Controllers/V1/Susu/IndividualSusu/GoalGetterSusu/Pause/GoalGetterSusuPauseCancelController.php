@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Interface\Controllers\V1\Susu\IndividualSusu\GoalGetterSusu\Pause;
 
 use App\Application\Susu\Actions\IndividualSusu\GoalGetterSusu\Pause\GoalGetterSusuPauseCancelAction;
-use App\Domain\Account\Models\AccountPause;
 use App\Domain\Customer\Models\Customer;
+use App\Domain\PaymentInstruction\Models\RecurringDepositPause;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\GoalGetterSusu;
 use App\Interface\Controllers\Shared\Controller;
@@ -18,7 +18,7 @@ final class GoalGetterSusuPauseCancelController extends Controller
     /**
      * @param Customer $customer
      * @param GoalGetterSusu $goalGetterSusu
-     * @param AccountPause $accountPause
+     * @param RecurringDepositPause $accountPause
      * @param GoalGetterSusuPauseCancelRequest $goalGetterSusuPauseCancelRequest
      * @param GoalGetterSusuPauseCancelAction $goalGetterSusuPauseCancelAction
      * @return JsonResponse
@@ -27,7 +27,7 @@ final class GoalGetterSusuPauseCancelController extends Controller
     public function __invoke(
         Customer $customer,
         GoalGetterSusu $goalGetterSusu,
-        AccountPause $accountPause,
+        RecurringDepositPause $accountPause,
         GoalGetterSusuPauseCancelRequest $goalGetterSusuPauseCancelRequest,
         GoalGetterSusuPauseCancelAction $goalGetterSusuPauseCancelAction
     ): JsonResponse {

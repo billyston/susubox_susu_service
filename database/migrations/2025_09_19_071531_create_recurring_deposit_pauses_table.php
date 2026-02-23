@@ -16,7 +16,7 @@ return new class extends Migration
     public function up(
     ): void {
         Schema::create(
-            table: 'account_pauses',
+            table: 'recurring_deposit_pauses',
             callback: function (
                 Blueprint $table
              ) {
@@ -25,15 +25,12 @@ return new class extends Migration
                 $table->uuid(column: 'resource_id')->unique()->index();
 
                 // Polymorphic relation
-                $table->foreignId(column: 'payment_instruction_id')->constrained(table: 'payment_instructions');
-                $table->morphs(name: 'pauseable');
+                $table->foreignId(column: 'recurring_deposit_id')->constrained(table: 'recurring_deposits')->cascadeOnDelete();
 
                 // Table main attributes
                 $table->timestamp(column: 'paused_at')->default(value: Carbon::today());
-                $table->timestamp(column: 'resumed_at')->nullable();
-
+                $table->timestamp(column: 'expires_at')->nullable();
                 $table->boolean(column: 'accepted_terms')->default(value: false);
-
                 $table->enum(column: 'status', allowed: [
                     Statuses::PENDING->value,
                     Statuses::APPROVED->value,
@@ -55,7 +52,7 @@ return new class extends Migration
     public function down(
     ): void {
         Schema::dropIfExists(
-            table: 'account_pauses'
+            table: 'recurring_deposit_pauses'
         );
     }
 };

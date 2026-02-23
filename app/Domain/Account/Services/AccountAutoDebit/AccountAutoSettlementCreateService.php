@@ -6,11 +6,11 @@ namespace App\Domain\Account\Services\AccountAutoDebit;
 
 use App\Domain\Account\Models\Account;
 use App\Domain\Account\Models\AccountCycle;
-use App\Domain\Account\Models\AccountSettlement;
-use App\Domain\Account\Models\AccountSettlementCycle;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Models\Wallet;
 use App\Domain\PaymentInstruction\Models\PaymentInstruction;
+use App\Domain\PaymentInstruction\Models\Settlement;
+use App\Domain\PaymentInstruction\Models\SettlementCycle;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Transaction\Enums\TransactionCategoryCode;
@@ -63,8 +63,8 @@ final class AccountAutoSettlementCreateService
                         'extra_data' => $requestVO['extra_data'] ?? null,
                     ]);
 
-                    // Create a new AccountSettlement
-                    $accountSettlement = AccountSettlement::create([
+                    // Create a new Settlement
+                    $accountSettlement = Settlement::create([
                         'account_id' => $account->id,
                         'payment_instruction_id' => $paymentInstruction->id,
                         'settlement_scope' => $requestVO['extra_data']['settlement_scope'],
@@ -74,8 +74,8 @@ final class AccountAutoSettlementCreateService
                         'status' => $paymentInstruction->status,
                     ]);
 
-                    // Link the AccountSettlement with the AccountSettlementCycle
-                    AccountSettlementCycle::create([
+                    // Link the Settlement with the SettlementCycle
+                    SettlementCycle::create([
                         'account_settlement_id' => $accountSettlement->id,
                         'account_cycle_id' => $accountCycle->id,
                     ]);

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\IndividualSusu\DailySusu\Settlement;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Domain\Account\Models\AccountSettlement;
 use App\Domain\Account\Services\AccountAutoDebit\AccountSettlementStatusUpdateService;
+use App\Domain\PaymentInstruction\Models\Settlement;
 use App\Domain\PaymentInstruction\Services\PaymentInstructionCancelService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
@@ -31,12 +31,12 @@ final class DailySusuSettlementCancelAction
     }
 
     /**
-     * @param AccountSettlement $accountSettlement
+     * @param Settlement $accountSettlement
      * @return JsonResponse
      * @throws SystemFailureException
      */
     public function execute(
-        AccountSettlement $accountSettlement,
+        Settlement $accountSettlement,
     ): JsonResponse {
         // Execute the PaymentInstructionCancelService and return the resource
         $this->accountSettlementStatusUpdateService->execute(

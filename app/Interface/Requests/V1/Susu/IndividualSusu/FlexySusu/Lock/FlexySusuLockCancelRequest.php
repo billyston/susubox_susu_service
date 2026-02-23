@@ -29,7 +29,7 @@ final class FlexySusuLockCancelRequest extends FormRequest
             'data.type' => [
                 'required',
                 'string',
-                'in:AccountLock',
+                'in:AccountPayoutLock',
             ],
         ];
     }

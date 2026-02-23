@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Susu\Services\IndividualSusu\DailySusu\Settlement;
 
 use App\Domain\Account\Models\AccountCycle;
-use App\Domain\Account\Models\AccountSettlement;
+use App\Domain\PaymentInstruction\Models\Settlement;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use Illuminate\Support\Facades\DB;
@@ -16,13 +16,13 @@ use Throwable;
 final class DailySusuSettlementCompletedService
 {
     /**
-     * @param AccountSettlement $accountSettlement
-     * @return AccountSettlement
+     * @param Settlement $accountSettlement
+     * @return Settlement
      * @throws SystemFailureException
      */
     public static function execute(
-        AccountSettlement $accountSettlement,
-    ): AccountSettlement {
+        Settlement $accountSettlement,
+    ): Settlement {
         try {
             // Execute the database transaction
             return DB::transaction(
@@ -36,7 +36,7 @@ final class DailySusuSettlementCompletedService
                     ]);
 
                     // Fetch all account cycles linked to this settlement
-                    $accountSettlement->cycles()
+                    $accountSettlement->accountCycles()
                         ->whereNull('settled_at')
                         ->each(function (AccountCycle $cycle) {
                             $cycle->update([
@@ -45,7 +45,7 @@ final class DailySusuSettlementCompletedService
                             ]);
                         });
 
-                    // Return the AccountSettlement
+                    // Return the Settlement
                     return $accountSettlement->refresh();
                 }
             );

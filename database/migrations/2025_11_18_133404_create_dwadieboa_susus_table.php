@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * @return void
+     */
     public function up(
     ): void {
         Schema::create(
@@ -17,17 +20,22 @@ return new class extends Migration
              ) {
                 // Table ids
                 $table->id();
+                $table->uuid(column: 'resource_id')->unique()->index();
 
                 // Table related fields
+                $table->foreignId(column: 'account_id')->constrained(table: 'accounts')->cascadeOnDelete();
 
                 // Table main attributes
-
-                // Foreign key fields
+                $table->json(column: 'metadata')->nullable();
 
                 // Timestamps (created_at / updated_at) fields
+                $table->timestamps();
             });
     }
 
+    /**
+     * @return void
+     */
     public function down(
     ): void {
         Schema::dropIfExists(

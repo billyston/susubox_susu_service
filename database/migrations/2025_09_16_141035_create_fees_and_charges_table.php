@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * @return void
+     */
     public function up(
     ): void {
         Schema::create(
@@ -20,21 +23,24 @@ return new class extends Migration
                 $table->uuid(column: 'resource_id')->unique()->index();
 
                 // Table related fields
-                $table->foreignId(column: 'susu_scheme_id')->constrained(table: 'susu_schemes');
+                $table->foreignId(column: 'susu_scheme_id')->index()->constrained(table: 'susu_schemes');
 
                 // Table main attributes
-                $table->string(column: 'event');
+                $table->string(column: 'event')->index();
                 $table->string(column: 'calculation_type');
                 $table->decimal(column: 'value', total: 12, places: 4)->nullable();
-
-                $table->boolean(column: 'is_active')->default(true);
+                $table->boolean(column: 'is_active')->default(value: true)->index();
                 $table->timestamp(column: 'effective_from')->nullable();
                 $table->timestamp(column: 'effective_to')->nullable();
 
-                $table->index(['susu_scheme_id', 'event', 'is_active']);
+                // Timestamps (created_at / updated_at) fields
+                $table->timestamps();
             });
     }
 
+    /**
+     * @return void
+     */
     public function down(
     ): void {
         Schema::dropIfExists(

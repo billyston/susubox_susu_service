@@ -20,6 +20,7 @@ enum Statuses: string
     case REVERSED = 'reversed';
     case REFUNDED = 'refunded';
     case CANCELLED = 'cancelled';
+    case EXPIRED = 'expired';
     case APPROVED = 'approved';
     case CLOSED = 'closed';
     case TERMINATED = 'terminated';

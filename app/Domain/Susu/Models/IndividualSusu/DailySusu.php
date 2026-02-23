@@ -5,119 +5,78 @@ declare(strict_types=1);
 namespace App\Domain\Susu\Models\IndividualSusu;
 
 use App\Domain\Account\Models\Account;
-use App\Domain\Account\Models\AccountAutoDebit;
-use App\Domain\Account\Models\AccountCycle;
-use App\Domain\Account\Models\AccountCycleDefinition;
-use App\Domain\Account\Models\AccountLock;
-use App\Domain\Account\Models\AccountPause;
-use App\Domain\Customer\Models\Customer;
-use App\Domain\Customer\Models\Wallet;
-use App\Domain\Shared\Casts\MoneyCasts;
-use App\Domain\Shared\Enums\Statuses;
-use App\Domain\Shared\Models\Frequency;
 use App\Domain\Shared\Models\HasUuid;
-use Brick\Money\Money;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Support\Carbon;
 
 /**
  * Class DailySusu
  *
- * Represents a daily susu (savings) plan for an individual account.
- * Handles cycles, auto-debit events, locks, pauses, and related financial data.
+ * Represents a traditional individual-based Susu savings plan with a 31-day cycle,
+ * where contributions are collected daily and savings become eligible for payout
+ * at the end of each cycle. A new cycle starts automatically after the previous cycle ends.
  *
+ * The DailySusu model manages the lifecycle of an individual’s daily savings,
+ * including start and end dates, payout eligibility, automatic rollover into
+ * a new cycle, optional collateralization, and additional configuration stored in metadata.
+ *
+ * Key Responsibilities:
+ * - Associates the daily Susu plan with an Account.
+ * - Tracks the 31-day savings cycle duration.
+ * - Handles automatic rollover into a new cycle after payout.
+ * - Indicates whether the savings plan is collateralized.
+ * - Manages payout processing status and optional automatic payout.
+ * - Stores flexible configuration in the metadata field.
+ *
+ * Routing:
+ * - Uses `resource_id` as the route key for public-facing identification.
+ *
+ * Attributes:
  * @property int $id
  * @property string $resource_id
- * @property int $individual_account_id
- * @property int|null $wallet_id
- * @property int|null $frequency_id
- *
- * @property string $currency
- * @property Money $susu_amount
- * @property Money $initial_deposit
- * @property int|null $initial_deposit_frequency
- *
- * @property Carbon|null $start_date
- * @property Carbon|null $end_date
- *
- * @property bool $rollover_enabled
+ * @property int $account_id
+ * @property Carbon $start_date
+ * @property Carbon $end_date
  * @property bool $is_collateralized
- * @property string|null $recurring_debit_status
- * @property string|null $settlement_status
- * @property bool|null $auto_settlement
+ * @property bool $auto_payout
+ * @property string|null $payout_status
+ * @property array|null $metadata
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  *
- * @property string|null $action
- * @property bool|null $from_state
- * @property bool|null $to_state
- * @property Carbon|null $requested_at
- * @property Carbon|null $effective_at
- * @property string|null $initiator
- * @property int|null $initiator_id
+ * Relationships:
+ * @property-read Account $account
  *
- * @property array $extra_data
- *
- * @property-read IndividualAccount $individual
- * @property-read Customer|null $customer
- * @property-read Account|HasOneThrough $account
- * @property-read Wallet|null $wallet
- * @property-read Frequency|null $frequency
- * @property-read AccountCycleDefinition|null $cycleDefinition
- * @property-read Collection|AccountCycle[] $cycles
- * @property-read Collection|AccountLock[] $accountLocks
- * @property-read AccountLock|null $activeAccountLock
- * @property-read Collection|AccountPause[] $accountPauses
- * @property-read AccountPause|null $activeAccountPause
- * @property-read Collection|AccountAutoDebit[] $autoDebits
- * @property-read AccountAutoDebit|null $lastAutoDebitEvent
+ * Domain Notes:
+ * - Designed for individual daily contribution savings schemes.
+ * - Each 31-day cycle accrues savings that become eligible for payout.
+ * - Automatic cycle rollover ensures continuous savings without manual intervention.
+ * - Collateralization and auto-payout options enable integration with credit or automated disbursement flows.
  */
 final class DailySusu extends Model
 {
     use HasUuid;
 
-    public $timestamps = false;
-
     protected $guarded = ['id'];
 
     protected $casts = [
-        'susu_amount' => MoneyCasts::class,
-        'initial_deposit' => MoneyCasts::class,
-        'extra_data' => 'array',
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'is_collateralized' => 'boolean',
+        'auto_payout' => 'boolean',
+        'metadata' => 'array',
     ];
 
     protected $fillable = [
         'resource_id',
-        'individual_account_id',
-        'wallet_id',
-        'frequency_id',
-
-        'susu_amount',
-        'initial_deposit',
-        'initial_deposit_frequency',
-        'currency',
-
+        'account_id',
         'start_date',
         'end_date',
-
-        'rollover_enabled',
         'is_collateralized',
-        'recurring_debit_status',
-
-        'settlement_status',
-        'auto_settlement',
-
-        'extra_data',
-        'action',
-        'from_state',
-        'to_state',
-        'requested_at',
-        'effective_at',
-        'initiator',
-        'initiator_id',
+        'auto_payout',
+        'payout_status',
+        'metadata',
     ];
 
     /**
@@ -131,196 +90,11 @@ final class DailySusu extends Model
     /**
      * @return BelongsTo
      */
-    public function individual(
-    ): BelongsTo {
-        return $this->belongsTo(
-            related: IndividualAccount::class,
-            foreignKey: 'individual_account_id',
-        );
-    }
-
-    /**
-     * @return BelongsTo
-     */
-    public function customer(
-    ): BelongsTo {
-        return $this->belongsTo(
-            related: Customer::class,
-            foreignKey: 'customer_id',
-        );
-    }
-
-    /**
-     * @return HasOneThrough
-     */
     public function account(
-    ): HasOneThrough {
-        return $this->hasOneThrough(
+    ): BelongsTo {
+        return $this->belongsTo(
             related: Account::class,
-            through: IndividualAccount::class,
-            firstKey: 'id',
-            secondKey: 'accountable_id',
-            localKey: 'individual_account_id',
-            secondLocalKey: 'id'
-        )->where(
-            column: 'accountable_type',
-            operator: IndividualAccount::class,
+            foreignKey: 'account_id',
         );
-    }
-
-    /**
-     * @return BelongsTo
-     */
-    public function wallet(
-    ): BelongsTo {
-        return $this->belongsTo(
-            related: Wallet::class,
-            foreignKey: 'wallet_id',
-        );
-    }
-
-    /**
-     * @return BelongsTo
-     */
-    public function frequency(
-    ): BelongsTo {
-        return $this->belongsTo(
-            related: Frequency::class,
-            foreignKey: 'frequency_id',
-        );
-    }
-
-    /**
-     * @return MorphOne
-     */
-    public function cycleDefinition(
-    ): MorphOne {
-        return $this->morphOne(
-            related: AccountCycleDefinition::class,
-            name: 'definable'
-        );
-    }
-
-    /**
-     * @return MorphMany
-     */
-    public function cycles(
-    ): MorphMany {
-        return $this->morphMany(
-            related: AccountCycle::class,
-            name: 'cycleable'
-        );
-    }
-
-    /**
-     * @return MorphMany
-     */
-    public function accountLocks(
-    ): MorphMany {
-        return $this->morphMany(
-            related: AccountLock::class,
-            name: 'lockable'
-        );
-    }
-
-    /**
-     * @return AccountLock|null
-     */
-    public function activeAccountLock(
-    ): ?AccountLock {
-        return $this->accountLocks()
-            ->where('status', Statuses::ACTIVE->value)
-            ->where(function ($query) {
-                $query->whereNull('unlocked_at')
-                    ->orWhere('unlocked_at', '>', Carbon::now());
-            })
-            ->latest('locked_at')
-            ->first();
-    }
-
-    /**
-     * @return bool
-     */
-    public function isLocked(
-    ): bool {
-        return $this->settlement_status === Statuses::LOCKED->value
-            && $this->activeAccountLock() !== null;
-    }
-
-    /**
-     * @return MorphMany
-     */
-    public function pauses(
-    ): MorphMany {
-        return $this->morphMany(
-            related: AccountPause::class,
-            name: 'pauseable'
-        );
-    }
-
-    /**
-     * @return AccountLock|null
-     */
-    public function activeAccountPause(
-    ): ?AccountPause {
-        return $this->pauses()
-            ->where('status', Statuses::ACTIVE->value)
-            ->where(function ($query) {
-                $query->whereNull('paused_at')
-                    ->orWhere('resumed_at', '>', Carbon::now());
-            })
-            ->latest('paused_at')
-            ->first();
-    }
-
-    /**
-     * @return bool
-     */
-    public function isPaused(
-    ): bool {
-        return $this->recurring_debit_status === Statuses::PAUSED->value
-            && $this->activeAccountPause() !== null;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function charge(
-    ): ?string {
-        return $this->individual->scheme->charges->value;
-    }
-
-    /**
-     * @return MorphMany
-     */
-    public function autoDebits(
-    ): MorphMany {
-        return $this->morphMany(
-            related: AccountAutoDebit::class,
-            name: 'debitable'
-        );
-    }
-
-    /**
-     * @return AccountAutoDebit|null
-     */
-    public function lastAutoDebitEvent(
-    ): ?AccountAutoDebit {
-        return $this->autoDebitEvents()
-            ->latest('id')
-            ->first();
-    }
-
-    /**
-     * @return void
-     */
-    protected static function booted(
-    ): void {
-        DailySusu::deleting(function (DailySusu $dailySusu) {
-            $dailySusu->accountLocks()->delete();
-        });
-        DailySusu::deleting(function (DailySusu $dailySusu) {
-            $dailySusu->pauses()->delete();
-        });
     }
 }

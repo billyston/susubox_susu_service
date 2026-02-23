@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Account\Services\AccountAutoDebit;
 
-use App\Domain\Account\Models\AccountSettlement;
+use App\Domain\PaymentInstruction\Models\Settlement;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
@@ -15,15 +15,15 @@ use Throwable;
 final class AccountSettlementStatusUpdateService
 {
     /**
-     * @param AccountSettlement $accountSettlement
+     * @param Settlement $accountSettlement
      * @param string $status
-     * @return AccountSettlement
+     * @return Settlement
      * @throws SystemFailureException
      */
     public static function execute(
-        AccountSettlement $accountSettlement,
+        Settlement $accountSettlement,
         string $status,
-    ): AccountSettlement {
+    ): Settlement {
         try {
             // Execute the database transaction
             return DB::transaction(

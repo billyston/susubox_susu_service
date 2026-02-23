@@ -8,7 +8,7 @@ use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Application\Transaction\DTOs\RecurringDeposit\RecurringDepositRequestDTO;
 use App\Application\Transaction\Jobs\RecurringDeposit\RecurringDepositPausedJob;
 use App\Application\Transaction\Jobs\RecurringDeposit\RecurringDepositResumedJob;
-use App\Domain\Account\Models\AccountPause;
+use App\Domain\PaymentInstruction\Models\RecurringDepositPause;
 use App\Domain\Shared\Enums\Statuses;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,12 +17,12 @@ final class AccountPauseAction
 {
     /**
      * @param array $request
-     * @param AccountPause $accountPause
+     * @param RecurringDepositPause $accountPause
      * @return JsonResponse
      */
     public function execute(
         array $request,
-        AccountPause $accountPause,
+        RecurringDepositPause $accountPause,
     ): JsonResponse {
         // Build the RecurringDepositRequestDTO
         $requestDTO = RecurringDepositRequestDTO::fromPayload(

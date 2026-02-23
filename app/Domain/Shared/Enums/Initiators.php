@@ -4,10 +4,13 @@ namespace App\Domain\Shared\Enums;
 
 enum Initiators: string
 {
-    case CUSTOMER = 'customer';
     case ADMINISTRATOR = 'administrator';
     case SYSTEM = 'system';
+    case CUSTOMER = 'customer';
+    case MEMBER = 'member';
     case SCHEDULED = 'scheduled';
+    case ORGANIZER = 'organizer';
+    case SIGNATORY = 'signatory';
 
     /**
      * @return array

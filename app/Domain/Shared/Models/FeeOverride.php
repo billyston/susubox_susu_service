@@ -4,44 +4,60 @@ declare(strict_types=1);
 
 namespace App\Domain\Shared\Models;
 
-use Eloquent;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Carbon;
 
 /**
  * Class FeeOverride
  *
+ * Represents a contextual override to a predefined fee or charge rule.
+ *
+ * The FeeOverride model allows modification of an existing FeesAndCharge
+ * configuration for a specific overrideable entity (e.g., account, customer,
+ * or scheme instance). It supports temporary or permanent adjustments,
+ * enabling flexible fee governance and exception handling.
+ *
+ * Purpose:
+ * - Override standard fee rules defined in FeesAndCharge.
+ * - Apply custom fee values for specific entities or conditions.
+ * - Support time-bound overrides using start and end dates.
+ * - Enable activation and deactivation of overrides dynamically.
+ * - Record justification for fee adjustments.
+ *
+ * Routing:
+ * - Uses `resource_id` as the route key for public-facing identification.
+ *
+ * Attributes:
  * @property int $id
  * @property string $resource_id
- *
+ * @property string $overrideable
  * @property int $fee_and_charge_id
  * @property string $override_type
- *
- * @property float $value
+ * @property string $value
  * @property Carbon|null $starts_at
  * @property Carbon|null $ends_at
  * @property bool $is_active
- *
  * @property string|null $reason
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  *
- * @property FeesAndCharge $feeAndCharge
- * @property Model|MorphTo $overrideable
+ * Relationships:
+ * @property-read FeesAndCharge $fees
  *
- * @method static Builder|FeeOverride whereResourceId(string $resourceId)
- * @method static Builder|FeeOverride whereOverrideType(string $type)
- * @method static Builder|FeeOverride whereIsActive(bool $active)
- * @method static Builder|FeeOverride active()
+ * Methods:
+ * - getRouteKeyName(): string
+ *   Returns 'resource_id' for route model binding.
  *
- * @mixin Eloquent
+ * Domain Notes:
+ * - `override_type` may define whether the override replaces or adjusts the base fee (e.g., fixed, percentage, discount).
+ * - Effective period is controlled via `starts_at` and `ends_at`.
+ * - Only active overrides within the valid date range should be applied.
+ * - Designed to support promotional pricing, negotiated terms, or special customer arrangements.
  */
 final class FeeOverride extends Model
 {
     use HasUuid;
-
-    public $timestamps = false;
 
     protected $guarded = ['id'];
 
@@ -81,13 +97,5 @@ final class FeeOverride extends Model
             related: FeesAndCharge::class,
             foreignKey: 'fee_and_charge_id'
         );
-    }
-
-    /**
-     * @return MorphTo
-     */
-    public function overrideable(
-    ): MorphTo {
-        return $this->morphTo();
     }
 }

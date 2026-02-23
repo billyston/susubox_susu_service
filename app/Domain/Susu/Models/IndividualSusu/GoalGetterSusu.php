@@ -5,99 +5,84 @@ declare(strict_types=1);
 namespace App\Domain\Susu\Models\IndividualSusu;
 
 use App\Domain\Account\Models\Account;
-use App\Domain\Account\Models\AccountLock;
-use App\Domain\Account\Models\AccountPause;
-use App\Domain\Customer\Models\Customer;
-use App\Domain\Customer\Models\Wallet;
 use App\Domain\Shared\Casts\MoneyCasts;
-use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Models\Duration;
-use App\Domain\Shared\Models\Frequency;
 use App\Domain\Shared\Models\HasUuid;
-use Carbon\Carbon;
-use Eloquent;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Carbon;
 
 /**
  * Class GoalGetterSusu
  *
- * @property string $id
+ * Represents a goal-oriented individual savings plan where a customer sets a
+ * specific target amount to be saved over a defined duration. This scheme is
+ * designed to help customers achieve financial goals with structured saving
+ * and optional collateralization.
+ *
+ * The GoalGetterSusu model manages contributions toward a target amount,
+ * tracks the start and end dates for the savings duration, and records
+ * payout eligibility and status.
+ *
+ * Key Responsibilities:
+ * - Associates the goal-oriented savings plan with an Account.
+ * - Tracks the target savings amount and the saving duration.
+ * - Handles start and end dates for the plan.
+ * - Indicates whether the savings are collateralized.
+ * - Stores payout status and additional scheme configuration in metadata.
+ *
+ * Routing:
+ * - Uses `resource_id` as the route key for public-facing identification.
+ *
+ * Attributes:
+ * @property int $id
  * @property string $resource_id
- * @property string $individual_account_id
- * @property string|null $customer_id
- * @property string $wallet_id
- * @property string $frequency_id
- * @property string $duration_id
- *
- * Monetary fields (casted via MoneyCasts):
- * @property mixed $target_amount
- * @property mixed $susu_amount
- * @property mixed $initial_deposit
- *
+ * @property int $account_id
+ * @property int $duration_id
+ * @property float|int $target_amount
  * @property string $currency
- * @property string|Carbon $start_date
- * @property string|Carbon|null $end_date
+ * @property Carbon $start_date
+ * @property Carbon $end_date
  * @property bool $is_collateralized
- * @property string $withdrawal_status
- *
- * Extra data:
- * @property array|null $extra_data
+ * @property string|null $payout_status
+ * @property array|null $metadata
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  *
  * Relationships:
- * @property IndividualAccount $individual
- * @property Customer|null $customer
- * @property Account|null $account
- * @property Wallet $wallet
- * @property Frequency $frequency
- * @property Duration $duration
+ * @property-read Account $account
+ * @property-read Duration $duration
  *
- * @method static Builder|GoalGetterSusu whereResourceId($value)
- * @method static Builder|GoalGetterSusu whereIndividualAccountId($value)
- * @method static Builder|GoalGetterSusu whereWalletId($value)
- * @method static Builder|GoalGetterSusu whereFrequencyId($value)
- * @method static Builder|GoalGetterSusu whereDurationId($value)
- *
- * @mixin Eloquent
+ * Domain Notes:
+ * - Suitable for customers saving toward specific goals.
+ * - Payout is generally made at the end of the duration or upon achieving the target.
+ * - Metadata may include additional rules, reminders, or personalized plan details.
  */
 final class GoalGetterSusu extends Model
 {
     use HasUuid;
 
-    public $timestamps = false;
-
     protected $guarded = ['id'];
 
     protected $casts = [
         'target_amount' => MoneyCasts::class,
-        'susu_amount' => MoneyCasts::class,
-        'initial_deposit' => MoneyCasts::class,
-        'extra_data' => 'array',
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'is_collateralized' => 'boolean',
+        'metadata' => 'array',
     ];
 
     protected $fillable = [
         'resource_id',
-        'individual_account_id',
-        'wallet_id',
-        'frequency_id',
+        'account_id',
         'duration_id',
         'target_amount',
-        'susu_amount',
-        'initial_deposit',
         'currency',
         'start_date',
         'end_date',
         'is_collateralized',
-        'recurring_debit_status',
-        'withdrawal_status',
-        'extra_data',
-        'accepted_terms',
-        'unlocked_at',
-        'locked_at',
-        'status',
+        'payout_status',
+        'metadata',
     ];
 
     /**
@@ -111,62 +96,11 @@ final class GoalGetterSusu extends Model
     /**
      * @return BelongsTo
      */
-    public function individual(
-    ): BelongsTo {
-        return $this->belongsTo(
-            related: IndividualAccount::class,
-            foreignKey: 'individual_account_id',
-        );
-    }
-
-    /**
-     * @return BelongsTo
-     */
-    public function customer(
-    ): BelongsTo {
-        return $this->belongsTo(
-            related: Customer::class,
-            foreignKey: 'customer_id',
-        );
-    }
-
-    /**
-     * @return HasOneThrough
-     */
     public function account(
-    ): HasOneThrough {
-        return $this->hasOneThrough(
+    ): BelongsTo {
+        return $this->belongsTo(
             related: Account::class,
-            through: IndividualAccount::class,
-            firstKey: 'id',
-            secondKey: 'accountable_id',
-            localKey: 'individual_account_id',
-            secondLocalKey: 'id'
-        )->where(
-            column: 'accountable_type',
-            operator: IndividualAccount::class,
-        );
-    }
-
-    /**
-     * @return BelongsTo
-     */
-    public function wallet(
-    ): BelongsTo {
-        return $this->belongsTo(
-            related: Wallet::class,
-            foreignKey: 'wallet_id',
-        );
-    }
-
-    /**
-     * @return BelongsTo
-     */
-    public function frequency(
-    ): BelongsTo {
-        return $this->belongsTo(
-            related: Frequency::class,
-            foreignKey: 'frequency_id',
+            foreignKey: 'account_id',
         );
     }
 
@@ -179,85 +113,5 @@ final class GoalGetterSusu extends Model
             related: Duration::class,
             foreignKey: 'duration_id'
         );
-    }
-
-    /**
-     * @return MorphMany
-     */
-    public function accountLocks(
-    ): MorphMany {
-        return $this->morphMany(
-            related: AccountLock::class,
-            name: 'lockable'
-        );
-    }
-
-    public function activeAccountLock(
-    ): ?AccountLock {
-        return $this->accountLocks()
-            ->where('status', Statuses::ACTIVE->value)
-            ->where(function ($query) {
-                $query->whereNull('unlocked_at')
-                    ->orWhere('unlocked_at', '>', Carbon::now());
-            })
-            ->latest('locked_at')
-            ->first();
-    }
-
-    /**
-     * @return bool
-     */
-    public function isLocked(
-    ): bool {
-        return $this->withdrawal_status === Statuses::LOCKED->value
-            && $this->activeAccountLock() !== null;
-    }
-
-    /**
-     * @return MorphMany
-     */
-    public function accountPauses(
-    ): MorphMany {
-        return $this->morphMany(
-            related: AccountPause::class,
-            name: 'pauseable'
-        );
-    }
-
-    /**
-     * @return AccountLock|null
-     */
-    public function activeAccountPause(
-    ): ?AccountPause {
-        return $this->accountPauses()
-            ->where('status', Statuses::ACTIVE->value)
-            ->where(function ($query) {
-                $query->whereNull('paused_at')
-                    ->orWhere('resumed_at', '>', Carbon::now());
-            })
-            ->latest('paused_at')
-            ->first();
-    }
-
-    /**
-     * @return bool
-     */
-    public function isPaused(
-    ): bool {
-        return $this->recurring_debit_status === Statuses::PAUSED->value
-            && $this->activeAccountPause() !== null;
-    }
-
-    /**
-     * @return void
-     */
-    protected static function booted(
-    ): void {
-        GoalGetterSusu::deleting(function (GoalGetterSusu $goalGetterSusu) {
-            $goalGetterSusu->accountLocks()->delete();
-        });
-        GoalGetterSusu::deleting(function (GoalGetterSusu $goalGetterSusu) {
-            $goalGetterSusu->accountPauses()->delete();
-        });
     }
 }

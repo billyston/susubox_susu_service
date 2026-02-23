@@ -17,13 +17,13 @@ return new class extends Migration
     public function up(
     ): void {
         Schema::create(
-            table: 'account_settlements',
+            table: 'settlements',
             callback: function (
                 Blueprint $table
              ) {
                 // Table ids
                 $table->id();
-                $table->uuid(column: 'resource_id')->unique();
+                $table->uuid(column: 'resource_id')->unique()->index();
 
                 // Table related fields
                 $table->foreignId(column: 'account_id')->constrained(table: 'accounts')->cascadeOnDelete();
@@ -46,7 +46,6 @@ return new class extends Migration
                 $table->bigInteger(column: 'charge_amount');
                 $table->bigInteger(column: 'total_amount');
                 $table->string(column: 'currency')->default(value: 'GHS');
-
                 $table->enum(column: 'status', allowed: [
                     Statuses::PENDING->value,
                     Statuses::PROCESSING->value,
@@ -67,7 +66,7 @@ return new class extends Migration
     public function down(
     ): void {
         Schema::dropIfExists(
-            table: 'account_settlements'
+            table: 'settlements'
         );
     }
 };

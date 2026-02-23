@@ -28,8 +28,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 final class StartDate extends Model
 {
-    public $timestamps = false;
-
     protected $guarded = ['id'];
 
     protected $casts = [];

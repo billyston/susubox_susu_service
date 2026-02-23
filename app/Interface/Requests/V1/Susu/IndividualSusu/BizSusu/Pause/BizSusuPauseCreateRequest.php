@@ -26,7 +26,7 @@ final class BizSusuPauseCreateRequest extends FormRequest
             'data.type' => [
                 'required',
                 'string',
-                'in:AccountPause',
+                'in:RecurringDepositPause',
             ],
 
             'data.attributes' => [

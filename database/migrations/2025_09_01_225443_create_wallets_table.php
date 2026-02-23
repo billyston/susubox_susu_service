@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * @return void
+     */
     public function up(
     ): void {
         Schema::create(
@@ -20,7 +23,7 @@ return new class extends Migration
                 $table->uuid(column: 'resource_id')->unique()->index();
 
                 // Table related fields
-                $table->foreignId(column: 'customer_id')->index()->constrained(table: 'customers');
+                $table->foreignId(column: 'customer_id')->index()->unique()->constrained(table: 'customers')->restrictOnDelete();
 
                 // Table main attributes
                 $table->string(column: 'wallet_name');
@@ -28,16 +31,14 @@ return new class extends Migration
                 $table->string(column: 'network_code');
                 $table->string(column: 'status')->default(value: 'active');
 
-                // Constraints
-                $table->unique(['customer_id', 'wallet_number']);
-
                 // Timestamps (created_at / updated_at) fields
                 $table->timestamps();
-
-                $table->softDeletes();
             });
     }
 
+    /**
+     * @return void
+     */
     public function down(
     ): void {
         Schema::dropIfExists(

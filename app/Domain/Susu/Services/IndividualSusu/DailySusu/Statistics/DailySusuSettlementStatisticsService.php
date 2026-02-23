@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Susu\Services\IndividualSusu\DailySusu\Statistics;
 
 use App\Domain\Account\Models\Account;
-use App\Domain\Account\Models\AccountSettlement;
+use App\Domain\PaymentInstruction\Models\Settlement;
 use App\Domain\Shared\Enums\Statuses;
 use Brick\Money\Exception\MoneyMismatchException;
 use Brick\Money\Exception\UnknownCurrencyException;
@@ -100,7 +100,7 @@ final class DailySusuSettlementStatisticsService
      */
     protected function initialize(
     ): void {
-        $query = AccountSettlement::query()->where('account_id', $this->account->id)->latest();
+        $query = Settlement::query()->where('account_id', $this->account->id)->latest();
 
         if ($this->from) {
             $query->where('created_at', '>=', $this->from);
@@ -129,17 +129,17 @@ final class DailySusuSettlementStatisticsService
 
         $principalTotal = $this->sumMoney(
             $completed,
-            fn (AccountSettlement $s) => $s->principal_amount
+            fn (Settlement $s) => $s->principal_amount
         );
 
         $chargesTotal = $this->sumMoney(
             $completed,
-            fn (AccountSettlement $s) => $s->charge_amount
+            fn (Settlement $s) => $s->charge_amount
         );
 
         $totalPaid = $this->sumMoney(
             $completed,
-            fn (AccountSettlement $s) => $s->total_amount
+            fn (Settlement $s) => $s->total_amount
         );
 
         $this->statistics = [

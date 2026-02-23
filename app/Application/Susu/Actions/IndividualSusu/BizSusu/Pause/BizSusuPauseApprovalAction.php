@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\IndividualSusu\BizSusu\Pause;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Domain\Account\Models\AccountPause;
 use App\Domain\Account\Services\AccountPause\AccountPauseStatusUpdateService;
 use App\Domain\Customer\Models\Customer;
+use App\Domain\PaymentInstruction\Models\RecurringDepositPause;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\BizSusu;
@@ -28,14 +28,14 @@ final class BizSusuPauseApprovalAction
     /**
      * @param Customer $customer
      * @param BizSusu $bizSusu
-     * @param AccountPause $accountPause
+     * @param RecurringDepositPause $accountPause
      * @return JsonResponse
      * @throws SystemFailureException
      */
     public function execute(
         Customer $customer,
         BizSusu $bizSusu,
-        AccountPause $accountPause,
+        RecurringDepositPause $accountPause,
     ): JsonResponse {
         // Execute the AccountPauseStatusUpdateService
         $this->AccountPauseStatusUpdateService->execute(

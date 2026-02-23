@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Account\Services\AccountLock;
 
-use App\Domain\Account\Models\AccountLock;
+use App\Domain\Account\Models\AccountPayoutLock;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use Illuminate\Support\Facades\DB;
@@ -29,7 +29,7 @@ final class AccountUnlockDueDateService
                 $callback,
                 $chunkSize
             ) {
-                return AccountLock::query()
+                return AccountPayoutLock::query()
                     ->where('status', Statuses::ACTIVE->value)
                     ->whereNotNull('locked_at')
                     ->where('unlocked_at', '<=', now())

@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * @return void
+     */
     public function up(
     ): void {
         Schema::create(
@@ -30,9 +33,15 @@ return new class extends Migration
                 $table->timestamp(column: 'ends_at')->nullable();
                 $table->boolean(column: 'is_active')->default(true);
                 $table->string(column: 'reason')->nullable();
+
+                // Timestamps (created_at / updated_at) fields
+                $table->timestamps();
             });
     }
 
+    /**
+     * @return void
+     */
     public function down(
     ): void {
         Schema::dropIfExists(

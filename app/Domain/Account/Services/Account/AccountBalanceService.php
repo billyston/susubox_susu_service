@@ -22,7 +22,7 @@ final class AccountBalanceService
     ): AccountBalance {
         try {
             // Execute the database transaction
-            return $account->accountBalance()
+            return $account->balance()
                 ->firstOrFail();
         } catch (
             Throwable $throwable

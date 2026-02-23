@@ -69,7 +69,7 @@ final class DailySusuSettlementCompletedJob implements ShouldQueue
         Transaction $transaction,
         DailySusuSettlementCompletedService $dailySusuSettlementCompletedService
     ): void {
-        // Get the AccountSettlement
+        // Get the Settlement
         $settlement = $transaction->payment->settlement;
 
         // Terminate the process (if $settlement is already completed)

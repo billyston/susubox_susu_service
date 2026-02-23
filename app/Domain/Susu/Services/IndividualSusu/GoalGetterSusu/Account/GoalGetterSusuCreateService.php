@@ -117,7 +117,7 @@ final class GoalGetterSusuCreateService
                     'end_date' => $endDate,
                 ]);
 
-                // Create the AccountLock
+                // Create the AccountPayoutLock
                 $goalGetterSusu->accountLocks()->create([
                     'locked_at' => $requestDTO->startDate,
                     'unlocked_at' => $endDate,

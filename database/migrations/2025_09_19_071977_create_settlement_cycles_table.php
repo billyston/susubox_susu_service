@@ -8,29 +8,35 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * @return void
+     */
     public function up(
     ): void {
         Schema::create(
-            table: 'group_accounts',
+            table: 'settlement_cycles',
             callback: function (
                 Blueprint $table
              ) {
                 // Table ids
                 $table->id();
-                $table->uuid(column: 'resource_id')->unique()->index();
 
                 // Table related fields
-                $table->foreignId(column: 'susu_scheme_id')->constrained(table: 'susu_schemes');
+                $table->foreignId(column: 'settlement_id')->unique()->constrained(table: 'settlements')->cascadeOnDelete();
+                $table->foreignId(column: 'account_cycle_id')->unique()->constrained(table: 'account_cycles')->restrictOnDelete();
 
                 // Timestamps (created_at / updated_at) fields
                 $table->timestamps();
             });
     }
 
+    /**
+     * @return void
+     */
     public function down(
     ): void {
         Schema::dropIfExists(
-            table: 'group_accounts'
+            table: 'settlement_cycles'
         );
     }
 };

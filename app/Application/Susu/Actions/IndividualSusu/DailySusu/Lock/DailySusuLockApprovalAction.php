@@ -6,7 +6,7 @@ namespace App\Application\Susu\Actions\IndividualSusu\DailySusu\Lock;
 
 use App\Application\Account\Jobs\AccountLockNotificationJob;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Domain\Account\Models\AccountLock;
+use App\Domain\Account\Models\AccountPayoutLock;
 use App\Domain\Account\Services\AccountLock\AccountLockStatusUpdateService;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Enums\Statuses;
@@ -33,14 +33,14 @@ final class DailySusuLockApprovalAction
     /**
      * @param Customer $customer
      * @param DailySusu $dailySusu
-     * @param AccountLock $accountLock
+     * @param AccountPayoutLock $accountLock
      * @return JsonResponse
      * @throws SystemFailureException
      */
     public function execute(
         Customer $customer,
         DailySusu $dailySusu,
-        AccountLock $accountLock,
+        AccountPayoutLock $accountLock,
     ): JsonResponse {
         // Execute the AccountLockStatusUpdateService
         $this->accountLockStatusUpdateService->execute(

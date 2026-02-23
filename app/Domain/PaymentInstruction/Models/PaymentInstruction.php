@@ -5,68 +5,89 @@ declare(strict_types=1);
 namespace App\Domain\PaymentInstruction\Models;
 
 use App\Domain\Account\Models\Account;
-use App\Domain\Account\Models\AccountPause;
-use App\Domain\Account\Models\AccountSettlement;
+use App\Domain\Account\Models\AccountCustomer;
 use App\Domain\Customer\Models\Wallet;
 use App\Domain\Shared\Casts\MoneyCasts;
 use App\Domain\Shared\Models\HasUuid;
 use App\Domain\Transaction\Models\Transaction;
 use App\Domain\Transaction\Models\TransactionCategory;
-use Eloquent;
-use Illuminate\Database\Eloquent\Builder;
+use Brick\Money\Money;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Carbon;
 
 /**
  * Class PaymentInstruction
  *
- * @property string $id
+ * Represents a financial instruction initiated by a customer or system
+ * to perform a specific transaction such as recurring debit, direct debit,
+ * withdrawal, or settlement.
+ *
+ * The PaymentInstruction model acts as the intent or plan for a monetary
+ * operation. It records the amounts, charges, total payable, associated
+ * wallet, account, and customer details, and tracks approval and execution
+ * status. It is the bridge between customer action and the resulting
+ * Transaction records.
+ *
+ * Key Responsibilities:
+ * - Stores monetary amounts including initial, charge, and total.
+ * - Tracks the associated account, customer, and wallet.
+ * - Links to a transaction category for classification.
+ * - Tracks approval status and timestamp for authorized instructions.
+ * - Maintains execution status and other metadata.
+ * - Supports direct connection to recurring deposits and transactions generated from the instruction.
+ *
+ * Financial & Operational Notes:
+ * - `amount` represents the principal value of the instruction.
+ * - `charge` represents any fees applied.
+ * - `total` is the sum of amount and charge, representing the total to be processed.
+ * - Approval and status fields must be validated before execution.
+ *
+ * Metadata:
+ * - The `metadata` field stores additional optional data related to the instruction.
+ *
+ * Routing:
+ * - Uses `resource_id` as the route key for public-facing identification.
+ *
+ * Attributes:
+ * @property int $id
  * @property string $resource_id
- * @property string $for_type
- * @property string $for_id
- * @property string $initiated_by_type
- * @property string $initiated_by_id
- * @property string $transaction_category_id
- * @property string $account_id
- * @property string $wallet_id
- *
- * Monetary fields (casted via MoneyCasts):
- * @property mixed $initial_amount
- * @property mixed $amount
- * @property mixed $charge
- * @property mixed $total
- *
+ * @property int $transaction_category_id
+ * @property int $account_id
+ * @property int|null $account_customer_id
+ * @property int|null $wallet_id
+ * @property Money $amount
+ * @property Money|null $initial_amount
+ * @property Money $charge
+ * @property Money $total
  * @property string $currency
- * @property string $internal_reference
+ * @property string|null $internal_reference
  * @property string $transaction_type
- * @property string $accepted_terms
+ * @property bool $accepted_terms
  * @property string $approval_status
- * @property string $approved_at
+ * @property Carbon|null $approved_at
  * @property string $status
- *
- * Extra data:
- * @property array|null $extra_data
+ * @property array|null $metadata
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  *
  * Relationships:
- * @property Model $for
- * @property Model $initiator
- * @property Account|null $account
- * @property AccountSettlement|null $settlement
- * @property Wallet|null $wallet
- * @property TransactionCategory|null $transactionCategory
- * @property Collection<int, Transaction> $transactions
+ * @property-read TransactionCategory $transactionCategory
+ * @property-read Account $account
+ * @property-read AccountCustomer|null $accountCustomer
+ * @property-read Wallet|null $wallet
+ * @property-read RecurringDeposit|null $recurringDeposit
+ * @property-read Collection|Transaction[] $transactions
  *
- * @method static Builder|PaymentInstruction whereResourceId($value)
- * @method static Builder|PaymentInstruction whereTransactionCategoryId($value)
- * @method static Builder|PaymentInstruction whereAccountId($value)
- * @method static Builder|PaymentInstruction whereWalletId($value)
- * @method static Builder|PaymentInstruction whereStatus($value)
+ * Helper Methods:
+ * - getMetadata(): Returns the metadata array or an empty array if none exists.
  *
- * @mixin Eloquent
+ * Domain Notes:
+ * - Acts as the declarative intent for a transaction.
+ * - Multiple transactions may be generated from a single PaymentInstruction depending on system processing and recurring structures.
  */
 final class PaymentInstruction extends Model
 {
@@ -79,17 +100,15 @@ final class PaymentInstruction extends Model
         'amount' => MoneyCasts::class,
         'charge' => MoneyCasts::class,
         'total' => MoneyCasts::class,
-        'extra_data' => 'array',
+        'approved_at' => 'datetime',
+        'metadata' => 'array',
     ];
 
     protected $fillable = [
         'resource_id',
-        'for_type',
-        'for_id',
-        'initiated_by_type',
-        'initiated_by_id',
         'transaction_category_id',
         'account_id',
+        'account_customer_id',
         'wallet_id',
         'amount',
         'charge',
@@ -101,7 +120,7 @@ final class PaymentInstruction extends Model
         'approval_status',
         'approved_at',
         'status',
-        'extra_data',
+        'metadata',
     ];
 
     /**
@@ -113,19 +132,14 @@ final class PaymentInstruction extends Model
     }
 
     /**
-     * @return MorphTo
+     * @return BelongsTo
      */
-    public function for(
-    ): MorphTo {
-        return $this->morphTo(name: 'for');
-    }
-
-    /**
-     * @return MorphTo
-     */
-    public function initiator(
-    ): MorphTo {
-        return $this->morphTo(name: 'initiated_by');
+    public function transactionCategory(
+    ): BelongsTo {
+        return $this->belongsTo(
+            related: TransactionCategory::class,
+            foreignKey: 'transaction_category_id',
+        );
     }
 
     /**
@@ -140,13 +154,13 @@ final class PaymentInstruction extends Model
     }
 
     /**
-     * @return HasOne
+     * @return BelongsTo
      */
-    public function settlement(
-    ): HasOne {
-        return $this->hasOne(
-            related: AccountSettlement::class,
-            foreignKey: 'payment_instruction_id',
+    public function accountCustomer(
+    ): BelongsTo {
+        return $this->belongsTo(
+            related: AccountCustomer::class,
+            foreignKey: 'account_customer_id',
         );
     }
 
@@ -162,13 +176,13 @@ final class PaymentInstruction extends Model
     }
 
     /**
-     * @return BelongsTo
+     * @return HasOne
      */
-    public function transactionCategory(
-    ): BelongsTo {
-        return $this->belongsTo(
-            related: TransactionCategory::class,
-            foreignKey: 'transaction_category_id',
+    public function recurringDeposit(
+    ): HasOne {
+        return $this->hasOne(
+            related: RecurringDeposit::class,
+            foreignKey: 'payment_instruction_id',
         );
     }
 
@@ -184,21 +198,10 @@ final class PaymentInstruction extends Model
     }
 
     /**
-     * @return HasMany
-     */
-    public function pauses(
-    ): HasMany {
-        return $this->hasMany(
-            related: AccountPause::class,
-            foreignKey: 'payment_instruction_id',
-        );
-    }
-
-    /**
      * @return array
      */
     public function getMetadata(
     ): array {
-        return $this->extra_data ?? [];
+        return $this->metadata ?? [];
     }
 }

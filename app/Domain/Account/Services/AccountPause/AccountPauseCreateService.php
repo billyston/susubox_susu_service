@@ -6,8 +6,8 @@ namespace App\Domain\Account\Services\AccountPause;
 
 use App\Application\Account\DTOs\AccountPause\AccountPauseRequestDTO;
 use App\Application\Shared\Helpers\Helpers;
-use App\Domain\Account\Models\AccountPause;
 use App\Domain\PaymentInstruction\Models\PaymentInstruction;
+use App\Domain\PaymentInstruction\Models\RecurringDepositPause;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use Carbon\Carbon;
@@ -22,14 +22,14 @@ final class AccountPauseCreateService
      * @param Model $susuAccount
      * @param PaymentInstruction $paymentInstruction
      * @param AccountPauseRequestDTO $requestDTO
-     * @return AccountPause
+     * @return RecurringDepositPause
      * @throws SystemFailureException
      */
     public function execute(
         Model $susuAccount,
         PaymentInstruction $paymentInstruction,
         AccountPauseRequestDTO $requestDTO
-    ): AccountPause {
+    ): RecurringDepositPause {
         try {
             // Execute the database transaction
             return DB::transaction(function () use (
@@ -42,7 +42,7 @@ final class AccountPauseCreateService
                     date: $requestDTO->duration
                 )->days;
 
-                // Create and return the AccountLock
+                // Create and return the AccountPayoutLock
                 return $susuAccount->pauses()->create([
                     'payment_instruction_id' => $paymentInstruction->id,
                     'paused_at' => Carbon::today(),

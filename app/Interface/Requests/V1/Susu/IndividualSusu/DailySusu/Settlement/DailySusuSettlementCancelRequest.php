@@ -29,7 +29,7 @@ final class DailySusuSettlementCancelRequest extends FormRequest
             'data.type' => [
                 'required',
                 'string',
-                'in:AccountSettlement',
+                'in:Settlement',
             ],
         ];
     }

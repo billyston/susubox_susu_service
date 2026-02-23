@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Account\Services\AccountPause;
 
-use App\Domain\Account\Models\AccountPause;
+use App\Domain\PaymentInstruction\Models\RecurringDepositPause;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use Illuminate\Support\Facades\DB;
@@ -29,7 +29,7 @@ final class AccountPauseDueDateService
                 $callback,
                 $chunkSize
             ) {
-                return AccountPause::query()
+                return RecurringDepositPause::query()
                     ->where('status', Statuses::ACTIVE->value)
                     ->whereNotNull('paused_at')
                     ->where('resumed_at', '<=', now())

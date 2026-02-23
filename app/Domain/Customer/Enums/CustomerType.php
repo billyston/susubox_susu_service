@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Domain\Shared\Enums;
+namespace App\Domain\Customer\Enums;
 
-enum Role: string
+enum CustomerType: string
 {
-    case ADMIN = 'administrator';
-    case ORGANIZER = 'organizer';
+    case PRIMARY = 'primary';
     case MEMBER = 'member';
 
     /**

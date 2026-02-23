@@ -5,19 +5,20 @@ declare(strict_types=1);
 namespace App\Application\Account\DTOs\AccountPause;
 
 use App\Domain\Account\Models\Account;
-use App\Domain\Account\Models\AccountPause;
 use App\Domain\Customer\Models\Customer;
+use App\Domain\PaymentInstruction\Models\RecurringDepositPause;
 use Carbon\Carbon;
 
 final readonly class AccountPauseResponseDTO
 {
     /**
-     * @param AccountPause $accountPause
+     * @param RecurringDepositPause $accountPause
      * @param Account $account
      * @param Customer $customer
+     * @param array $action
      */
     public function __construct(
-        public AccountPause $accountPause,
+        public RecurringDepositPause $accountPause,
         public Account $account,
         public Customer $customer,
         public array $action,
@@ -26,17 +27,17 @@ final readonly class AccountPauseResponseDTO
     }
 
     /**
-     * @param AccountPause $accountPause
+     * @param RecurringDepositPause $accountPause
      * @param array $action
      * @return self
      */
     public static function fromDomain(
-        AccountPause $accountPause,
+        RecurringDepositPause $accountPause,
         array $action
     ): self {
         // Get the account
-        $account = $accountPause->payment->account;
-        $customer = $accountPause->payment->initiator;
+        $account = $accountPause->account;
+        $customer = $accountPause->initiator;
 
         return new self(
             accountPause: $accountPause,
@@ -53,11 +54,11 @@ final readonly class AccountPauseResponseDTO
     ): array {
         return [
             'data' => [
-                'type' => 'AccountLock',
+                'type' => 'AccountPayoutLock',
                 'attributes' => [
                     'resource_id' => $this->accountPause->resource_id,
                     'paused_at' => Carbon::parse($this->accountPause->paused_at)->toFormattedDateString(),
-                    'resumed_at' => Carbon::parse($this->accountPause->resumed_at)->toFormattedDateString(),
+                    'expires_at' => Carbon::parse($this->accountPause->expires_at)->toFormattedDateString(),
                     'action' => $this->action['action'],
                     'status' => $this->action['status'],
                 ],

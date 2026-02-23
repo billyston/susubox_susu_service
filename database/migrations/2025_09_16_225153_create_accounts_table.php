@@ -2,14 +2,17 @@
 
 declare(strict_types=1);
 
+use App\Domain\Account\Enums\AccountType;
 use App\Domain\Shared\Enums\Statuses;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * @return void
+     */
     public function up(
     ): void {
         Schema::create(
@@ -21,28 +24,32 @@ return new class extends Migration
                 $table->id();
                 $table->uuid(column: 'resource_id')->unique()->index();
 
-                // Add polymorphic fields for accountable relationship
-                $table->string(column: 'accountable_type')->nullable()->index();
-                $table->unsignedBigInteger(column: 'accountable_id')->nullable()->index();
+                // Table related / Foreign key fields
+                $table->foreignId(column: 'susu_scheme_id')->unique()->constrained()->cascadeOnDelete();
 
                 // Table main attributes
                 $table->string(column: 'account_name')->index();
                 $table->string(column: 'account_number')->unique()->index();
-                $table->dateTime(column: 'account_activity_period')->default(value: Carbon::now());
+                $table->enum(column: 'account_type', allowed: [
+                    AccountType::INDIVIDUAL,
+                    AccountType::GROUP,
+                ])->index();
                 $table->boolean(column: 'accepted_terms')->default(value: false);
                 $table->enum(column: 'status', allowed: [
-                    Statuses::PENDING->value,
-                    Statuses::APPROVED->value,
-                    Statuses::ACTIVE->value,
-                    Statuses::CLOSED->value,
-                    Statuses::SUSPENDED->value,
-                ])->default(value: Statuses::PENDING->value);
+                    Statuses::PENDING,
+                    Statuses::ACTIVE,
+                    Statuses::CLOSED,
+                    Statuses::SUSPENDED,
+                ])->default(value: Statuses::PENDING);
 
                 // Timestamps (created_at / updated_at) fields
                 $table->timestamps();
             });
     }
 
+    /**
+     * @return void
+     */
     public function down(
     ): void {
         Schema::dropIfExists(

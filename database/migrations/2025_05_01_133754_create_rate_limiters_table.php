@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * @return void
+     */
     public function up(
     ): void {
         Schema::create(
@@ -21,18 +24,13 @@ return new class extends Migration
                 // Table related fields
 
                 // Table main attributes
-                $table->string(column: 'key')->comment(comment: 'The rate limit key (e.g., user ID, IP, API key)');
-                $table->string(column: 'group')->comment(comment: 'Rate limit group / endpoint name');
+                $table->string(column: 'key')->index()->comment(comment: 'The rate limit key (e.g., user ID, IP, API key)');
+                $table->string(column: 'group')->index()->comment(comment: 'Rate limit group / endpoint name');
                 $table->integer(column: 'attempts')->default(value: 0);
                 $table->timestamp(column: 'reset_at')->nullable();
-                $table->timestamp(column: 'expires_at')->nullable();
+                $table->timestamp(column: 'expires_at')->index()->nullable();
 
-                $table->index(['key', 'group']);
-                $table->index(columns: 'expires_at');
-
-                // Foreign key fields
-
-                // Timestamps (created_at/updated_at) fields
+                // Timestamps (created_at / updated_at) fields
                 $table->timestamps();
             });
     }

@@ -26,7 +26,7 @@ final class FlexySusuLockCreateRequest extends FormRequest
             'data.type' => [
                 'required',
                 'string',
-                'in:AccountLock',
+                'in:AccountPayoutLock',
             ],
 
             'data.attributes' => [

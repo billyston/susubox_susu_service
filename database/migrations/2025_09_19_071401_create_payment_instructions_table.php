@@ -24,23 +24,16 @@ return new class extends Migration
                 $table->id();
                 $table->uuid(column: 'resource_id')->unique()->index();
 
-                // What is the payment for (Polymorphic: IndividualAccount, GroupAccount)
-                $table->string(column: 'for_type')->index();
-                $table->unsignedBigInteger(column: 'for_id')->index();
-
-                // Who initiated the payment (Polymorphic: Customer, GroupMember)
-                $table->string(column: 'initiated_by_type')->index();
-                $table->unsignedBigInteger(column: 'initiated_by_id')->index();
-
                 // Table related fields
-                $table->foreignId(column: 'account_id')->index()->constrained(table: 'accounts');
-                $table->foreignId(column: 'transaction_category_id')->index()->constrained(table: 'transaction_categories');
-                $table->foreignId(column: 'wallet_id')->constrained(table: 'wallets');
+                $table->foreignId(column: 'transaction_category_id')->index()->constrained();
+                $table->foreignId(column: 'account_id')->constrained()->cascadeOnDelete();
+                $table->foreignId(column: 'account_customer_id')->constrained()->cascadeOnDelete();
+                $table->foreignId(column: 'wallet_id')->constrained()->restrictOnDelete();
 
                 // Table main attributes
-                $table->integer(column: 'amount')->default(value: 0);
-                $table->integer(column: 'charge')->nullable()->default(value: 0);
-                $table->integer(column: 'total')->nullable()->default(value: 0);
+                $table->bigInteger(column: 'amount')->default(value: 0);
+                $table->bigInteger(column: 'charge')->nullable()->default(value: 0);
+                $table->bigInteger(column: 'total')->nullable()->default(value: 0);
                 $table->string(column: 'currency')->nullable()->default(value: 'GHS');
 
                 $table->string(column: 'internal_reference')->index()->nullable();
@@ -61,9 +54,8 @@ return new class extends Migration
                     Statuses::SUCCESS->value,
                     Statuses::TERMINATED->value,
                     Statuses::FAILED->value,
-                    Statuses::PAUSED->value,
                 ])->index()->default(value: Statuses::PENDING->value);
-                $table->json(column: 'extra_data')->nullable();
+                $table->json(column: 'metadata')->nullable();
 
                 // Timestamps (created_at / updated_at) fields
                 $table->timestamps();

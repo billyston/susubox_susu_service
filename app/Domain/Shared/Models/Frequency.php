@@ -4,12 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Shared\Models;
 
-use App\Domain\Susu\Models\IndividualSusu\BizSusu;
-use App\Domain\Susu\Models\IndividualSusu\DailySusu;
-use App\Domain\Susu\Models\IndividualSusu\DriveToOwnSusu;
-use App\Domain\Susu\Models\IndividualSusu\GoalGetterSusu;
-use Eloquent;
-use Illuminate\Database\Eloquent\Builder;
+use App\Domain\PaymentInstruction\Models\RecurringDeposit;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -17,33 +12,44 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * Class Frequency
  *
- * @property string $id
+ * Represents a contribution or repayment frequency configuration within
+ * the SusuBox system.
+ *
+ * The Frequency model defines how often a recurring financial action occurs
+ * (e.g., daily, weekly, monthly). It is primarily used by recurring savings
+ * or deposit-based schemes such as RecurringDeposit to standardize scheduling
+ * behavior across the platform.
+ *
+ * Purpose:
+ * - Define standardized contribution or repayment intervals.
+ * - Control which frequencies are available for use via the `is_allowed` flag.
+ * - Provide descriptive metadata for system configuration and reporting.
+ *
+ * Routing:
+ * - Uses `resource_id` as the route key for public-facing identification.
+ *
+ * Attributes:
+ * @property int $id
  * @property string $resource_id
  * @property string $name
- * @property string $alias
- * @property string $code
+ * @property string|null $alias
+ * @property string|null $code
  * @property string|null $description
  * @property bool $is_allowed
  *
  * Relationships:
- * @property Collection<int, DailySusu> $dailySusu
- * @property Collection<int, BizSusu> $bizSusu
- * @property Collection<int, GoalGetterSusu> $goalGetterSusu
- * @property Collection<int, DriveToOwnSusu> $driveToOwnSusu
+ * @property-read Collection|RecurringDeposit[] $recurringDeposits
  *
- * @method static Builder|Frequency whereResourceId($value)
- * @method static Builder|Frequency whereName($value)
- * @method static Builder|Frequency whereAlias($value)
- * @method static Builder|Frequency whereCode($value)
- * @method static Builder|Frequency whereDescription($value)
- * @method static Builder|Frequency whereIsAllowed($value)
+ * Methods:
+ * - getRouteKeyName(): string
+ *   Returns 'resource_id' for route model binding.
  *
- * @mixin Eloquent
+ * Domain Notes:
+ * - The `is_allowed` flag determines whether a frequency option can be selected for new recurring configurations.
+ * - Designed to centralize scheduling logic across savings products.
  */
 final class Frequency extends Model
 {
-    public $timestamps = false;
-
     protected $guarded = ['id'];
 
     protected $casts = [
@@ -70,43 +76,10 @@ final class Frequency extends Model
     /**
      * @return HasMany
      */
-    public function dailySusu(
+    public function recurringDeposits(
     ): HasMany {
         return $this->hasMany(
-            related: DailySusu::class,
-            foreignKey: 'frequency_id',
-        );
-    }
-
-    /**
-     * @return HasMany
-     */
-    public function bizSusu(
-    ): HasMany {
-        return $this->hasMany(
-            related: BizSusu::class,
-            foreignKey: 'frequency_id',
-        );
-    }
-
-    /**
-     * @return HasMany
-     */
-    public function goalGetterSusu(
-    ): HasMany {
-        return $this->hasMany(
-            related: GoalGetterSusu::class,
-            foreignKey: 'frequency_id',
-        );
-    }
-
-    /**
-     * @return HasMany
-     */
-    public function driveToOwnSusu(
-    ): HasMany {
-        return $this->hasMany(
-            related: DriveToOwnSusu::class,
+            related: RecurringDeposit::class,
             foreignKey: 'frequency_id',
         );
     }

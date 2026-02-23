@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Domain\Shared\Models;
 
 use App\Domain\Susu\Models\IndividualSusu\GoalGetterSusu;
-use Eloquent;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,28 +12,43 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * Class Duration
  *
- * @property string $id
+ * Represents a predefined time duration configuration used within the SusuBox system.
+ *
+ * The Duration model defines standardized savings, pause, lock periods (e.g., 30 days,
+ * 90 days, 180 days, etc.) that can be attached to payment lock, debit pause and savings
+ * schemes, such as GoalGetterSusu. It provides a structured way to manage time-bound financial
+ * products by defining the number of days, status, and identifying code.
+ *
+ * Purpose:
+ * - Define reusable time durations.
+ * - Standardize duration logic across time-bound schemes.
+ * - Enable activation/deactivation of specific duration options.
+ *
+ * Routing:
+ * - Uses `resource_id` as the route key for public-facing identification.
+ *
+ * Attributes:
+ * @property int $id
  * @property string $resource_id
  * @property string $name
- * @property string $code
+ * @property string|null $code
  * @property int $days
- * @property string $status
+ * @property string|null $status
  *
  * Relationships:
- * @property Collection<int, GoalGetterSusu> $goal
+ * @property-read Collection|GoalGetterSusu[] $goalGetterSusu
  *
- * @method static Builder|Duration whereResourceId($value)
- * @method static Builder|Duration whereName($value)
- * @method static Builder|Duration whereCode($value)
- * @method static Builder|Duration whereDays($value)
- * @method static Builder|Duration whereStatus($value)
+ * Methods:
+ * - getRouteKeyName(): string
+ *   Returns 'resource_id' for route model binding.
  *
- * @mixin Eloquent
+ * Domain Notes:
+ * - The `days` attribute determines the length of a savings plan.
+ * - Status may be used to control availability (e.g., active/inactive).
+ * - Designed to ensure consistency across time-based savings products.
  */
 final class Duration extends Model
 {
-    public $timestamps = false;
-
     protected $guarded = ['id'];
 
     protected $casts = [];
@@ -59,7 +72,7 @@ final class Duration extends Model
     /**
      * @return HasMany
      */
-    public function goal(
+    public function goalGetterSusu(
     ): HasMany {
         return $this->hasMany(
             related: GoalGetterSusu::class,

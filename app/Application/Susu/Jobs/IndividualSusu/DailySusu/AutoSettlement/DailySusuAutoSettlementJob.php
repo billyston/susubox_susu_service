@@ -71,7 +71,7 @@ final class DailySusuAutoSettlementJob implements ShouldQueue
             charges: $dailySusu->susu_amount,
         );
 
-        // Execute the AccountAutoSettlementCreateService and return the AccountSettlement resource
+        // Execute the AccountAutoSettlementCreateService and return the Settlement resource
         $paymentInstruction = $accountAutoSettlementCreateService->execute(
             accountCycle: $accountCycle,
             account: $account,

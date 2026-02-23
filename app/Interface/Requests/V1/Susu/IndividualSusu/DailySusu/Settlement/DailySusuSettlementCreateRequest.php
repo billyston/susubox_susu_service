@@ -26,7 +26,7 @@ final class DailySusuSettlementCreateRequest extends FormRequest
             'data.type' => [
                 'required',
                 'string',
-                'in:AccountSettlement',
+                'in:Settlement',
             ],
 
             'data.attributes' => [

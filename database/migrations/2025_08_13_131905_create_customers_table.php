@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * @return void
+     */
     public function up(
     ): void {
         Schema::create(
@@ -26,11 +29,12 @@ return new class extends Migration
 
                 // Timestamps (created_at / updated_at) fields
                 $table->timestamps();
-
-                $table->softDeletes();
             });
     }
 
+    /**
+     * @return void
+     */
     public function down(
     ): void {
         Schema::dropIfExists(

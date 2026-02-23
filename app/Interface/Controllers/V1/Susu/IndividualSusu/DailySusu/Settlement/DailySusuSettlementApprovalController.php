@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Interface\Controllers\V1\Susu\IndividualSusu\DailySusu\Settlement;
 
 use App\Application\Susu\Actions\IndividualSusu\DailySusu\Settlement\DailySusuSettlementApprovalAction;
-use App\Domain\Account\Models\AccountSettlement;
 use App\Domain\Customer\Models\Customer;
+use App\Domain\PaymentInstruction\Models\Settlement;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
 use App\Interface\Controllers\Shared\Controller;
@@ -19,7 +19,7 @@ final class DailySusuSettlementApprovalController extends Controller
     /**
      * @param Customer $customer
      * @param DailySusu $dailySusu
-     * @param AccountSettlement $accountSettlement
+     * @param Settlement $accountSettlement
      * @param DailySusuSettlementApprovalRequest $dailySusuSettlementApprovalRequest
      * @param DailySusuSettlementApprovalAction $dailySusuSettlementApprovalAction
      * @return JsonResponse
@@ -29,7 +29,7 @@ final class DailySusuSettlementApprovalController extends Controller
     public function __invoke(
         Customer $customer,
         DailySusu $dailySusu,
-        AccountSettlement $accountSettlement,
+        Settlement $accountSettlement,
         DailySusuSettlementApprovalRequest $dailySusuSettlementApprovalRequest,
         DailySusuSettlementApprovalAction $dailySusuSettlementApprovalAction
     ): JsonResponse {

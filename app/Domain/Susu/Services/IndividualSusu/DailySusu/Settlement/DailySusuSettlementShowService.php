@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Susu\Services\IndividualSusu\DailySusu\Settlement;
 
-use App\Domain\Account\Models\AccountSettlement;
 use App\Domain\Customer\Models\Customer;
+use App\Domain\PaymentInstruction\Models\Settlement;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
@@ -17,26 +17,26 @@ final class DailySusuSettlementShowService
     /**
      * @param Customer $customer
      * @param DailySusu $dailySusu
-     * @param AccountSettlement $accountSettlement
-     * @return AccountSettlement
+     * @param Settlement $accountSettlement
+     * @return Settlement
      * @throws SystemFailureException
      * @throws UnauthorisedAccessException
      */
     public static function execute(
         Customer $customer,
         DailySusu $dailySusu,
-        AccountSettlement $accountSettlement,
-    ): AccountSettlement {
+        Settlement $accountSettlement,
+    ): Settlement {
         try {
             return match (true) {
-                $dailySusu->individual->customer->id !== $customer->id => throw new UnauthorisedAccessException(
+                $dailySusu->customer->id !== $customer->id => throw new UnauthorisedAccessException(
                     message: 'You are not authorized to access this susu account.'
                 ),
                 $dailySusu->account->id !== $accountSettlement->account->id => throw new UnauthorisedAccessException(
                     message: 'You are not authorized to access this susu account.'
                 ),
 
-                // Return the AccountSettlement resource
+                // Return the Settlement resource
                 default => $accountSettlement,
             };
         } catch (

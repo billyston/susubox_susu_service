@@ -57,14 +57,14 @@ return Application::configure(basePath: dirname(__DIR__))
             // Schedule the AccountUnLockScheduler
             $schedule
                 ->job(job: AccountUnLockScheduler::class)
-                ->everyMinute()
+                ->hourly()
                 ->withoutOverlapping()
                 ->onOneServer();
 
             // Schedule the AccountPauseResumeScheduler
             $schedule
                 ->job(job: AccountPauseResumeScheduler::class)
-                ->everyMinute()
+                ->hourly()
                 ->withoutOverlapping()
                 ->onOneServer();
         }
