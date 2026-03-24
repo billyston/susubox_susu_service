@@ -28,7 +28,7 @@ Route::group([
 
     // Cancel settlement request route
     Route::post(
-        uri: '/{account_settlement}/cancel',
+        uri: '/{settlement}/cancel',
         action: DailySusuSettlementCancelController::class,
     )->name(
         name: 'cancel'
@@ -69,7 +69,7 @@ Route::group([
 
     // Get single settlement request route
     Route::get(
-        uri: '{account_settlement}',
+        uri: '{settlement}',
         action: DailySusuSettlementShowController::class,
     )->name(
         name: 'index'

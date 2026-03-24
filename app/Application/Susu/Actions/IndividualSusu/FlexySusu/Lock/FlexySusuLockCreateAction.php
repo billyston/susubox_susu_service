@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace App\Application\Susu\Actions\IndividualSusu\FlexySusu\Lock;
 
-use App\Application\Account\DTOs\AccountLockRequestDTO;
+use App\Application\Account\DTOs\AccountPayoutLock\AccountPayoutLockRequestDTO;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Domain\Account\Services\AccountLock\AccountLockCreateService;
+use App\Domain\Account\Services\AccountPayoutLock\AccountPayoutLockCreateService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
-use App\Interface\Resources\V1\Account\AccountLockResource;
+use App\Interface\Resources\V1\Account\AccountPayoutLock\AccountPayoutLockResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class FlexySusuLockCreateAction
 {
-    private AccountLockCreateService $accountLockCreateService;
+    private AccountPayoutLockCreateService $accountLockCreateService;
 
     public function __construct(
-        AccountLockCreateService $accountLockCreateService
+        AccountPayoutLockCreateService $accountLockCreateService
     ) {
         $this->accountLockCreateService = $accountLockCreateService;
     }
@@ -34,11 +34,11 @@ final class FlexySusuLockCreateAction
         array $request
     ): JsonResponse {
         // Build the accountLockRequestDTO
-        $requestDTO = AccountLockRequestDTO::fromPayload(
+        $requestDTO = AccountPayoutLockRequestDTO::fromPayload(
             payload: $request
         );
 
-        // Execute the AccountLockCreateService and return the resource
+        // Execute the AccountPayoutLockCreateService and return the resource
         $accountLock = $this->accountLockCreateService->execute(
             susuAccount: $flexySusu,
             requestDTO: $requestDTO
@@ -49,7 +49,7 @@ final class FlexySusuLockCreateAction
             code: Response::HTTP_OK,
             message: 'Request successful.',
             description: 'The account lock was successfully created.',
-            data: new AccountLockResource(
+            data: new AccountPayoutLockResource(
                 resource: $accountLock->refresh()
             )
         );

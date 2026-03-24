@@ -25,7 +25,7 @@ return new class extends Migration
                 $table->uuid(column: 'resource_id')->unique()->index();
 
                 // Table related / Foreign key fields
-                $table->foreignId(column: 'susu_scheme_id')->unique()->constrained()->cascadeOnDelete();
+                $table->foreignId(column: 'susu_scheme_id')->constrained()->cascadeOnDelete();
 
                 // Table main attributes
                 $table->string(column: 'account_name')->index();

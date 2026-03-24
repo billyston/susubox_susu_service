@@ -6,7 +6,7 @@ namespace App\Domain\Susu\Models\IndividualSusu;
 
 use App\Domain\Account\Models\Account;
 use App\Domain\Shared\Casts\MoneyCasts;
-use App\Domain\Shared\Models\HasUuid;
+use App\Domain\Shared\Concerns\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;

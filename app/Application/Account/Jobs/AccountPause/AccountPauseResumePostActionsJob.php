@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Application\Account\Jobs\AccountPause;
 
 use App\Domain\Account\Services\AccountPause\AccountPauseByResourceIdService;
+use App\Domain\PaymentInstruction\Services\RecurringDeposit\RecurringDepositStatusUpdateService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Transaction\Services\RecurringDebitStatusUpdateService;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -34,13 +34,13 @@ final class AccountPauseResumePostActionsJob implements ShouldQueue
 
     /**
      * @param AccountPauseByResourceIdService $accountPauseByResourceIdService
-     * @param RecurringDebitStatusUpdateService $recurringDebitStatusUpdateService
+     * @param RecurringDepositStatusUpdateService $recurringDebitStatusUpdateService
      * @return void
      * @throws SystemFailureException
      */
     public function handle(
         AccountPauseByResourceIdService $accountPauseByResourceIdService,
-        RecurringDebitStatusUpdateService $recurringDebitStatusUpdateService
+        RecurringDepositStatusUpdateService $recurringDebitStatusUpdateService
     ): void {
         // Execute the AccountPauseByResourceIdService and return the resource
         $accountPause = $accountPauseByResourceIdService->execute(
@@ -50,7 +50,7 @@ final class AccountPauseResumePostActionsJob implements ShouldQueue
         // Get the pauseable_type
         $pauseable = $accountPause->pauseable;
 
-        // Execute the RecurringDebitStatusUpdateService and return the resource
+        // Execute the RecurringDepositStatusUpdateService and return the resource
         $recurringDebitStatusUpdateService->execute(
             model: $pauseable,
             status: Statuses::ACTIVE->value,

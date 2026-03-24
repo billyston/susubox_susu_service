@@ -6,7 +6,7 @@ namespace App\Application\Susu\Actions\IndividualSusu\GoalGetterSusu\DirectDepos
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Domain\PaymentInstruction\Models\PaymentInstruction;
-use App\Domain\PaymentInstruction\Services\PaymentInstructionCancelService;
+use App\Domain\PaymentInstruction\Services\PaymentInstruction\PaymentInstructionCancelService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;

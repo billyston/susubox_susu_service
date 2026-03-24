@@ -69,7 +69,7 @@ final class DailySusuSettlementCalculationVO
 
             'accepted_terms' => true,
 
-            'extra_data' => [
+            'metadata' => [
                 'settlement_scope' => $this->settlementScope,
                 'cycle_resource_ids' => $this->cycleResourceIDs,
             ],

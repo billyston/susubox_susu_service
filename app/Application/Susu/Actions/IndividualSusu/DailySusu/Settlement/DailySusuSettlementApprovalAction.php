@@ -4,46 +4,48 @@ declare(strict_types=1);
 
 namespace App\Application\Susu\Actions\IndividualSusu\DailySusu\Settlement;
 
+use App\Application\PaymentInstruction\DTOs\Settlement\SettlementApprovalResponseDTO;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Transaction\DTOs\SettlementApprovalResponseDTO;
 use App\Domain\PaymentInstruction\Models\Settlement;
-use App\Domain\PaymentInstruction\Services\PaymentInstructionApprovalStatusUpdateService;
+use App\Domain\PaymentInstruction\Services\PaymentInstruction\PaymentInstructionApprovalStatusUpdateService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
-use App\Interface\Resources\V1\Susu\IndividualSusu\DailySusu\DailySusuSettlementResource;
-use App\Services\SusuBox\Http\Requests\Payment\PaymentRequestHandler;
-use Brick\Money\Exception\UnknownCurrencyException;
+use App\Interface\Resources\V1\PaymentInstruction\SettlementResource;
+use App\Services\SusuBox\Http\SusuBoxServiceDispatcher;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class DailySusuSettlementApprovalAction
 {
     private PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService;
-    private PaymentRequestHandler $dispatcher;
+    private SusuBoxServiceDispatcher $susuBoxServiceDispatcher;
 
+    /**
+     * @param PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService
+     * @param SusuBoxServiceDispatcher $susuBoxServiceDispatcher
+     */
     public function __construct(
         PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService,
-        PaymentRequestHandler $dispatcher,
+        SusuBoxServiceDispatcher $susuBoxServiceDispatcher,
     ) {
         $this->paymentInstructionApprovalStatusUpdateService = $paymentInstructionApprovalStatusUpdateService;
-        $this->dispatcher = $dispatcher;
+        $this->susuBoxServiceDispatcher = $susuBoxServiceDispatcher;
     }
 
     /**
      * @param DailySusu $dailySusu
-     * @param Settlement $accountSettlement
+     * @param Settlement $settlement
      * @return JsonResponse
      * @throws SystemFailureException
-     * @throws UnknownCurrencyException
      */
     public function execute(
         DailySusu $dailySusu,
-        Settlement $accountSettlement,
+        Settlement $settlement,
     ): JsonResponse {
         // Execute the PaymentInstructionApprovalStatusUpdateService and return the resource
         $paymentInstruction = $this->paymentInstructionApprovalStatusUpdateService->execute(
-            paymentInstruction: $accountSettlement->paymentInstruction,
+            paymentInstruction: $settlement->paymentInstruction,
             status: Statuses::APPROVED->value,
         );
 
@@ -55,10 +57,10 @@ final class DailySusuSettlementApprovalAction
         );
 
         // Dispatch to SusuBox Service (Payment Service)
-        $this->dispatcher->sendToSusuBoxService(
+        $this->susuBoxServiceDispatcher->send(
             service: config('susubox.payment.name'),
             endpoint: 'payouts',
-            data: $responseDTO->toArray(),
+            payload: $responseDTO->toArray(),
         );
 
         // Build and return the JsonResponse
@@ -66,8 +68,8 @@ final class DailySusuSettlementApprovalAction
             code: Response::HTTP_OK,
             message: 'Request successful.',
             description: 'Your request is successful. You will be notified shortly.',
-            data: new DailySusuSettlementResource(
-                resource: $accountSettlement->refresh()
+            data: new SettlementResource(
+                resource: $settlement->refresh()
             )
         );
     }

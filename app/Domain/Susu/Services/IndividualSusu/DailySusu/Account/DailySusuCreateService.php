@@ -5,125 +5,147 @@ declare(strict_types=1);
 namespace App\Domain\Susu\Services\IndividualSusu\DailySusu\Account;
 
 use App\Application\Susu\DTOs\IndividualSusu\DailySusu\Account\DailySusuCreateRequestDTO;
-use App\Domain\Account\Models\Account;
-use App\Domain\Account\Models\AccountBalance;
-use App\Domain\Account\Models\AccountCycleDefinition;
+use App\Domain\Account\Enums\AccountType;
+use App\Domain\Account\Services\Account\AccountCreateService;
+use App\Domain\Account\Services\AccountBalance\AccountBalanceCreateService;
+use App\Domain\Account\Services\AccountCustomer\AccountCustomerCreateService;
+use App\Domain\Account\Services\AccountCycle\AccountCycleDefinitionCreateService;
+use App\Domain\Customer\Enums\CustomerType;
 use App\Domain\Customer\Models\Customer;
-use App\Domain\Customer\Services\CustomerWalletService;
-use App\Domain\Shared\Enums\Statuses;
+use App\Domain\Customer\Models\Wallet;
+use App\Domain\PaymentInstruction\Services\PaymentInstruction\PaymentInstructionCreateService;
+use App\Domain\PaymentInstruction\Services\RecurringDeposit\RecurringDepositCreateService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Shared\Services\FrequencyService;
-use App\Domain\Shared\Services\SusuSchemeService;
+use App\Domain\Shared\Models\Frequency;
+use App\Domain\Shared\Models\SusuScheme;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
-use App\Domain\Susu\Models\IndividualSusu\IndividualAccount;
+use App\Domain\Transaction\Enums\TransactionType;
+use App\Domain\Transaction\Models\TransactionCategory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
 final class DailySusuCreateService
 {
-    private CustomerWalletService $customerWalletService;
-    private SusuSchemeService $susuSchemeService;
-    private FrequencyService $frequencyService;
+    private AccountCreateService $accountCreateService;
+    private AccountCustomerCreateService $accountCustomerCreateService;
+    private AccountBalanceCreateService $accountBalanceCreateService;
+    private AccountCycleDefinitionCreateService $accountCycleDefinitionCreateService;
+    private PaymentInstructionCreateService $paymentInstructionCreateService;
+    private RecurringDepositCreateService $recurringDepositCreateService;
 
     /**
-     * @param CustomerWalletService $customerWalletService
-     * @param SusuSchemeService $susuSchemeService
-     * @param FrequencyService $frequencyService
+     * @param AccountCreateService $accountCreateService
+     * @param AccountCustomerCreateService $accountCustomerCreateService
+     * @param AccountBalanceCreateService $accountBalanceCreateService
+     * @param AccountCycleDefinitionCreateService $accountCycleDefinitionCreateService
+     * @param PaymentInstructionCreateService $paymentInstructionCreateService
+     * @param RecurringDepositCreateService $recurringDepositCreateService
      */
     public function __construct(
-        CustomerWalletService $customerWalletService,
-        SusuSchemeService $susuSchemeService,
-        FrequencyService $frequencyService,
+        AccountCreateService $accountCreateService,
+        AccountCustomerCreateService $accountCustomerCreateService,
+        AccountBalanceCreateService $accountBalanceCreateService,
+        AccountCycleDefinitionCreateService $accountCycleDefinitionCreateService,
+        PaymentInstructionCreateService $paymentInstructionCreateService,
+        RecurringDepositCreateService $recurringDepositCreateService
     ) {
-        $this->customerWalletService = $customerWalletService;
-        $this->susuSchemeService = $susuSchemeService;
-        $this->frequencyService = $frequencyService;
+        $this->accountCreateService = $accountCreateService;
+        $this->accountCustomerCreateService = $accountCustomerCreateService;
+        $this->accountBalanceCreateService = $accountBalanceCreateService;
+        $this->accountCycleDefinitionCreateService = $accountCycleDefinitionCreateService;
+        $this->paymentInstructionCreateService = $paymentInstructionCreateService;
+        $this->recurringDepositCreateService = $recurringDepositCreateService;
     }
 
     /**
      * @param Customer $customer
+     * @param Wallet $wallet
      * @param DailySusuCreateRequestDTO $requestDTO
+     * @param SusuScheme $susuScheme
+     * @param Frequency $frequency
+     * @param TransactionCategory $transactionCategory
      * @return DailySusu
      * @throws SystemFailureException
      */
     public function execute(
         Customer $customer,
-        DailySusuCreateRequestDTO $requestDTO
+        Wallet $wallet,
+        DailySusuCreateRequestDTO $requestDTO,
+        SusuScheme $susuScheme,
+        Frequency $frequency,
+        TransactionCategory $transactionCategory,
     ): DailySusu {
         try {
             // Execute the database transaction
             return DB::transaction(function () use (
                 $customer,
-                $requestDTO
+                $wallet,
+                $requestDTO,
+                $susuScheme,
+                $frequency,
+                $transactionCategory,
             ) {
-                // Execute the CustomerWalletService and return the resource
-                $wallet = $this->customerWalletService->execute(
+                // Execute the AccountCreateService and return the resource
+                $account = $this->accountCreateService->execute(
+                    susuScheme: $susuScheme,
+                    accountName: $requestDTO->accountName,
+                    accountType: AccountType::INDIVIDUAL,
+                    acceptedTerms: $requestDTO->acceptedTerms
+                );
+
+                // Execute the AccountCustomerCreateService and return the resource
+                $accountCustomer = $this->accountCustomerCreateService->execute(
+                    account: $account,
                     customer: $customer,
-                    walletResourceID: $requestDTO->walletResourceID,
+                    wallet: $wallet,
+                    customerType: CustomerType::PRIMARY
                 );
 
-                // Execute the SusuSchemeService and return the resource
-                $susuScheme = $this->susuSchemeService->execute(
-                    schemeCode: config(key: 'susubox.susu_schemes.daily_susu_code')
+                // Execute the AccountBalanceCreateService and return the resource
+                $this->accountBalanceCreateService->execute(
+                    account: $account,
                 );
 
-                // Execute the FrequencyService and return the resource
-                $frequency = $this->frequencyService->execute(
-                    frequency_code: 'daily'
+                // Execute the AccountCycleDefinition and return the resource
+                $this->accountCycleDefinitionCreateService->execute(
+                    account: $account,
+                    cycleLength: $requestDTO->cycleLength,
+                    expectedFrequencies: $requestDTO->expectedFrequencies,
+                    payoutFrequencies: $requestDTO->payoutFrequencies,
+                    commissionFrequencies: $requestDTO->commissionFrequencies,
+                    expectedCycleAmount: $requestDTO->expectedCycleAmount,
+                    expectedPayoutAmount: $requestDTO->expectedPayoutAmount,
+                    commissionAmount: $requestDTO->commissionAmount,
                 );
 
-                // Create Financial Account
-                $account = Account::create([
-                    'accountable_type' => IndividualAccount::class,
-                    'account_name' => $requestDTO->accountName,
-                    'account_number' => Account::generateAccountNumber(),
-                    'accepted_terms' => $requestDTO->acceptedTerms,
-                ]);
+                // Execute the PaymentInstructionCreateService and return the resource
+                $paymentInstruction = $this->paymentInstructionCreateService->execute(
+                    account: $account,
+                    transactionCategory: $transactionCategory,
+                    accountCustomer: $accountCustomer,
+                    transactionType: TransactionType::CREDIT,
+                    wallet: $wallet,
+                    amount: $requestDTO->susuAmount,
+                    charge: $requestDTO->charge,
+                    total: $requestDTO->susuAmount,
+                    acceptedTerms: $requestDTO->acceptedTerms
+                );
 
-                // Create IndividualAccount (polymorphic bridge)
-                $individualAccount = IndividualAccount::create([
-                    'customer_id' => $customer->id,
-                    'susu_scheme_id' => $susuScheme->id,
-                ]);
-
-                // Link Account to IndividualAccount (Update polymorphic fields)
-                $account->update([
-                    'accountable_id' => $individualAccount->id,
-                ]);
-
-                // Create the AccountBalance
-                AccountBalance::create([
-                    'account_id' => $account->id,
-                ]);
-
-                // Create and return the DailySusu resource
-                $dailySusu = DailySusu::create([
-                    'individual_account_id' => $individualAccount->id,
-                    'wallet_id' => $wallet->id,
-                    'frequency_id' => $frequency->id,
-                    'susu_amount' => $requestDTO->susuAmount,
-                    'initial_deposit' => $requestDTO->initialDeposit,
-                    'initial_deposit_frequency' => $requestDTO->initialDepositFrequency,
-                    'rollover_enabled' => $requestDTO->rolloverEnabled,
-                    'recurring_debit_status' => Statuses::PENDING->value,
-                ]);
-
-                // Create the AccountCycleDefinition
-                AccountCycleDefinition::create([
-                    'definable_type' => DailySusu::class,
-                    'definable_id' => $dailySusu->id,
-                    'cycle_length' => $requestDTO->cycleLength,
-                    'expected_frequencies' => $requestDTO->expectedFrequencies,
-                    'expected_cycle_amount' => $requestDTO->expectedCycleAmount,
-                    'expected_settlement_amount' => $requestDTO->expectedSettlementAmount,
-                    'commission_amount' => $requestDTO->commissionAmount,
-                    'commission_frequencies' => $requestDTO->commissionFrequencies,
-                    'settlement_frequencies' => $requestDTO->settlementFrequencies,
-                ]);
+                // Execute the PaymentInstructionCreateService and return the resource
+                $this->recurringDepositCreateService->execute(
+                    account: $account,
+                    accountCustomer: $accountCustomer,
+                    paymentInstruction: $paymentInstruction,
+                    frequency: $frequency,
+                    recurringAmount: $requestDTO->susuAmount,
+                    initialAmount: $requestDTO->initialDeposit,
+                    initialDepositFrequency: $requestDTO->initialDepositFrequency,
+                    rolloverEnabled: $requestDTO->rolloverEnabled,
+                );
 
                 // Return the DailySusu resource
-                return $dailySusu;
+                return $account->dailySusu()->create();
             });
         } catch (
             Throwable $throwable

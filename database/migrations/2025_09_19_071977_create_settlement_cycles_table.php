@@ -22,8 +22,8 @@ return new class extends Migration
                 $table->id();
 
                 // Table related fields
-                $table->foreignId(column: 'settlement_id')->unique()->constrained(table: 'settlements')->cascadeOnDelete();
-                $table->foreignId(column: 'account_cycle_id')->unique()->constrained(table: 'account_cycles')->restrictOnDelete();
+                $table->foreignId(column: 'settlement_id')->constrained(table: 'settlements')->cascadeOnDelete();
+                $table->foreignId(column: 'account_cycle_id')->constrained(table: 'account_cycles')->restrictOnDelete();
 
                 // Timestamps (created_at / updated_at) fields
                 $table->timestamps();

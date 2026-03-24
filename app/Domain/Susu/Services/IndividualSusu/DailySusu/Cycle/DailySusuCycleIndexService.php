@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Susu\Services\IndividualSusu\DailySusu\Cycle;
 
-use App\Domain\Account\Models\AccountCycle;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -30,37 +28,29 @@ final class DailySusuCycleIndexService
     ): Collection {
         try {
             return DB::transaction(function () use (
-                $customer,
                 $dailySusu,
+                $customer,
             ) {
-                /**
-                 * AUTHORISATION GUARD
-                 * Ensure the DailySusu belongs to the customer
-                 */
-                $belongsToCustomer = $dailySusu->individual->customer_id === $customer->id;
-                if (! $belongsToCustomer) {
+                // Extract the main resources
+                $account = $dailySusu->account;
+                $accountCustomer = $account->accountCustomer->customer;
+
+                // Ensure the customer making the request is the owner of the account
+                if ($accountCustomer->id !== $customer->id) {
                     throw new UnauthorisedAccessException(
                         message: 'You are not authorised to access these account cycles.'
                     );
                 }
 
-                /**
-                 * Fetch AccountCycles for this DailySusu
-                 */
-                return AccountCycle::query()
-                    ->where('cycleable_type', DailySusu::class)
-                    ->where('cycleable_id', $dailySusu->id)
-                    ->orderBy('cycle_number', 'desc')
+                // Fetch all account cycles that belong to the account
+                return $account->accountCycles()
+                    ->orderByDesc('created_at')
                     ->get();
             });
         } catch (
             UnauthorisedAccessException $unauthorisedAccessException
         ) {
             throw $unauthorisedAccessException;
-        } catch (
-            QueryException $queryException
-        ) {
-            throw $queryException;
         } catch (
             Throwable $throwable
         ) {

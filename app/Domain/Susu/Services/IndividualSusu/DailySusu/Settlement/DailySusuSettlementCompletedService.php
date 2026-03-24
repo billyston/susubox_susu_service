@@ -10,33 +10,32 @@ use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use InvalidArgumentException;
 use Throwable;
 
 final class DailySusuSettlementCompletedService
 {
     /**
-     * @param Settlement $accountSettlement
+     * @param Settlement $settlement
      * @return Settlement
      * @throws SystemFailureException
      */
     public static function execute(
-        Settlement $accountSettlement,
+        Settlement $settlement,
     ): Settlement {
         try {
             // Execute the database transaction
             return DB::transaction(
                 function () use (
-                    $accountSettlement,
+                    $settlement,
                 ) {
                     // Update (mark) the status as (completed)
-                    $accountSettlement->update([
+                    $settlement->update([
                         'status' => Statuses::COMPLETED->value,
                         'completed_at' => now(),
                     ]);
 
                     // Fetch all account cycles linked to this settlement
-                    $accountSettlement->accountCycles()
+                    $settlement->accountCycles()
                         ->whereNull('settled_at')
                         ->each(function (AccountCycle $cycle) {
                             $cycle->update([
@@ -46,19 +45,15 @@ final class DailySusuSettlementCompletedService
                         });
 
                     // Return the Settlement
-                    return $accountSettlement->refresh();
+                    return $settlement->refresh();
                 }
             );
-        } catch (
-            InvalidArgumentException $invalidArgumentException
-        ) {
-            throw $invalidArgumentException;
         } catch (
             Throwable $throwable
         ) {
             // Log the full exception with context
             Log::error('Exception in DailySusuSettlementCompletedService', [
-                'account_settlement' => $accountSettlement,
+                'settlement' => $settlement,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),

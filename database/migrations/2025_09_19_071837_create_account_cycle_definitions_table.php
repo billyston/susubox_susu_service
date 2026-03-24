@@ -27,9 +27,9 @@ return new class extends Migration
 
                 // Table main attributes
                 $table->unsignedSmallInteger(column: 'cycle_length')->default(value: 31);
-                $table->unsignedSmallInteger(column: 'commission_frequencies')->default(value: 1);
-                $table->unsignedSmallInteger(column: 'payout_frequencies')->default(value: 30);
                 $table->unsignedSmallInteger(column: 'expected_frequencies')->default(value: 31);
+                $table->unsignedSmallInteger(column: 'payout_frequencies')->default(value: 30);
+                $table->unsignedSmallInteger(column: 'commission_frequencies')->default(value: 1);
                 $table->bigInteger(column: 'expected_cycle_amount');
                 $table->bigInteger(column: 'expected_payout_amount');
                 $table->bigInteger(column: 'commission_amount');

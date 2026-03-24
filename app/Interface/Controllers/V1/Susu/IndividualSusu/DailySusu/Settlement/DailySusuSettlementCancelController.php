@@ -18,7 +18,7 @@ final class DailySusuSettlementCancelController extends Controller
     /**
      * @param Customer $customer
      * @param DailySusu $dailySusu
-     * @param Settlement $accountSettlement
+     * @param Settlement $settlement
      * @param DailySusuSettlementCancelRequest $dailySusuSettlementCancelRequest
      * @param DailySusuSettlementCancelAction $dailySusuSettlementCancelAction
      * @return JsonResponse
@@ -27,13 +27,13 @@ final class DailySusuSettlementCancelController extends Controller
     public function __invoke(
         Customer $customer,
         DailySusu $dailySusu,
-        Settlement $accountSettlement,
+        Settlement $settlement,
         DailySusuSettlementCancelRequest $dailySusuSettlementCancelRequest,
         DailySusuSettlementCancelAction $dailySusuSettlementCancelAction
     ): JsonResponse {
         // Execute the DailySusuSettlementCancelAction and return the JsonResponse
         return $dailySusuSettlementCancelAction->execute(
-            accountSettlement: $accountSettlement,
+            settlement: $settlement,
         );
     }
 }

@@ -113,17 +113,6 @@ final class AccountCustomer extends Model
     }
 
     /**
-     * @return HasMany
-     */
-    public function recurringDeposits(
-    ): HasMany {
-        return $this->hasMany(
-            related: RecurringDeposit::class,
-            foreignKey: 'account_customer_id',
-        );
-    }
-
-    /**
      * @return BelongsTo
      */
     public function wallet(
@@ -131,6 +120,17 @@ final class AccountCustomer extends Model
         return $this->belongsTo(
             related: Wallet::class,
             foreignKey: 'wallet_id',
+        );
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function recurringDeposits(
+    ): HasMany {
+        return $this->hasMany(
+            related: RecurringDeposit::class,
+            foreignKey: 'account_customer_id',
         );
     }
 

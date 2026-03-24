@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace App\Application\Susu\Actions\IndividualSusu\FlexySusu\Lock;
 
-use App\Application\Account\Jobs\AccountLockNotificationJob;
+use App\Application\Account\Jobs\AccountPayoutLock\AccountPayoutLockNotificationJob;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Domain\Account\Models\AccountPayoutLock;
-use App\Domain\Account\Services\AccountLock\AccountLockStatusUpdateService;
+use App\Domain\Account\Services\AccountPayoutLock\AccountPayoutLockStatusUpdateService;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
 use App\Domain\Susu\Services\IndividualSusu\FlexySusu\Withdrawal\FlexySusuWithdrawalStatusUpdateService;
-use App\Interface\Resources\V1\Account\AccountLockResource;
+use App\Interface\Resources\V1\Account\AccountPayoutLock\AccountPayoutLockResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class FlexySusuLockApprovalAction
 {
-    private AccountLockStatusUpdateService $accountLockStatusUpdateService;
+    private AccountPayoutLockStatusUpdateService $accountLockStatusUpdateService;
     private FlexySusuWithdrawalStatusUpdateService $flexySusuWithdrawalStatusUpdateService;
 
     public function __construct(
-        AccountLockStatusUpdateService $accountLockStatusUpdateService,
+        AccountPayoutLockStatusUpdateService $accountLockStatusUpdateService,
         FlexySusuWithdrawalStatusUpdateService $flexySusuWithdrawalStatusUpdateService
     ) {
         $this->accountLockStatusUpdateService = $accountLockStatusUpdateService;
@@ -42,9 +42,9 @@ final class FlexySusuLockApprovalAction
         FlexySusu $flexySusu,
         AccountPayoutLock $accountLock,
     ): JsonResponse {
-        // Execute the AccountLockStatusUpdateService
+        // Execute the AccountPayoutLockStatusUpdateService
         $this->accountLockStatusUpdateService->execute(
-            accountLock: $accountLock,
+            accountPayoutLock: $accountLock,
             status: Statuses::ACTIVE->value
         );
 
@@ -54,8 +54,8 @@ final class FlexySusuLockApprovalAction
             status: Statuses::LOCKED->value
         );
 
-        // Dispatch the AccountLockNotificationJob
-        AccountLockNotificationJob::dispatch(
+        // Dispatch the AccountPayoutLockNotificationJob
+        AccountPayoutLockNotificationJob::dispatch(
             customerResource: $customer->resource_id,
             accountLockResource: $accountLock->resource_id
         );
@@ -65,7 +65,7 @@ final class FlexySusuLockApprovalAction
             code: Response::HTTP_OK,
             message: 'Request successful.',
             description: 'Your request is successful. You will be notified shortly.',
-            data: new AccountLockResource(
+            data: new AccountPayoutLockResource(
                 resource: $accountLock->refresh()
             )
         );

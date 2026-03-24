@@ -19,7 +19,7 @@ final class TransactionLoader
     ): Collection {
         return Transaction::where('account_id', $account->id)
             ->whereBetween('date', [$from, $to])
-            ->with(['category:id,code,name', 'wallet:id,wallet_name,network_code'])
+            ->with(['transactionCategory:id,code,name', 'wallet:id,wallet_name,network_code'])
             ->orderBy('date', 'desc')
             ->get()
             ->map(fn ($t) => tap($t, fn ($x) => $x->date = Carbon::parse($x->date)));

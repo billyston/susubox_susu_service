@@ -7,8 +7,8 @@ use App\Interface\Controllers\V1\Susu\IndividualSusu\DailySusu\Cycle\DailySusuCy
 use Illuminate\Support\Facades\Route;
 
 Route::group([
-    'prefix' => 'customers/{customer}/daily-susus/{daily_susu}/cycles',
-    'as' => 'customers.customer.daily_susus.daily_susu.cycles',
+    'prefix' => 'customers/{customer}/daily-susus/{daily_susu}/account-cycles',
+    'as' => 'customers.customer.daily_susus.daily_susu.account_cycles',
 ], function (): void {
     // Get daily susu (all) route
     Route::get(
@@ -20,10 +20,6 @@ Route::group([
         parameters: [
             'customer',
         ]
-    )->middleware(
-        middleware: [
-            'rate_limiter:1,30',
-        ],
     );
 
     // Get daily susu (single) route

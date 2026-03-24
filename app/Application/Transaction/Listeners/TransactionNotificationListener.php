@@ -9,7 +9,7 @@ use App\Application\Transaction\Interfaces\TransactionCreatedEvent;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Transaction\Enums\TransactionCategoryCode;
 use App\Domain\Transaction\Services\TransactionByResourceIdService;
-use App\Services\SusuBox\Http\Requests\Notification\NotificationRequestHandler;
+use App\Services\SusuBox\Http\SusuBoxServiceDispatcher;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -26,18 +26,18 @@ final class TransactionNotificationListener implements ShouldQueue
     use SerializesModels;
 
     private TransactionByResourceIdService $transactionByResourceIdService;
-    private NotificationRequestHandler $dispatcher;
+    private SusuBoxServiceDispatcher $susuBoxServiceDispatcher;
 
     /**
      * @param TransactionByResourceIdService $transactionByResourceIdService
-     * @param NotificationRequestHandler $dispatcher
+     * @param SusuBoxServiceDispatcher $susuBoxServiceDispatcher
      */
     public function __construct(
         TransactionByResourceIdService $transactionByResourceIdService,
-        NotificationRequestHandler $dispatcher
+        SusuBoxServiceDispatcher $susuBoxServiceDispatcher
     ) {
         $this->transactionByResourceIdService = $transactionByResourceIdService;
-        $this->dispatcher = $dispatcher;
+        $this->susuBoxServiceDispatcher = $susuBoxServiceDispatcher;
     }
 
     /**
@@ -48,12 +48,9 @@ final class TransactionNotificationListener implements ShouldQueue
     public function handle(
         TransactionCreatedEvent $transactionCreatedEvent
     ): void {
-        // Get the transactionResourceID from the TransactionCreditCreatedEvent
-        $transactionResourceID = $transactionCreatedEvent->transactionResourceId;
-
         // Execute the TransactionByResourceIdService and return the resource
         $transaction = $this->transactionByResourceIdService->execute(
-            resourceID: $transactionResourceID,
+            resourceID: $transactionCreatedEvent->transactionResourceId,
         );
 
         /**
@@ -61,8 +58,8 @@ final class TransactionNotificationListener implements ShouldQueue
          * recurring_deposit that is NOT initial_deposit
          */
         if (
-            $transaction->category->code === TransactionCategoryCode::RECURRING_DEBIT_CODE->value
-            && $transaction->extra_data['is_initial_deposit'] === false
+            $transaction->transactionCategory->code === TransactionCategoryCode::RECURRING_DEBIT_CODE->value &&
+            $transaction->metadata['is_initial_deposit'] === false
         ) {
             return;
         }
@@ -70,14 +67,13 @@ final class TransactionNotificationListener implements ShouldQueue
         // Build the TransactionCreateResponseDTO
         $responseDTO = TransactionCreateResponseDTO::fromDomain(
             transaction: $transaction,
-            isInitialDeposit: $transaction->extra_data['is_initial_deposit']
         );
 
-        // Dispatch the TransactionCreateResponseDTO to SusuBox services
-        $this->dispatcher->sendToSusuBoxService(
+        // Dispatch the SusuBoxServiceDispatcher to SusuBox services
+        $this->susuBoxServiceDispatcher->send(
             service: config('susubox.notification.name'),
             endpoint: 'transactions',
-            data: $responseDTO->toArray(),
+            payload: $responseDTO->toArray(),
         );
     }
 }

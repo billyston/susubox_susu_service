@@ -8,6 +8,7 @@ use App\Application\Account\Actions\Transaction\AccountTransactionShowAction;
 use App\Domain\Account\Models\Account;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
+use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
 use App\Domain\Transaction\Models\Transaction;
 use App\Interface\Controllers\Shared\Controller;
 use Illuminate\Http\Request;
@@ -23,6 +24,7 @@ final class AccountTransactionShowController extends Controller
      * @param AccountTransactionShowAction $accountTransactionShowAction
      * @return JsonResponse
      * @throws SystemFailureException
+     * @throws UnauthorisedAccessException
      */
     public function __invoke(
         Request $request,

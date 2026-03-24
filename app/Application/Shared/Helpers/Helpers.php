@@ -6,6 +6,8 @@ namespace App\Application\Shared\Helpers;
 
 use App\Domain\Shared\Models\Duration;
 use Carbon\Carbon;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 final class Helpers
 {
@@ -82,5 +84,61 @@ final class Helpers
 
         // Return the new date as a string
         return $newDate->toDateString();
+    }
+
+    /**
+     * Parse include query into array
+     */
+    public static function parse(
+        ?string $include
+    ): array {
+        if (! $include) {
+            return [];
+        }
+
+        return collect(explode(',', $include))
+            ->map(fn ($item) => trim($item))
+            ->filter()
+            ->values()
+            ->toArray();
+    }
+
+    /**
+     * Apply includes to query or model
+     */
+    public static function apply(
+        $query,
+        array $includes
+    ) {
+        if (empty($includes)) {
+            return $query;
+        }
+
+        return $query->with($includes);
+    }
+
+    /**
+     * Check if include exists
+     */
+    public static function has(
+        array $includes,
+        string $relation
+    ): bool {
+        return in_array($relation, $includes);
+    }
+
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public static function includeResources(
+    ): array {
+        $include = request()->get('include');
+
+        if (! $include) {
+            return [];
+        }
+
+        return array_filter(array_map('trim', explode(',', $include)));
     }
 }

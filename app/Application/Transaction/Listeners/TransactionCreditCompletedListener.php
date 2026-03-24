@@ -7,13 +7,6 @@ namespace App\Application\Transaction\Listeners;
 use App\Application\Susu\Handlers\IndividualSusu\IndividualAccountCreditHandler;
 use App\Application\Transaction\Interfaces\TransactionCreatedEvent;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Susu\Models\GroupSusu\GroupAccount;
-use App\Domain\Susu\Models\IndividualSusu\BizSusu;
-use App\Domain\Susu\Models\IndividualSusu\DailySusu;
-use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
-use App\Domain\Susu\Models\IndividualSusu\GoalGetterSusu;
-use App\Domain\Susu\Models\IndividualSusu\IndividualAccount;
-use App\Domain\Transaction\Models\Transaction;
 use App\Domain\Transaction\Services\TransactionByResourceIdService;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
@@ -57,56 +50,21 @@ final class TransactionCreditCompletedListener implements ShouldQueue
             resourceID: $transactionResourceID,
         );
 
-        // Get the accountable (IndividualAccount / GroupAccount)
-        $accountable = $transaction->account->accountable;
+        // Get the account from $transaction
+        $account = $transaction->account;
 
-        // Resolve the $accountable
+        // Resolve the susu type (scheme) and execute the handler
         match (true) {
-            $accountable instanceof IndividualAccount => $this->individualAccountResolver(
-                individualAccount: $accountable,
-                transaction: $transaction,
-            ),
-            $accountable instanceof GroupAccount => $this->groupAccountResolver(
-                groupAccount: $accountable,
-                transaction: $transaction,
-            ),
+            $account->dailySusu()->exists() => $this->individualAccountCreditHandler->dailySusuDispatchableHandler(transaction: $transaction),
+            $account->bizSusu()->exists() => $this->individualAccountCreditHandler->bizSusuDispatchableHandler(transaction: $transaction),
+            $account->goalGetterSusu()->exists() => $this->individualAccountCreditHandler->goalGetterSusuDispatchableHandler(transaction: $transaction),
+            $account->flexySusu()->exists() => $this->individualAccountCreditHandler->flexySusuDispatchableHandler(transaction: $transaction),
+
+//            $account->nkabomNhyiraSusu()->exists() => 'NkabomNhyiraSusu',
+//            $account->dwadieboaSusu()->exists() => 'DwadieboaSusu',
+//            $account->corporativeSusu()->exists() => 'CorporativeSusu',
 
             default => null
         };
-    }
-
-    /**
-     * @param IndividualAccount $individualAccount
-     * @param Transaction $transaction
-     * @return void
-     */
-    private function individualAccountResolver(
-        IndividualAccount $individualAccount,
-        Transaction $transaction
-    ): void {
-        // Get the susu account (type)
-        $susu = $individualAccount->susu();
-
-        // Resolve and handle the $susu type
-        match (true) {
-            $susu instanceof DailySusu => $this->individualAccountCreditHandler->dailySusuDispatchableHandler(transaction: $transaction),
-            $susu instanceof BizSusu => $this->individualAccountCreditHandler->bizSusuDispatchableHandler(transaction: $transaction),
-            $susu instanceof GoalGetterSusu => $this->individualAccountCreditHandler->goalGetterSusuDispatchableHandler(transaction: $transaction),
-            $susu instanceof FlexySusu => $this->individualAccountCreditHandler->flexySusuDispatchableHandler(transaction: $transaction),
-
-            default => null
-        };
-    }
-
-    /**
-     * @param GroupAccount $groupAccount
-     * @param Transaction $transaction
-     * @return void
-     */
-    private function groupAccountResolver(
-        GroupAccount $groupAccount,
-        Transaction $transaction
-    ): void {
-        // ..
     }
 }

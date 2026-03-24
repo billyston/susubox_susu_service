@@ -5,26 +5,35 @@ declare(strict_types=1);
 namespace App\Application\Account\Actions\Transaction;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
+use App\Application\Shared\Helpers\Helpers;
+use App\Application\Shared\Helpers\Relationships;
 use App\Domain\Account\Models\Account;
-use App\Domain\Account\Services\AccountTransaction\AccountIndividualTransactionIndexService;
+use App\Domain\Account\Services\AccountTransaction\AccountTransactionIndexService;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
-use App\Interface\Resources\V1\Account\AccountTransaction\AccountTransactionCollectionResource;
+use App\Interface\Resources\V1\Account\AccountTransaction\AccountTransactionResource;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class AccountTransactionIndexAction
 {
-    private AccountIndividualTransactionIndexService $accountTransactionIndexService;
+    use Relationships;
+
+    private AccountTransactionIndexService $accountTransactionIndexService;
 
     /**
-     * @param AccountIndividualTransactionIndexService $accountTransactionIndexService
+     * @param AccountTransactionIndexService $accountTransactionIndexService
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function __construct(
-        AccountIndividualTransactionIndexService $accountTransactionIndexService
+        AccountTransactionIndexService $accountTransactionIndexService
     ) {
         $this->accountTransactionIndexService = $accountTransactionIndexService;
+        $this->relationships = Helpers::includeResources();
     }
 
     /**
@@ -38,19 +47,24 @@ final class AccountTransactionIndexAction
         Customer $customer,
         Account $account,
     ): JsonResponse {
-        // Execute the AccountIndividualTransactionIndexService and return the collection
-        $accountTransactions = $this->accountTransactionIndexService->execute(
+        // Execute the AccountTransactionIndexService and return the collection
+        $transactions = $this->accountTransactionIndexService->execute(
             customer: $customer,
             account: $account
         );
+
+        // (Guard) Load related resources if exist
+        if ($this->loadRelationships()) {
+            $transactions->load($this->relationships);
+        }
 
         // Build and return the JsonResponse
         return ApiResponseBuilder::paginated(
             status: true,
             code: Response::HTTP_OK,
             message: 'Request successful.',
-            data: AccountTransactionCollectionResource::collection(
-                resource: $accountTransactions,
+            data: AccountTransactionResource::collection(
+                resource: $transactions,
             ),
         );
     }

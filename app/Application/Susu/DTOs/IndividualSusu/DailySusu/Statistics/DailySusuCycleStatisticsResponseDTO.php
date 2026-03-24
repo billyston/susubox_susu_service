@@ -57,7 +57,6 @@ final readonly class DailySusuCycleStatisticsResponseDTO
                     'discipline_score' => $performance['discipline_score'],
                     'average_cycle_duration_days' => $performance['average_cycle_duration_days'],
                 ],
-
                 'included' => [
                     'period' => [
                         'type' => 'Period',
@@ -87,7 +86,7 @@ final readonly class DailySusuCycleStatisticsResponseDTO
                             'started_at' => $currentCycle->started_at->toDateString(),
                             'expected_frequencies' => $currentCycle->expected_frequencies,
                             'completed_frequencies' => $currentCycle->completed_frequencies,
-                            'remaining_frequencies' => $currentCycle->remainingFrequencies(),
+                            'remaining_frequencies' => $currentCycle->expected_frequencies - $currentCycle->completed_frequencies,
                             'completion_rate' => round($currentCycle->completed_frequencies / $currentCycle->expected_frequencies * 100, 2),
                         ],
                     ] : null,

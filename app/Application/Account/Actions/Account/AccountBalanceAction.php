@@ -6,7 +6,7 @@ namespace App\Application\Account\Actions\Account;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Domain\Account\Models\Account;
-use App\Domain\Account\Services\Account\AccountBalanceService;
+use App\Domain\Account\Services\AccountBalance\AccountBalanceService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Interface\Resources\V1\Account\AccountBalanceResource;
 use Symfony\Component\HttpFoundation\JsonResponse;

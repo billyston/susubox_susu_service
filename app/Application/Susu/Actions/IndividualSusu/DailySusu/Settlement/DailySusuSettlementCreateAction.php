@@ -9,14 +9,11 @@ use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Application\Susu\DTOs\IndividualSusu\DailySusu\Settlement\DailySusuSettlementRequestDTO;
 use App\Application\Susu\Services\IndividualSusu\DailySusu\Settlement\DailySusuSettlementCalculationService;
 use App\Domain\Customer\Models\Customer;
-use App\Domain\PaymentInstruction\Services\PaymentInstructionCreateService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
 use App\Domain\Susu\Services\IndividualSusu\DailySusu\Cycle\DailySusuCycleSelectionService;
-use App\Domain\Susu\Services\IndividualSusu\DailySusu\Settlement\DailySusuAccountSettlementCreateService;
-use App\Domain\Transaction\Enums\TransactionCategoryCode;
-use App\Domain\Transaction\Services\TransactionCategoryByCodeService;
-use App\Interface\Resources\V1\Susu\IndividualSusu\DailySusu\DailySusuSettlementResource;
+use App\Domain\Susu\Services\IndividualSusu\DailySusu\Settlement\DailySusuSettlementCreateService;
+use App\Interface\Resources\V1\PaymentInstruction\SettlementResource;
 use Brick\Money\Exception\MoneyMismatchException;
 use Brick\Money\Exception\UnknownCurrencyException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -25,34 +22,26 @@ use Throwable;
 
 final class DailySusuSettlementCreateAction
 {
-    private DailySusuCycleSelectionService $dailySusuAccountCycleSelectionService;
+    private DailySusuCycleSelectionService $dailySusuCycleSelectionService;
     private DailySusuSettlementCalculationService $dailySusuSettlementCalculationService;
     private AccountBalanceGuardService $balanceValidationService;
-    private TransactionCategoryByCodeService $transactionCategoryByCodeGetService;
-    private PaymentInstructionCreateService $paymentInstructionCreateService;
-    private DailySusuAccountSettlementCreateService $dailySusuSettlementService;
+    private DailySusuSettlementCreateService $dailySusuSettlementService;
 
     /**
      * @param DailySusuCycleSelectionService $dailySusuCycleSelectionService
      * @param DailySusuSettlementCalculationService $dailySusuSettlementCalculationService
      * @param AccountBalanceGuardService $balanceValidationService
-     * @param TransactionCategoryByCodeService $transactionCategoryByCodeGetService
-     * @param PaymentInstructionCreateService $paymentInstructionCreateService
-     * @param DailySusuAccountSettlementCreateService $dailySusuAccountSettlementCreateService
+     * @param DailySusuSettlementCreateService $dailySusuAccountSettlementCreateService
      */
     public function __construct(
         DailySusuCycleSelectionService $dailySusuCycleSelectionService,
         DailySusuSettlementCalculationService $dailySusuSettlementCalculationService,
         AccountBalanceGuardService $balanceValidationService,
-        TransactionCategoryByCodeService $transactionCategoryByCodeGetService,
-        PaymentInstructionCreateService $paymentInstructionCreateService,
-        DailySusuAccountSettlementCreateService $dailySusuAccountSettlementCreateService,
+        DailySusuSettlementCreateService $dailySusuAccountSettlementCreateService,
     ) {
-        $this->dailySusuAccountCycleSelectionService = $dailySusuCycleSelectionService;
+        $this->dailySusuCycleSelectionService = $dailySusuCycleSelectionService;
         $this->dailySusuSettlementCalculationService = $dailySusuSettlementCalculationService;
         $this->balanceValidationService = $balanceValidationService;
-        $this->transactionCategoryByCodeGetService = $transactionCategoryByCodeGetService;
-        $this->paymentInstructionCreateService = $paymentInstructionCreateService;
         $this->dailySusuSettlementService = $dailySusuAccountSettlementCreateService;
     }
 
@@ -71,50 +60,39 @@ final class DailySusuSettlementCreateAction
         DailySusu $dailySusu,
         array $request
     ): JsonResponse {
+        // Extract the main resources
+        $account = $dailySusu->account;
+        $accountBalance = $account->accountBalance;
+
         // Build the accountLockRequestDTO
         $requestDTO = DailySusuSettlementRequestDTO::fromPayload(
             payload: $request
         );
 
         // Execute the DailySusuCycleSelectionService
-        $accountCycles = $this->dailySusuAccountCycleSelectionService->execute(
-            account: $dailySusu->individual->account,
+        $accountSettlementCycles = $this->dailySusuCycleSelectionService->execute(
+            account: $account,
             scope:$requestDTO->scope,
             cycleResourceIDs: $requestDTO->cycleResourceIDs
         );
 
         // Execute the DailySusuCycleSelectionService
         $settlementCalculations = $this->dailySusuSettlementCalculationService->execute(
-            uniteCharge: $dailySusu->susu_amount,
-            accountCycles: $accountCycles,
+            accountCycles: $accountSettlementCycles,
             requestDTO: $requestDTO
         );
 
         // Execute the AccountBalanceGuardService
         $this->balanceValidationService->execute(
-            availableBalance: $dailySusu->account->accountBalance->available_balance,
+            availableBalance: $accountBalance->available_balance,
             debitAmount: $settlementCalculations->principal
-        );
-
-        // Execute the TransactionCreateDebitService and return the resource
-        $transactionCategory = $this->transactionCategoryByCodeGetService->execute(
-            TransactionCategoryCode::SETTLEMENT_CODE->value
-        );
-
-        // Execute the PaymentInstructionCreateService and return the payment instruction resource
-        $paymentInstruction = $this->paymentInstructionCreateService->execute(
-            transactionCategory: $transactionCategory,
-            account: $dailySusu->account,
-            wallet: $dailySusu->wallet,
-            customer: $customer,
-            data: $settlementCalculations->toArray()
         );
 
         // SettlementService should be executed here
         $settlement = $this->dailySusuSettlementService->execute(
-            account: $dailySusu->account,
-            accountCycles: $accountCycles,
-            paymentInstruction: $paymentInstruction,
+            account: $account,
+            accountCycles: $accountSettlementCycles,
+            requestDTO: $requestDTO,
             requestVO: $settlementCalculations
         );
 
@@ -123,7 +101,7 @@ final class DailySusuSettlementCreateAction
             code: Response::HTTP_OK,
             message: 'Request successful.',
             description: 'The account settlement was successfully created.',
-            data: new DailySusuSettlementResource(
+            data: new SettlementResource(
                 resource: $settlement
             )
         );

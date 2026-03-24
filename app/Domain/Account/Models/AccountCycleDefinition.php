@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Account\Models;
 
 use App\Domain\Shared\Casts\MoneyCasts;
-use App\Domain\Shared\Models\HasUuid;
+use App\Domain\Shared\Concerns\HasUuid;
 use Brick\Money\Money;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -86,9 +86,9 @@ final class AccountCycleDefinition extends Model
         'resource_id',
         'account_id',
         'cycle_length',
-        'commission_frequencies',
-        'payout_frequencies',
         'expected_frequencies',
+        'payout_frequencies',
+        'commission_frequencies',
         'expected_cycle_amount',
         'expected_payout_amount',
         'commission_amount',

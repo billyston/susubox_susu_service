@@ -5,48 +5,36 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\IndividualSusu\DailySusu\Settlement;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Domain\Account\Services\AccountAutoDebit\AccountSettlementStatusUpdateService;
 use App\Domain\PaymentInstruction\Models\Settlement;
-use App\Domain\PaymentInstruction\Services\PaymentInstructionCancelService;
-use App\Domain\Shared\Enums\Statuses;
+use App\Domain\PaymentInstruction\Services\Settlement\SettlementCancelService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class DailySusuSettlementCancelAction
 {
-    private AccountSettlementStatusUpdateService $accountSettlementStatusUpdateService;
-    private PaymentInstructionCancelService $paymentInstructionCancelService;
+    private SettlementCancelService $settlementCancelService;
 
     /**
-     * @param AccountSettlementStatusUpdateService $accountSettlementStatusUpdateService
-     * @param PaymentInstructionCancelService $paymentInstructionCancelService
+     * @param SettlementCancelService $settlementCancelService
      */
     public function __construct(
-        AccountSettlementStatusUpdateService $accountSettlementStatusUpdateService,
-        PaymentInstructionCancelService $paymentInstructionCancelService
+        SettlementCancelService $settlementCancelService,
     ) {
-        $this->accountSettlementStatusUpdateService = $accountSettlementStatusUpdateService;
-        $this->paymentInstructionCancelService = $paymentInstructionCancelService;
+        $this->settlementCancelService = $settlementCancelService;
     }
 
     /**
-     * @param Settlement $accountSettlement
+     * @param Settlement $settlement
      * @return JsonResponse
      * @throws SystemFailureException
      */
     public function execute(
-        Settlement $accountSettlement,
+        Settlement $settlement,
     ): JsonResponse {
         // Execute the PaymentInstructionCancelService and return the resource
-        $this->accountSettlementStatusUpdateService->execute(
-            accountSettlement: $accountSettlement,
-            status: Statuses::CANCELLED->value
-        );
-
-        // Execute the PaymentInstructionCancelService and return the resource
-        $this->paymentInstructionCancelService->execute(
-            paymentInstruction: $accountSettlement->payment,
+        $this->settlementCancelService->execute(
+            settlement: $settlement,
         );
 
         // Build and return the JsonResponse

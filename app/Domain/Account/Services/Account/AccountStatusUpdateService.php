@@ -6,10 +6,8 @@ namespace App\Domain\Account\Services\Account;
 
 use App\Domain\Account\Models\Account;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use InvalidArgumentException;
 use Throwable;
 
 final class AccountStatusUpdateService
@@ -38,14 +36,6 @@ final class AccountStatusUpdateService
                     return $account->refresh();
                 }
             );
-        } catch (
-            InvalidArgumentException $invalidArgumentException
-        ) {
-            throw $invalidArgumentException;
-        } catch (
-            QueryException $queryException
-        ) {
-            throw $queryException;
         } catch (
             Throwable $throwable
         ) {

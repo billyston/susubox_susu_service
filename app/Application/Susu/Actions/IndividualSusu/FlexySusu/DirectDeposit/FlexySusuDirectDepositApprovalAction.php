@@ -4,30 +4,30 @@ declare(strict_types=1);
 
 namespace App\Application\Susu\Actions\IndividualSusu\FlexySusu\DirectDeposit;
 
+use App\Application\PaymentInstruction\DTOs\DirectDeposit\DirectDepositApprovalResponseDTO;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Transaction\DTOs\DirectDepositApprovalResponseDTO;
 use App\Domain\PaymentInstruction\Models\PaymentInstruction;
-use App\Domain\PaymentInstruction\Services\PaymentInstructionApprovalStatusUpdateService;
+use App\Domain\PaymentInstruction\Services\PaymentInstruction\PaymentInstructionApprovalStatusUpdateService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
 use App\Interface\Resources\V1\PaymentInstruction\DirectDepositResource;
-use App\Services\SusuBox\Http\Requests\Payment\PaymentRequestHandler;
+use App\Services\SusuBox\Http\Requests\Payment\PaymentServiceRequestDispatcher;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class FlexySusuDirectDepositApprovalAction
 {
     private PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService;
-    private PaymentRequestHandler $dispatcher;
+    private PaymentServiceRequestDispatcher $dispatcher;
 
     /**
      * @param PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService
-     * @param PaymentRequestHandler $dispatcher
+     * @param PaymentServiceRequestDispatcher $dispatcher
      */
     public function __construct(
         PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService,
-        PaymentRequestHandler $dispatcher
+        PaymentServiceRequestDispatcher $dispatcher
     ) {
         $this->paymentInstructionApprovalStatusUpdateService = $paymentInstructionApprovalStatusUpdateService;
         $this->dispatcher = $dispatcher;

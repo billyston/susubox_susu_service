@@ -46,8 +46,8 @@ final readonly class DailySusuCycleResponseDTO
         DailySusu $dailySusu,
         Transaction $transaction,
     ): self {
-        $definition = $dailySusu->cycleDefinition;
-        $paymentInstruction = $transaction->payment;
+        $definition = $dailySusu->account->accountCycleDefinition;
+        $paymentInstruction = $transaction->paymentInstruction;
 
         /**
          * Resolve entry type & frequency using match
@@ -85,7 +85,7 @@ final readonly class DailySusuCycleResponseDTO
                     'entry_type' => $this->entryType,
                     'frequency' => $this->frequency,
                 ],
-                'relationships' => [
+                'included' => [
                     'account' => [
                         'resource_id' => $this->account->resource_id,
                     ],
@@ -111,18 +111,10 @@ final readonly class DailySusuCycleResponseDTO
         $paymentInstructionMetadata = $paymentInstruction->getMetadata();
 
         return match (true) {
-            $transactionMetadata['is_initial_deposit'] === true => [
-                'initial',
-                (int) ($paymentInstructionMetadata['initial_deposit_frequency'] ?? 1),
-            ],
-            $transactionMetadata['is_initial_deposit'] === false && array_key_exists('frequencies', $paymentInstructionMetadata) => [
-                'direct',
-                (int) $paymentInstructionMetadata['frequencies'],
-            ],
-            default => [
-                'recurring',
-                1,
-            ],
+            $transactionMetadata['is_initial_deposit'] === true => ['initial', ($paymentInstruction->recurringDeposit->initial_frequency ?? 1)],
+            $transactionMetadata['is_initial_deposit'] === false && array_key_exists('frequencies', $paymentInstructionMetadata) => ['direct', (int) $paymentInstructionMetadata['frequencies']],
+
+            default => ['recurring', 1],
         };
     }
 }

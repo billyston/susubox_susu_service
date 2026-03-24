@@ -54,12 +54,9 @@ final class TransactionAccountStatusUpdateListener implements ShouldQueue
     public function handle(
         TransactionCreatedEvent $transactionCreatedEvent
     ): void {
-        // Get the transactionResourceID from the TransactionCreditCreatedEvent
-        $transactionResourceID = $transactionCreatedEvent->transactionResourceId;
-
         // Execute the TransactionByResourceIdService and return the resource
         $transaction = $this->transactionByResourceIdService->execute(
-            resourceID: $transactionResourceID,
+            resourceID: $transactionCreatedEvent->transactionResourceId,
         );
 
         // Evaluate and execute the (SuccessAction / FailureAction)

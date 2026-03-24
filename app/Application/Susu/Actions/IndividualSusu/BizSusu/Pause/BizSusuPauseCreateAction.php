@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Application\Susu\Actions\IndividualSusu\BizSusu\Pause;
 
-use App\Application\Account\DTOs\AccountPause\AccountPauseRequestDTO;
+use App\Application\PaymentInstruction\DTOs\RecurringDeposit\RecurringDepositPauseRequestDTO;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Domain\Account\Services\AccountPause\AccountPauseCreateService;
+use App\Domain\PaymentInstruction\Services\RecurringDeposit\RecurringDepositPauseCreateService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\BizSusu;
 use App\Interface\Resources\V1\Account\AccountPauseResource;
@@ -15,10 +15,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class BizSusuPauseCreateAction
 {
-    private AccountPauseCreateService $accountPauseCreateService;
+    private RecurringDepositPauseCreateService $accountPauseCreateService;
 
     public function __construct(
-        AccountPauseCreateService $accountPauseCreateService
+        RecurringDepositPauseCreateService $accountPauseCreateService
     ) {
         $this->accountPauseCreateService = $accountPauseCreateService;
     }
@@ -33,12 +33,12 @@ final class BizSusuPauseCreateAction
         BizSusu $bizSusu,
         array $request
     ): JsonResponse {
-        // Build the AccountPauseRequestDTO
-        $requestDTO = AccountPauseRequestDTO::fromPayload(
+        // Build the RecurringDepositPauseRequestDTO
+        $requestDTO = RecurringDepositPauseRequestDTO::fromPayload(
             payload: $request
         );
 
-        // Execute the AccountPauseCreateService and return the resource
+        // Execute the RecurringDepositPauseCreateService and return the resource
         $accountPause = $this->accountPauseCreateService->execute(
             susuAccount: $bizSusu,
             requestDTO: $requestDTO

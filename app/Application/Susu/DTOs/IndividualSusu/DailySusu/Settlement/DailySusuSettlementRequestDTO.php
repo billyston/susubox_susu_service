@@ -28,8 +28,10 @@ final readonly class DailySusuSettlementRequestDTO
     public static function fromPayload(
         array $payload
     ): self {
-        // Extract the data, attributes and relationships
+        // Extract the payload data
         $data = $payload['data'];
+
+        // Extract the main resources
         $attributes = $data['attributes'];
 
         return new self(

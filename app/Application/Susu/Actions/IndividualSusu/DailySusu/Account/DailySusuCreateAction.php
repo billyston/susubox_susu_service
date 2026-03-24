@@ -6,9 +6,17 @@ namespace App\Application\Susu\Actions\IndividualSusu\DailySusu\Account;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Application\Susu\DTOs\IndividualSusu\DailySusu\Account\DailySusuCreateRequestDTO;
+use App\Domain\Customer\Exceptions\WalletNotFoundException;
 use App\Domain\Customer\Models\Customer;
+use App\Domain\Customer\Services\CustomerWalletService;
+use App\Domain\Shared\Exceptions\FrequencyNotFoundException;
+use App\Domain\Shared\Exceptions\SusuSchemeNotFoundException;
 use App\Domain\Shared\Exceptions\SystemFailureException;
+use App\Domain\Shared\Services\FrequencyService;
+use App\Domain\Shared\Services\SusuSchemeService;
 use App\Domain\Susu\Services\IndividualSusu\DailySusu\Account\DailySusuCreateService;
+use App\Domain\Transaction\Enums\TransactionCategoryCode;
+use App\Domain\Transaction\Services\TransactionCategoryByCodeService;
 use App\Interface\Resources\V1\Susu\IndividualSusu\DailySusu\DailySusuResource;
 use Brick\Money\Exception\UnknownCurrencyException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,14 +24,30 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class DailySusuCreateAction
 {
+    private SusuSchemeService $susuSchemeService;
+    private FrequencyService $frequencyService;
+    private CustomerWalletService $customerWalletService;
+    private TransactionCategoryByCodeService $transactionCategoryByCodeService;
     private DailySusuCreateService $dailySusuCreateService;
 
     /**
+     * @param SusuSchemeService $susuSchemeService
+     * @param FrequencyService $frequencyService
+     * @param CustomerWalletService $customerWalletService
+     * @param TransactionCategoryByCodeService $transactionCategoryByCodeService
      * @param DailySusuCreateService $dailySusuCreateService
      */
     public function __construct(
+        SusuSchemeService $susuSchemeService,
+        FrequencyService $frequencyService,
+        CustomerWalletService $customerWalletService,
+        TransactionCategoryByCodeService $transactionCategoryByCodeService,
         DailySusuCreateService $dailySusuCreateService
     ) {
+        $this->susuSchemeService = $susuSchemeService;
+        $this->frequencyService = $frequencyService;
+        $this->customerWalletService = $customerWalletService;
+        $this->transactionCategoryByCodeService = $transactionCategoryByCodeService;
         $this->dailySusuCreateService = $dailySusuCreateService;
     }
 
@@ -33,6 +57,9 @@ final class DailySusuCreateAction
      * @return JsonResponse
      * @throws SystemFailureException
      * @throws UnknownCurrencyException
+     * @throws SusuSchemeNotFoundException
+     * @throws FrequencyNotFoundException
+     * @throws WalletNotFoundException
      */
     public function execute(
         Customer $customer,
@@ -43,10 +70,35 @@ final class DailySusuCreateAction
             payload: $request
         );
 
+        // Execute the SusuSchemeService and return the resource
+        $susuScheme = $this->susuSchemeService->execute(
+            schemeCode: config(key: 'susubox.susu_schemes.daily_susu_code')
+        );
+
+        // Execute the FrequencyService and return the resource
+        $frequency = $this->frequencyService->execute(
+            frequency_code: 'daily'
+        );
+
+        // Execute the SusuSchemeService and return the resource
+        $transactionCategory = $this->transactionCategoryByCodeService->execute(
+            categoryCode: TransactionCategoryCode::RECURRING_DEBIT_CODE->value
+        );
+
+        // Execute the CustomerWalletService and return the resource
+        $wallet = $this->customerWalletService->execute(
+            customer: $customer,
+            walletResourceID: $requestDTO->walletResourceID,
+        );
+
         // Execute the DailySusuCreateService and return the resource
         $dailySusu = $this->dailySusuCreateService->execute(
             customer: $customer,
-            requestDTO: $requestDTO
+            wallet: $wallet,
+            requestDTO: $requestDTO,
+            susuScheme: $susuScheme,
+            frequency: $frequency,
+            transactionCategory: $transactionCategory,
         );
 
         // Build and return the JsonResponse

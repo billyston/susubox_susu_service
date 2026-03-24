@@ -9,7 +9,7 @@ use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Services\CustomerWalletCreateService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Interface\Resources\V1\Customer\CustomerWalletResource;
+use App\Interface\Resources\V1\Customer\WalletResource;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,7 +47,7 @@ final class CustomerWalletCreateAction
             code: Response::HTTP_NO_CONTENT,
             message: 'Request successful.',
             description: 'Customer wallet created successfully.',
-            data: new CustomerWalletResource(
+            data: new WalletResource(
                 resource: $wallet
             ),
         );

@@ -27,7 +27,7 @@ return new class extends Migration
                 $table->foreignId(column: 'account_customer_id')->constrained()->cascadeOnDelete();
                 $table->foreignId(column: 'account_cycle_id')->constrained(table: 'account_cycles')->cascadeOnDelete();
                 $table->foreignId(column: 'payment_instruction_id')->constrained(table: 'payment_instructions')->cascadeOnDelete();
-                $table->foreignId(column: 'transaction_id')->unique()->constrained(table: 'transactions')->cascadeOnDelete();
+                $table->foreignId(column: 'transaction_id')->constrained(table: 'transactions')->cascadeOnDelete();
 
                 // Table main attributes
                 $table->integer(column: 'frequencies');

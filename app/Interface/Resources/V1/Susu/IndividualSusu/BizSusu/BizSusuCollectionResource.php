@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Interface\Resources\V1\Susu\IndividualSusu\BizSusu;
 
 use App\Interface\Resources\V1\Account\AccountResource;
-use App\Interface\Resources\V1\Customer\CustomerWalletResource;
+use App\Interface\Resources\V1\Customer\WalletResource;
 use App\Interface\Resources\V1\Shared\FrequencyResource;
 use App\Interface\Resources\V1\Shared\SusuSchemeResource;
 use Illuminate\Http\Request;
@@ -40,7 +40,7 @@ final class BizSusuCollectionResource extends JsonResource
             // Relationships
             'relationships' => [
                 'account' => new AccountResource($this->resource->individual->account),
-                'wallet' => new CustomerWalletResource($this->resource->wallet),
+                'wallet' => new WalletResource($this->resource->wallet),
                 'frequency' => new FrequencyResource($this->resource->frequency),
                 'scheme' => new SusuSchemeResource($this->resource->individual->susuScheme),
 

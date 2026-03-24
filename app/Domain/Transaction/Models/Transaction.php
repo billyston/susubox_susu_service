@@ -8,7 +8,7 @@ use App\Domain\Account\Models\Account;
 use App\Domain\Customer\Models\Wallet;
 use App\Domain\PaymentInstruction\Models\PaymentInstruction;
 use App\Domain\Shared\Casts\MoneyCasts;
-use App\Domain\Shared\Models\HasUuid;
+use App\Domain\Shared\Concerns\HasUuid;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -57,7 +57,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon|null $updated_at
  *
  * Relationships:
- * @property-read TransactionCategory $category
+ * @property-read TransactionCategory $transactionCategory
  * @property-read Account|null $account
  * @property-read Wallet|null $wallet
  * @property-read PaymentInstruction|null $paymentInstruction
@@ -118,7 +118,7 @@ final class Transaction extends Model
     /**
      * @return BelongsTo
      */
-    public function category(
+    public function transactionCategory(
     ): BelongsTo {
         return $this->belongsTo(
             related: TransactionCategory::class,
@@ -204,6 +204,6 @@ final class Transaction extends Model
      */
     public function getMetadata(
     ): array {
-        return $this->extra_data ?? [];
+        return $this->metadata ?? [];
     }
 }

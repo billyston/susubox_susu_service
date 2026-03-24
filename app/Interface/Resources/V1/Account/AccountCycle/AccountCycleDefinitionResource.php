@@ -23,14 +23,23 @@ final class AccountCycleDefinitionResource extends JsonResource
 
             // Resource exposed attributes
             'attributes' => [
+                'resource_id' => $this->resource->resource_id,
                 'cycle_length' => $this->resource->cycle_length,
-                'commission_frequencies' => $this->resource->commission_frequencies,
-                'settlement_frequencies' => $this->resource->settlement_frequencies,
                 'expected_frequencies' => $this->resource->expected_frequencies,
+                'payout_frequencies' => $this->resource->payout_frequencies,
+                'commission_frequencies' => $this->resource->commission_frequencies,
                 'expected_cycle_amount' => $this->resource->expected_cycle_amount->getAmount()->__toString(),
-                'expected_settlement_amount' => $this->resource->expected_settlement_amount->getAmount()->__toString(),
+                'expected_payout_amount' => $this->resource->expected_payout_amount->getAmount()->__toString(),
                 'commission_amount' => $this->resource->commission_amount->getAmount()->__toString(),
             ],
+
+            // Included resource
+            'included' => $this->when(
+                $this->resource->relationLoaded('accountCycles'),
+                [
+                    'account_cycles' => AccountCycleResource::collection($this->whenLoaded('accountCycles')),
+                ]
+            ),
         ];
     }
 }

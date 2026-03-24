@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Interface\Controllers\V1\Susu\IndividualSusu\DailySusu\AutoSettlement\DailySusuAutoSettlementController;
+use App\Interface\Controllers\V1\Susu\IndividualSusu\DailySusu\Settlement\DailySusuAutoSettlementController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([

@@ -35,14 +35,18 @@ final readonly class TransactionCreateResponseDTO
      */
     public static function fromDomain(
         Transaction $transaction,
-        bool $isInitialDeposit
     ): self {
+        // Extract the main resources
+        $account = $transaction->account;
+        $customer = $transaction->paymentInstruction->accountCustomer->customer;
+        $wallet = $transaction->wallet;
+
         return new self(
             transaction: $transaction,
-            account: $transaction->account,
-            customer: $transaction->payment->initiator,
-            wallet: $transaction->wallet,
-            isInitialDeposit: $isInitialDeposit,
+            account: $account,
+            customer: $customer,
+            wallet: $wallet,
+            isInitialDeposit: $transaction->metadata['is_initial_deposit'],
         );
     }
 
@@ -58,7 +62,7 @@ final readonly class TransactionCreateResponseDTO
                     'is_initial_deposit' => $this->isInitialDeposit,
                     'resource_id' => $this->transaction->resource_id,
                     'reference_number' => $this->transaction->reference_number,
-                    'transaction_category' => $this->transaction->category->code,
+                    'transaction_category' => $this->transaction->transactionCategory->code,
                     'amount' => $this->transaction->amount->getAmount()->__toString(),
                     'charge' => $this->transaction->charge->getAmount()->__toString(),
                     'total' => $this->transaction->total->getAmount()->__toString(),
@@ -67,21 +71,21 @@ final readonly class TransactionCreateResponseDTO
                     'date' => $this->transaction->date,
                     'status' => $this->transaction->status,
                 ],
-                'relationships' => [
+                'included' => [
                     'account' => [
                         'type' => 'Account',
                         'attributes' => [
                             'resource_id' => $this->account->resource_id,
                             'account_name' => $this->account->account_name,
                             'account_number' => $this->account->account_number,
-                            'account_scheme' => $this->account->scheme()->alias,
+                            'account_scheme' => $this->account->susuScheme->alias,
                         ],
                     ],
                     'customer' => [
                         'type' => 'Customer',
                         'attributes' => [
-                            'resource_id' => $this->customer['resource_id'],
-                            'phone_number' => $this->customer['phone_number'],
+                            'resource_id' => $this->customer->resource_id,
+                            'phone_number' => $this->customer->phone_number,
                         ],
                     ],
                     'wallet' => [

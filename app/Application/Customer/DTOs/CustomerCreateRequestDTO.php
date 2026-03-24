@@ -30,8 +30,11 @@ final readonly class CustomerCreateRequestDTO
     public static function fromPayload(
         array $payload
     ): self {
-        $data = $payload['data'] ?? [];
-        $attributes = $data['attributes'] ?? [];
+        // Extract the key arrays
+        $data = $payload['data'];
+
+        // Extract the main resources
+        $attributes = $data['attributes'];
 
         return new self(
             resourceID: $attributes['resource_id'],
@@ -48,11 +51,6 @@ final readonly class CustomerCreateRequestDTO
     public function toArray(
     ): array {
         return [
-            'resource_id' => $this->resourceID,
-            'first_name' => $this->firstName,
-            'last_name' => $this->lastName,
-            'phone_number' => $this->phoneNumber,
-            'email' => $this->email,
         ];
     }
 }

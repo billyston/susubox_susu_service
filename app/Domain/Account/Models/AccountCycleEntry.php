@@ -6,7 +6,7 @@ namespace App\Domain\Account\Models;
 
 use App\Domain\PaymentInstruction\Models\PaymentInstruction;
 use App\Domain\Shared\Casts\MoneyCasts;
-use App\Domain\Shared\Models\HasUuid;
+use App\Domain\Shared\Concerns\HasUuid;
 use App\Domain\Transaction\Models\Transaction;
 use Brick\Money\Money;
 use Illuminate\Database\Eloquent\Model;

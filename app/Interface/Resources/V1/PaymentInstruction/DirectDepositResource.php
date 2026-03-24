@@ -26,10 +26,10 @@ final class DirectDepositResource extends JsonResource
             // Resource exposed attributes
             'attributes' => [
                 'resource_id' => $this->resource->resource_id,
-                'deposit_type' => $this->resource->extra_data['deposit_type'],
+                'deposit_type' => $this->resource->metadata['deposit_type'],
                 'frequencies' => $this->when(
-                    condition: $this->resource->extra_data['deposit_type'] !== DepositType::AMOUNT->value,
-                    value: $this->extra_data['frequencies'] ?? []
+                    condition: $this->resource->metadata['deposit_type'] !== DepositType::AMOUNT->value,
+                    value: $this->metadata['frequencies'] ?? []
                 ),
                 'amount' => $this->resource->amount->getAmount()->__toString(),
                 'charges' => $this->resource->charge->getAmount()->__toString(),

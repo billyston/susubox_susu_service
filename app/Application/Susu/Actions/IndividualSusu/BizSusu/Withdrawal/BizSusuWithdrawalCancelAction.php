@@ -7,7 +7,7 @@ namespace App\Application\Susu\Actions\IndividualSusu\BizSusu\Withdrawal;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\PaymentInstruction\Models\PaymentInstruction;
-use App\Domain\PaymentInstruction\Services\PaymentInstructionCancelService;
+use App\Domain\PaymentInstruction\Services\PaymentInstruction\PaymentInstructionCancelService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\BizSusu;
 use Symfony\Component\HttpFoundation\JsonResponse;

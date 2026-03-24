@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Application\Shared\Helpers\Helpers;
 use App\Domain\Shared\Enums\Statuses;
+use Carbon\Carbon;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -34,11 +36,13 @@ return new class extends Migration
                 $table->bigInteger(column: 'initial_amount');
                 $table->integer(column: 'initial_frequency')->nullable();
                 $table->string(column: 'currency')->default(value: 'GHS');
+                $table->date(column: 'start_date')->default(value: Carbon::today());
+                $table->date(column: 'end_date')->default(value: Helpers::getEndCollectionDate());
                 $table->boolean(column: 'rollover_enabled')->default(value: false);
-                $table->unsignedInteger(column: 'rollover_count')->default(value: 0);
                 $table->enum(column: 'status', allowed: [
-                    Statuses::ACTIVE->value,
                     Statuses::PENDING->value,
+                    Statuses::FAILED->value,
+                    Statuses::ACTIVE->value,
                     Statuses::PAUSED->value,
                     Statuses::STOPPED->value,
                 ])->default(value: Statuses::PENDING->value);

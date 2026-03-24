@@ -5,52 +5,49 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\IndividualSusu\DailySusu\FailedDebitRollover;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Domain\Account\Services\AccountAutoDebit\AccountAutoDebitService;
-use App\Domain\Shared\Enums\Initiators;
-use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
+use App\Interface\Resources\V1\PaymentInstruction\RecurringDepositResource;
+use App\Services\SusuBox\Http\SusuBoxServiceDispatcher;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class DailySusuFailedDebitRolloverAction
 {
-    private AccountAutoDebitService $accountAutoDebitService;
+    private SusuBoxServiceDispatcher $susuBoxServiceDispatcher;
 
     /**
-     * @param AccountAutoDebitService $accountAutoDebitService
+     * @param SusuBoxServiceDispatcher $susuBoxServiceDispatcher
      */
     public function __construct(
-        AccountAutoDebitService $accountAutoDebitService
+        SusuBoxServiceDispatcher $susuBoxServiceDispatcher,
     ) {
-        $this->accountAutoDebitService = $accountAutoDebitService;
+        $this->susuBoxServiceDispatcher = $susuBoxServiceDispatcher;
     }
 
     /**
      * @param DailySusu $dailySusu
      * @return JsonResponse
-     * @throws SystemFailureException
-     * @throws UnauthorisedAccessException
      */
     public function execute(
         DailySusu $dailySusu,
     ): JsonResponse {
-        // Execute the AccountAutoDebitService
-        $dailySusu = $this->accountAutoDebitService->execute(
-            model: $dailySusu,
-            initiator: Initiators::CUSTOMER->value,
-            customer: $dailySusu->individual->customer,
-        );
+        // Extract the main resources
+        $recurringDeposit = $dailySusu->account->recurringDeposit;
 
-        // Notification dispatcher goes here
+        // Dispatch to SusuBox Service (Payment Service)
+        $this->susuBoxServiceDispatcher->send(
+            service: config('susubox.payment.name'),
+            endpoint: 'recurring-debits/'.$recurringDeposit->resource_id.'/rollover',
+        );
 
         // Build and return the JsonResponse
         return ApiResponseBuilder::success(
             code: Response::HTTP_OK,
             message: 'Request successful.',
-            description: $dailySusu->auto_settlement === true ?
-                'Your request is successful. Automated settlement is enabled.' :
-                'Your request is successful. Automated settlement is disabled.',
+            description: 'Your request is successful. You will be notified shortly.',
+            data: new RecurringDepositResource(
+                resource: $recurringDeposit->refresh()
+            )
         );
     }
 }

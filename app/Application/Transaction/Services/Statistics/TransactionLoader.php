@@ -26,7 +26,7 @@ final class TransactionLoader
         return Transaction::where('account_id', $account->id)
             ->whereBetween('date', [$fromDate, $toDate])
             ->with([
-                'category:id,code,name',
+                'transactionCategory:id,code,name',
                 'wallet:id,wallet_name,wallet_name,network_code',
             ])
             ->select([
@@ -46,7 +46,7 @@ final class TransactionLoader
                 'date',
                 'status_code',
                 'status',
-                'extra_data',
+                'metadata',
                 'created_at',
             ])
             ->orderBy('date', 'desc')

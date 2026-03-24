@@ -8,6 +8,12 @@ use App\Domain\Account\Models\AccountCycle;
 
 final readonly class DailySusuCycleCompletedResponseDTO
 {
+    /**
+     * @param string $expectedAmount
+     * @param string $contributedAmount
+     * @param string $accountName
+     * @param string $phoneNumber
+     */
     public function __construct(
         public string $expectedAmount,
         public string $contributedAmount,
@@ -17,14 +23,17 @@ final readonly class DailySusuCycleCompletedResponseDTO
         // ..
     }
 
+    /**
+     * @param AccountCycle $accountCycle
+     * @return self
+     */
     public static function fromDomain(
         AccountCycle $accountCycle,
     ): self {
-        // Extract the Account
+        // Extract the main resources
         $account = $accountCycle->account;
-
-        // Extract the Customer
-        $customer = $account->accountable->customer;
+        $accountCustomer = $account->accountCustomer;
+        $customer = $accountCustomer->customer;
 
         return new self(
             expectedAmount: $accountCycle->expected_amount->getAmount()->__toString(),
@@ -46,7 +55,7 @@ final readonly class DailySusuCycleCompletedResponseDTO
                     'expected_amount' => $this->expectedAmount,
                     'contributed_amount' => $this->contributedAmount,
                 ],
-                'relationships' => [
+                'included' => [
                     'account' => [
                         'attributes' => [
                             'account_name' => $this->accountName,

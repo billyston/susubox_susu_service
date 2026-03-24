@@ -8,7 +8,7 @@ use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Services\CustomerWalletIndexService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Interface\Resources\V1\Customer\CustomerWalletResource;
+use App\Interface\Resources\V1\Customer\WalletResource;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -45,7 +45,7 @@ final class CustomerWalletIndexAction
             code: Response::HTTP_OK,
             message: 'Request successful',
             description: '',
-            data: CustomerWalletResource::collection(
+            data: WalletResource::collection(
                 resource: $wallets,
             ),
         );

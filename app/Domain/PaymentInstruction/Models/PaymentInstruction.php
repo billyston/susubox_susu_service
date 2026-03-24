@@ -8,7 +8,7 @@ use App\Domain\Account\Models\Account;
 use App\Domain\Account\Models\AccountCustomer;
 use App\Domain\Customer\Models\Wallet;
 use App\Domain\Shared\Casts\MoneyCasts;
-use App\Domain\Shared\Models\HasUuid;
+use App\Domain\Shared\Concerns\HasUuid;
 use App\Domain\Transaction\Models\Transaction;
 use App\Domain\Transaction\Models\TransactionCategory;
 use Brick\Money\Money;
@@ -80,6 +80,7 @@ use Illuminate\Support\Carbon;
  * @property-read AccountCustomer|null $accountCustomer
  * @property-read Wallet|null $wallet
  * @property-read RecurringDeposit|null $recurringDeposit
+ * @property-read Settlement|null $settlement
  * @property-read Collection|Transaction[] $transactions
  *
  * Helper Methods:
@@ -106,15 +107,14 @@ final class PaymentInstruction extends Model
 
     protected $fillable = [
         'resource_id',
-        'transaction_category_id',
         'account_id',
+        'transaction_category_id',
         'account_customer_id',
         'wallet_id',
         'amount',
         'charge',
         'total',
         'currency',
-        'internal_reference',
         'transaction_type',
         'accepted_terms',
         'approval_status',
@@ -182,6 +182,17 @@ final class PaymentInstruction extends Model
     ): HasOne {
         return $this->hasOne(
             related: RecurringDeposit::class,
+            foreignKey: 'payment_instruction_id',
+        );
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function settlement(
+    ): HasOne {
+        return $this->hasOne(
+            related: Settlement::class,
             foreignKey: 'payment_instruction_id',
         );
     }

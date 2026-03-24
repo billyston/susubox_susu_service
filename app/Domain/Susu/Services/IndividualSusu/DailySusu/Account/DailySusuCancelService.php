@@ -7,7 +7,6 @@ namespace App\Domain\Susu\Services\IndividualSusu\DailySusu\Account;
 use App\Domain\Shared\Exceptions\CancellationNotAllowedException;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -33,14 +32,7 @@ final class DailySusuCancelService
                 );
             }
 
-            // Execute the database transaction
-            return DB::transaction(function () use (
-                $dailySusu,
-                $account
-            ) {
-                $dailySusu->accountLocks()->delete();
-                return $account->delete();
-            });
+            return $account->delete();
         } catch (
             CancellationNotAllowedException $cancellationNotAllowedException
         ) {

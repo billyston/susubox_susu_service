@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Susu\Services\IndividualSusu\DailySusu\Account;
 
+use App\Domain\Account\Models\AccountCustomer;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
@@ -14,9 +15,6 @@ use Throwable;
 final class DailySusuShowService
 {
     /**
-     * @param Customer $customer
-     * @param DailySusu $dailySusu
-     * @return DailySusu
      * @throws SystemFailureException
      * @throws UnauthorisedAccessException
      */
@@ -25,17 +23,21 @@ final class DailySusuShowService
         DailySusu $dailySusu,
     ): DailySusu {
         try {
-            return match (true) {
-                $dailySusu->individual->customer_id !== $customer->id => throw new UnauthorisedAccessException(
-                    message: 'You are not authorized to access this susu account.'
-                ),
-                $dailySusu->individual->scheme->code !== config('susubox.susu_schemes.daily_susu_code') => throw new UnauthorisedAccessException(
-                    message: 'You are not authorized to access this susu account.'
-                ),
+            // Ensure the customer belongs to the DailySusu via account_customers
+            $belongsToCustomer = AccountCustomer::query()
+                ->where('customer_id', $customer->id)
+                ->where('account_id', $dailySusu->account_id)
+                ->exists();
 
-                // Return the DailySusu resource
-                default => $dailySusu,
-            };
+            // Guard check
+            if (! $belongsToCustomer) {
+                throw new UnauthorisedAccessException(
+                    message: 'You are not authorized to access this susu account.'
+                );
+            }
+
+            // Return the DailySusu resource
+            return $dailySusu;
         } catch (
             UnauthorisedAccessException $unauthorisedAccessException
         ) {
@@ -47,8 +49,12 @@ final class DailySusuShowService
             Log::error('Exception in DailySusuShowService', [
                 'customer_id' => $customer,
                 'daily_susu' => $dailySusu,
-                'error' => $throwable->getMessage(),
-                'trace' => $throwable->getTraceAsString(),
+                'exception' => [
+                    'message' => $throwable->getMessage(),
+                    'file' => $throwable->getFile(),
+                    'line' => $throwable->getLine(),
+                    'trace' => $throwable->getTraceAsString(),
+                ],
             ]);
 
             // Throw the SystemFailureException

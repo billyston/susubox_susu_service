@@ -35,7 +35,7 @@ return new class extends Migration
                     TransactionType::CREDIT->value,
                     TransactionType::DEBIT->value,
                 ]);
-                $table->string(column: 'reference_number')->index();
+                $table->string(column: 'reference_number')->unique()->index();
                 $table->bigInteger(column: 'amount')->default(value: 0);
                 $table->bigInteger(column: 'charge')->default(value: 0);
                 $table->bigInteger(column: 'total')->default(value: 0);

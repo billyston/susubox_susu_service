@@ -19,9 +19,7 @@ final class DailySusuCycleShowService
      * @param Customer $customer
      * @param DailySusu $dailySusu
      * @param AccountCycle $accountCycle
-     *
      * @return AccountCycle
-     *
      * @throws UnauthorisedAccessException
      * @throws SystemFailureException
      */
@@ -36,23 +34,17 @@ final class DailySusuCycleShowService
                 $dailySusu,
                 $accountCycle
             ) {
-                /**
-                 * AUTHORISATION & OWNERSHIP GUARDS
-                 */
-                match (true) {
-                    // DailySusu does not belong to customer
-                    $dailySusu->individual->customer_id !== $customer->id => throw new UnauthorisedAccessException(
-                        message: 'You are not authorised to access this Daily Susu.'
-                    ),
+                // Extract the main resources
+                $account = $dailySusu->account;
+                $accountCustomer = $account->accountCustomer->customer;
 
-                    // AccountCycle does not belong to DailySusu
-                    $accountCycle->cycleable_type !== DailySusu::class ||
-                    $accountCycle->cycleable_id !== $dailySusu->id => throw new UnauthorisedAccessException(
-                        message: 'This account cycle does not belong to the specified Daily Susu.'
-                    ),
-
-                    default => null,
-                };
+                // Ensure the customer making the request is the owner of the account
+                // And account belongs to the accountCycle
+                if ($accountCustomer->id !== $customer->id && $account->id !== $accountCycle->account_id) {
+                    throw new UnauthorisedAccessException(
+                        message: 'You are not authorised to access these account cycle.'
+                    );
+                }
 
                 // Return the AccountCycle
                 return $accountCycle;
@@ -66,9 +58,9 @@ final class DailySusuCycleShowService
         ) {
             // Log the full exception with context
             Log::error('Exception in DailySusuCycleShowService', [
-                'customer_id' => $customer->id,
-                'daily_susu_id' => $dailySusu->id,
-                'account_cycle_id' => $accountCycle->id,
+                'customer' => $customer,
+                'daily_susu' => $dailySusu,
+                'account_cycle' => $accountCycle,
                 'exception' => [
                     'message' => $throwable->getMessage(),
                     'file' => $throwable->getFile(),

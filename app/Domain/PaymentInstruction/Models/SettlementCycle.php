@@ -49,7 +49,7 @@ final class SettlementCycle extends Model
     protected $casts = [];
 
     protected $fillable = [
-        'account_settlement_id',
+        'settlement_id',
         'account_cycle_id',
     ];
 

@@ -7,13 +7,15 @@ namespace App\Domain\PaymentInstruction\Models;
 use App\Domain\Account\Models\Account;
 use App\Domain\Account\Models\AccountCustomer;
 use App\Domain\Shared\Casts\MoneyCasts;
+use App\Domain\Shared\Concerns\HasUuid;
 use App\Domain\Shared\Models\Frequency;
-use App\Domain\Shared\Models\HasUuid;
+use App\Domain\Transaction\Models\Transaction;
 use Brick\Money\Money;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
@@ -54,6 +56,8 @@ use Illuminate\Support\Carbon;
  * @property Money|null $initial_amount
  * @property int|null $initial_frequency
  * @property string $currency
+ * @property Carbon $start_date
+ * @property Carbon $end_date
  * @property bool $rollover_enabled
  * @property int|null $rollover_count
  * @property string $status
@@ -85,6 +89,8 @@ final class RecurringDeposit extends Model
     protected $casts = [
         'recurring_amount' => MoneyCasts::class,
         'initial_amount' => MoneyCasts::class,
+        'start_date' => 'date',
+        'end_date' => 'date',
         'rollover_enabled' => 'boolean',
         'metadata' => 'array',
     ];
@@ -94,13 +100,14 @@ final class RecurringDeposit extends Model
         'account_id',
         'account_customer_id',
         'payment_instruction_id',
-        'frequency_id',
         'recurring_amount',
         'initial_amount',
         'initial_frequency',
         'currency',
+        'frequency_id',
+        'start_date',
+        'end_date',
         'rollover_enabled',
-        'rollover_count',
         'status',
         'metadata',
     ];
@@ -164,7 +171,7 @@ final class RecurringDeposit extends Model
     ): HasMany {
         return $this->hasMany(
             related: RecurringDepositPause::class,
-            foreignKey: 'recurring_deposit_pause_id'
+            foreignKey: 'recurring_deposit_id'
         );
     }
 
@@ -175,10 +182,22 @@ final class RecurringDeposit extends Model
     ): HasOne {
         return $this->hasOne(
             related: RecurringDepositPause::class,
-            foreignKey: 'recurring_deposit_pause_id'
+            foreignKey: 'recurring_deposit_id'
         )
             ->where('status', 'active')
             ->where('expires_at', '>', now());
+    }
+
+    public function transactions(
+    ): HasManyThrough {
+        return $this->hasManyThrough(
+            related: Transaction::class,
+            through: Account::class,
+            firstKey: 'id',
+            secondKey: 'account_id',
+            localKey: 'account_id',
+            secondLocalKey: 'id'
+        );
     }
 
     /**

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Application\Account\Schedulers\AccountLock\AccountUnLockScheduler;
-use App\Application\Account\Schedulers\AccountPause\AccountPauseResumeScheduler;
+use App\Application\Account\Schedulers\AccountPayout\AccountPayoutUnLockScheduler;
 use App\Application\Customer\Commands\CustomerRedisStreamConsumer;
+use App\Application\PaymentInstruction\Schedulers\RecurringDeposit\RecurringDepositResumeScheduler;
 use App\Domain\Shared\Exceptions\ApiExceptionHandler;
 use App\Interface\Middleware\Shared\CertificateTransparencyPolicy;
 use App\Interface\Middleware\Shared\ContentTypes;
@@ -54,16 +54,16 @@ return Application::configure(basePath: dirname(__DIR__))
         function (
             Schedule $schedule
         ): void {
-            // Schedule the AccountUnLockScheduler
+            // Schedule the AccountPayoutUnLockScheduler
             $schedule
-                ->job(job: AccountUnLockScheduler::class)
+                ->job(job: AccountPayoutUnLockScheduler::class)
                 ->hourly()
                 ->withoutOverlapping()
                 ->onOneServer();
 
-            // Schedule the AccountPauseResumeScheduler
+            // Schedule the RecurringDepositResumeScheduler
             $schedule
-                ->job(job: AccountPauseResumeScheduler::class)
+                ->job(job: RecurringDepositResumeScheduler::class)
                 ->hourly()
                 ->withoutOverlapping()
                 ->onOneServer();

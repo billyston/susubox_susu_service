@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Application\Susu\Actions\IndividualSusu\FlexySusu\Withdrawal;
 
+use App\Application\PaymentInstruction\DTOs\Withdrawal\WithdrawalApprovalResponseDTO;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Transaction\DTOs\WithdrawalApprovalResponseDTO;
 use App\Domain\PaymentInstruction\Models\PaymentInstruction;
-use App\Domain\PaymentInstruction\Services\PaymentInstructionApprovalStatusUpdateService;
+use App\Domain\PaymentInstruction\Services\PaymentInstruction\PaymentInstructionApprovalStatusUpdateService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
 use App\Interface\Resources\V1\PaymentInstruction\WithdrawalResource;
-use App\Services\SusuBox\Http\Requests\Payment\PaymentRequestHandler;
+use App\Services\SusuBox\Http\Requests\Payment\PaymentServiceRequestDispatcher;
 use Brick\Money\Exception\UnknownCurrencyException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,15 +20,15 @@ use Symfony\Component\HttpFoundation\Response;
 final class FlexySusuWithdrawalApprovalAction
 {
     private PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService;
-    private PaymentRequestHandler $dispatcher;
+    private PaymentServiceRequestDispatcher $dispatcher;
 
     /**
      * @param PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService
-     * @param PaymentRequestHandler $dispatcher
+     * @param PaymentServiceRequestDispatcher $dispatcher
      */
     public function __construct(
         PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService,
-        PaymentRequestHandler $dispatcher
+        PaymentServiceRequestDispatcher $dispatcher
     ) {
         $this->paymentInstructionApprovalStatusUpdateService = $paymentInstructionApprovalStatusUpdateService;
         $this->dispatcher = $dispatcher;

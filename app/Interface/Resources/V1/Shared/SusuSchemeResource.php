@@ -26,7 +26,6 @@ final class SusuSchemeResource extends JsonResource
                 'resource_id' => $this->resource->resource_id,
                 'name' => $this->resource->name,
                 'alias' => $this->resource->alias,
-                'code' => $this->resource->code,
                 'description' => $this->resource->description,
             ],
         ];

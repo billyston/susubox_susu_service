@@ -6,12 +6,8 @@ namespace App\Application\Account\Listeners;
 
 use App\Application\Account\Events\AccountCycleCompletedEvent;
 use App\Application\Susu\Handlers\IndividualSusu\IndividualCycleCompletedHandler;
-use App\Domain\Account\Models\AccountCycle;
 use App\Domain\Account\Services\AccountCycle\AccountCycleByResourceIdService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Susu\Models\GroupSusu\GroupAccount;
-use App\Domain\Susu\Models\IndividualSusu\DailySusu;
-use App\Domain\Susu\Models\IndividualSusu\IndividualAccount;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -54,53 +50,14 @@ final class AccountCycleCompletedListener implements ShouldQueue
             accountCycleResource: $accountCycleResourceId,
         );
 
-        // Get the accountable (IndividualAccount / GroupAccount)
-        $accountable = $accountCycle->account->accountable;
+        // Get the account from $transaction
+        $account = $accountCycle->account;
 
-        // Resolve the $accountable
+        // Resolve the susu type (scheme) and execute the handler
         match (true) {
-            $accountable instanceof IndividualAccount => $this->individualAccountResolver(
-                individualAccount: $accountable,
-                accountCycle: $accountCycle,
-            ),
-            $accountable instanceof GroupAccount => $this->groupAccountResolver(
-                groupAccount: $accountable,
-                accountCycle: $accountCycle,
-            ),
+            $account->dailySusu()->exists() => $this->individualAccountCycleCompletedHandler->dailySusuDispatchableHandler(accountCycle: $accountCycle),
 
             default => null
         };
-    }
-
-    /**
-     * @param IndividualAccount $individualAccount
-     * @param AccountCycle $accountCycle
-     * @return void
-     */
-    private function individualAccountResolver(
-        IndividualAccount $individualAccount,
-        AccountCycle $accountCycle
-    ): void {
-        // Get the susu account (type)
-        $susu = $individualAccount->susu();
-
-        // Resolve and handle the $susu type
-        match (true) {
-            $susu instanceof DailySusu => $this->individualAccountCycleCompletedHandler->dailySusuDispatchableHandler(accountCycle: $accountCycle),
-
-            default => null
-        };
-    }
-
-    /**
-     * @param GroupAccount $groupAccount
-     * @param AccountCycle $accountCycle
-     * @return void
-     */
-    private function groupAccountResolver(
-        GroupAccount $groupAccount,
-        AccountCycle $accountCycle
-    ): void {
-        // ..
     }
 }

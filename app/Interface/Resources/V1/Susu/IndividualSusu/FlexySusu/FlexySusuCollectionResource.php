@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Interface\Resources\V1\Susu\IndividualSusu\FlexySusu;
 
 use App\Interface\Resources\V1\Account\AccountResource;
-use App\Interface\Resources\V1\Customer\CustomerWalletResource;
+use App\Interface\Resources\V1\Customer\WalletResource;
 use App\Interface\Resources\V1\Shared\SusuSchemeResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -36,7 +36,7 @@ final class FlexySusuCollectionResource extends JsonResource
             // Relationships
             'relationships' => [
                 'account' => new AccountResource($this->resource->individual->account),
-                'wallet' => new CustomerWalletResource($this->resource->wallet),
+                'wallet' => new WalletResource($this->resource->wallet),
                 'scheme' => new SusuSchemeResource($this->resource->individual->susuScheme),
 
 //                'account_lock' => $this->when(! empty($this->resource->lock), new SusuAccountLockData($this->resource)),

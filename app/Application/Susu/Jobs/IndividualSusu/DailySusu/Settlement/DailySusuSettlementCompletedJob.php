@@ -48,9 +48,8 @@ final class DailySusuSettlementCompletedJob implements ShouldQueue
             resourceID: $this->transactionResourceID,
         );
 
-        // Resolve and execute the DailySusuCycleCreateService
+        // Resolve and execute the DailySusuSettlementCompleted
         match (true) {
-            // Handle the guards
             $transaction->status !== Statuses::SUCCESS->value => null,
             $transaction->transaction_type !== TransactionType::DEBIT->value => null,
 
@@ -70,7 +69,7 @@ final class DailySusuSettlementCompletedJob implements ShouldQueue
         DailySusuSettlementCompletedService $dailySusuSettlementCompletedService
     ): void {
         // Get the Settlement
-        $settlement = $transaction->payment->settlement;
+        $settlement = $transaction->paymentInstruction->settlement;
 
         // Terminate the process (if $settlement is already completed)
         if ($settlement->status === Statuses::COMPLETED->value) {
@@ -79,7 +78,7 @@ final class DailySusuSettlementCompletedJob implements ShouldQueue
 
         // Execute the DailySusuSettlementCompletedService
         $dailySusuSettlementCompletedService->execute(
-            accountSettlement: $settlement,
+            settlement: $settlement,
         );
     }
 }

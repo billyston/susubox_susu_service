@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\IndividualSusu\GoalGetterSusu\Pause;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Domain\Account\Services\AccountPause\AccountPauseStatusUpdateService;
 use App\Domain\PaymentInstruction\Models\RecurringDepositPause;
+use App\Domain\PaymentInstruction\Services\RecurringDeposit\RecurringDepositPauseStatusUpdateService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Interface\Resources\V1\Account\AccountPauseResource;
@@ -15,10 +15,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class GoalGetterSusuPauseApprovalAction
 {
-    private AccountPauseStatusUpdateService $AccountPauseStatusUpdateService;
+    private RecurringDepositPauseStatusUpdateService $AccountPauseStatusUpdateService;
 
     public function __construct(
-        AccountPauseStatusUpdateService $AccountPauseStatusUpdateService,
+        RecurringDepositPauseStatusUpdateService $AccountPauseStatusUpdateService,
     ) {
         $this->AccountPauseStatusUpdateService = $AccountPauseStatusUpdateService;
     }
@@ -31,9 +31,9 @@ final class GoalGetterSusuPauseApprovalAction
     public function execute(
         RecurringDepositPause $accountPause,
     ): JsonResponse {
-        // Execute the AccountPauseStatusUpdateService
+        // Execute the RecurringDepositPauseStatusUpdateService
         $this->AccountPauseStatusUpdateService->execute(
-            accountPause: $accountPause,
+            recurringDepositPause: $accountPause,
             status: Statuses::APPROVED->value
         );
 

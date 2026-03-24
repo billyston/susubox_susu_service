@@ -45,10 +45,6 @@ final readonly class CustomerWalletCreateRequestDTO
     public function toArray(
     ): array {
         return [
-            'resource_id' => $this->resourceID,
-            'wallet_number' => $this->walletNumber,
-            'wallet_name' => $this->walletName,
-            'network_code' => $this->networkCode,
         ];
     }
 }

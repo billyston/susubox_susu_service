@@ -25,8 +25,8 @@ return new class extends Migration
                 $table->uuid(column: 'resource_id')->unique()->index();
 
                 // Table related fields
-                $table->foreignId(column: 'transaction_category_id')->index()->constrained();
                 $table->foreignId(column: 'account_id')->constrained()->cascadeOnDelete();
+                $table->foreignId(column: 'transaction_category_id')->index()->constrained();
                 $table->foreignId(column: 'account_customer_id')->constrained()->cascadeOnDelete();
                 $table->foreignId(column: 'wallet_id')->constrained()->restrictOnDelete();
 
@@ -36,7 +36,6 @@ return new class extends Migration
                 $table->bigInteger(column: 'total')->nullable()->default(value: 0);
                 $table->string(column: 'currency')->nullable()->default(value: 'GHS');
 
-                $table->string(column: 'internal_reference')->index()->nullable();
                 $table->enum(column: 'transaction_type', allowed: [
                     TransactionType::CREDIT->value,
                     TransactionType::DEBIT->value,

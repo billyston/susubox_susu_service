@@ -13,7 +13,6 @@ use Brick\Money\Money;
 final class DailySusuSettlementCalculationService
 {
     /**
-     * @param Money $uniteCharge
      * @param iterable $accountCycles
      * @param DailySusuSettlementRequestDTO $requestDTO
      * @return DailySusuSettlementCalculationVO
@@ -21,7 +20,6 @@ final class DailySusuSettlementCalculationService
      * @throws UnknownCurrencyException
      */
     public static function execute(
-        Money $uniteCharge,
         iterable $accountCycles,
         DailySusuSettlementRequestDTO $requestDTO
     ): DailySusuSettlementCalculationVO {
@@ -36,7 +34,7 @@ final class DailySusuSettlementCalculationService
             $cycleResourceIDs[] = $accountCycle->resource_id;
 
             $principal = $principal->plus($accountCycle->contributed_amount);
-            $totalCharges = $totalCharges->plus($uniteCharge);
+            $totalCharges = $totalCharges->plus($accountCycle->accountCycleDefinition->commission_amount);
         }
 
         // Return the DailySusuSettlementCalculationVO

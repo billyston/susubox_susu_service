@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\Susu\Actions\IndividualSusu\BizSusu\DirectDeposit;
 
+use App\Application\PaymentInstruction\ValueObject\DirectDeposit\DirectDepositValueObject;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Transaction\ValueObject\DirectDepositVO;
 use App\Domain\Customer\Models\Customer;
-use App\Domain\PaymentInstruction\Services\PaymentInstructionCreateService;
+use App\Domain\PaymentInstruction\Services\PaymentInstruction\PaymentInstructionCreateService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\BizSusu;
 use App\Domain\Transaction\Enums\TransactionCategoryCode;
@@ -50,9 +50,9 @@ final class BizSusuDirectDepositCreateAction
         array $request,
     ): JsonResponse {
         // Build the DirectDepositCreateRequestDTO
-        $requestDTO = DirectDepositVO::create(
+        $requestDTO = DirectDepositValueObject::create(
             payload: $request,
-            susuAmount: $bizSusu->susu_amount
+            recurringAmount: $bizSusu->susu_amount
         );
 
         // Execute the TransactionCreateDebitService and return the resource

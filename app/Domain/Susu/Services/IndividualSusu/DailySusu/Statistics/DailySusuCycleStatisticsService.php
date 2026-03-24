@@ -205,10 +205,14 @@ final class DailySusuCycleStatisticsService
      */
     protected function buildInsights(
     ): void {
+        // Default state
+        $this->insights = [];
+        $this->recommendations = [];
+
         $completedCycles = $this->cycles->where('status', Statuses::COMPLETED->value);
         $hasActiveCycle = (bool) $this->statistics['current_cycle'];
 
-        // Historical discipline (completed cycles only)
+        // Historical discipline
         if ($completedCycles->count() >= 3 && $this->performance['discipline_score'] >= 85) {
             $this->insights = [
                 'scope' => 'historical',
@@ -216,7 +220,9 @@ final class DailySusuCycleStatisticsService
                 'message' => 'You have consistently completed your savings cycles.',
             ];
 
-            $this->recommendations = ['You may consider increasing your savings amount in your next cycle.'];
+            $this->recommendations = [
+                'You may consider increasing your savings amount in your next cycle.'
+            ];
         }
 
         // Current cycle pacing

@@ -26,24 +26,23 @@ final class AccountShowService
         Account $account,
     ): Account {
         try {
-            // Get the IndividualAccount
-            $individualAccount = $account->accountable;
+            // Ensure account belongs to customer
+            $account = Account::query()
+                ->where('id', $account->id)
+                ->where('status', '!=', Statuses::CLOSED->value)
+                ->whereHas('accountCustomers', function ($query) use ($customer) {
+                    $query->where('customer_id', $customer->id);
+                })
+                ->firstOrFail();
 
-            match (true) {
-                // Account is closed
-                $account->status === Statuses::CLOSED->value => throw new UnauthorisedAccessException(
-                    'This account has been closed.'
-                ),
+            // (Guard): Throw UnauthorisedAccessException if $paymentInstruction fails
+            if (! $account) {
+                throw new UnauthorisedAccessException(
+                    message: 'You are not authorized to access this payment instruction.'
+                );
+            }
 
-                // Account does not belong to customer
-                $individualAccount->customer_id !== $customer->id => throw new UnauthorisedAccessException(
-                    'You are not authorized to perform this action.'
-                ),
-
-                default => null,
-            };
-
-            // Return the account
+            // Return the Account resource
             return $account;
         } catch (
             UnauthorisedAccessException $unauthorisedAccessException

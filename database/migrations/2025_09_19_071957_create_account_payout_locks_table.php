@@ -36,6 +36,7 @@ return new class extends Migration
                     Statuses::APPROVED->value,
                     Statuses::CANCELLED->value,
                     Statuses::ACTIVE->value,
+                    Statuses::FAILED->value,
                     Statuses::SUSPENDED->value,
                     Statuses::EXPIRED->value,
                 ])->default(value: Statuses::PENDING->value);

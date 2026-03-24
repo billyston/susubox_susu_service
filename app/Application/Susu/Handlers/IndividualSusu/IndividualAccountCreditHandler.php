@@ -17,7 +17,7 @@ final class IndividualAccountCreditHandler
     ): void {
         // Chain the dependable jobs
         Bus::chain([
-            new DailySusuCycleCreateJob(resourceID: $transaction->resource_id),
+            new DailySusuCycleCreateJob(transactionResourceID: $transaction->resource_id),
         ])->dispatch();
     }
 

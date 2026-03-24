@@ -7,13 +7,15 @@ namespace App\Domain\PaymentInstruction\Models;
 use App\Domain\Account\Models\Account;
 use App\Domain\Account\Models\AccountCycle;
 use App\Domain\Shared\Casts\MoneyCasts;
-use App\Domain\Shared\Models\HasUuid;
+use App\Domain\Shared\Concerns\HasUuid;
+use App\Domain\Transaction\Models\Transaction;
 use Brick\Money\Money;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Support\Carbon;
 
 /**
@@ -140,6 +142,9 @@ final class Settlement extends Model
         );
     }
 
+    /**
+     * @return HasManyThrough
+     */
     public function accountCycles(
     ): HasManyThrough {
         return $this->hasManyThrough(
@@ -149,6 +154,21 @@ final class Settlement extends Model
             secondKey: 'id',
             localKey: 'id',
             secondLocalKey: 'account_cycle_id',
+        );
+    }
+
+    /**
+     * @return HasOneThrough
+     */
+    public function transaction(
+    ): HasOneThrough {
+        return $this->hasOneThrough(
+            related: Transaction::class,
+            through: PaymentInstruction::class,
+            firstKey: 'id',
+            secondKey: 'payment_instruction_id',
+            localKey: 'payment_instruction_id',
+            secondLocalKey: 'id'
         );
     }
 }

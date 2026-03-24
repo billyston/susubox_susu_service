@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace App\Application\Susu\Actions\IndividualSusu\FlexySusu\Account;
 
+use App\Application\PaymentInstruction\DTOs\DirectDeposit\DirectDepositApprovalResponseDTO;
+use App\Application\PaymentInstruction\ValueObject\DirectDeposit\DirectDepositInitialValueObject;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Transaction\DTOs\DirectDepositApprovalResponseDTO;
-use App\Application\Transaction\ValueObject\DirectDepositInitialValueObject;
 use App\Domain\Customer\Models\Customer;
-use App\Domain\PaymentInstruction\Services\PaymentInstructionApprovalStatusUpdateService;
-use App\Domain\PaymentInstruction\Services\PaymentInstructionCreateService;
+use App\Domain\PaymentInstruction\Services\PaymentInstruction\PaymentInstructionApprovalStatusUpdateService;
+use App\Domain\PaymentInstruction\Services\PaymentInstruction\PaymentInstructionCreateService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
 use App\Domain\Transaction\Enums\TransactionCategoryCode;
 use App\Domain\Transaction\Services\TransactionCategoryByCodeService;
 use App\Interface\Resources\V1\Susu\IndividualSusu\FlexySusu\FlexySusuResource;
-use App\Services\SusuBox\Http\Requests\Payment\PaymentRequestHandler;
+use App\Services\SusuBox\Http\Requests\Payment\PaymentServiceRequestDispatcher;
 use Brick\Money\Exception\MoneyMismatchException;
 use Brick\Money\Exception\UnknownCurrencyException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,19 +27,19 @@ final class FlexySusuApprovalAction
     private PaymentInstructionCreateService $paymentInstructionCreateService;
     private PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService;
     private TransactionCategoryByCodeService $transactionCategoryByCodeGetService;
-    private PaymentRequestHandler $dispatcher;
+    private PaymentServiceRequestDispatcher $dispatcher;
 
     /**
      * @param PaymentInstructionCreateService $paymentInstructionCreateService
      * @param PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService
      * @param TransactionCategoryByCodeService $transactionCategoryByCodeGetService
-     * @param PaymentRequestHandler $dispatcher
+     * @param PaymentServiceRequestDispatcher $dispatcher
      */
     public function __construct(
         PaymentInstructionCreateService $paymentInstructionCreateService,
         PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService,
         TransactionCategoryByCodeService $transactionCategoryByCodeGetService,
-        PaymentRequestHandler $dispatcher
+        PaymentServiceRequestDispatcher $dispatcher
     ) {
         $this->paymentInstructionCreateService = $paymentInstructionCreateService;
         $this->paymentInstructionApprovalStatusUpdateService = $paymentInstructionApprovalStatusUpdateService;

@@ -9,6 +9,7 @@ The SusuBox susu service API.
     [x] Create new customer wallet
     [x] Get all wallets
 
+
 ## Resources
     [x] Build the frequencies
     [x] Get all frequencies
@@ -20,6 +21,7 @@ The SusuBox susu service API.
     [x] Get all susu_schemes
     [x] Build the commission_and_charges resource
 
+
 ## Account
     [x] Create and Configure Account model and migration
     [x] Get all customer susu accounts
@@ -28,9 +30,11 @@ The SusuBox susu service API.
     [x] Update account status (active) after successful initial debit
     [ ] Work on a unique account_number
 
+
 ## IndividualAccount
     [x] Create IndividualAccount model and migration
     [x] Configure IndividualAccount relations
+
 
 ## DailySusu
 
@@ -43,6 +47,10 @@ The SusuBox susu service API.
     [x] Cancel create account
     [x] Approve account
     [x] Activate account
+    [x] Get all accounts for customer
+    [x] Get single account for customer
+    [ ] Validate get all account
+    [ ] Validate get single account
     [ ] Validate create account
     [ ] Validate cancel account
     [ ] Validate approve account
@@ -70,7 +78,11 @@ The SusuBox susu service API.
     [x] Implement the account cycle feature
     [x] Implement the account cycle entries feature
     [x] Implement the account cycle close feature
-    [ ] Start new cycle after (all_including_running) is settled if any
+    [x] Start new cycle after (all_including_running) is settled if any
+    [x] Get all accounts cycle for the account
+    [x] Get single account cycle for the account
+    [ ] Validate get all account cycle
+    [ ] Validate get single account cycle
 
 ###### DailySusu Settlements
     [x] Create selected_completed
@@ -78,6 +90,9 @@ The SusuBox susu service API.
     [x] Create all_including_running
     [x] Cancel settlement process
     [x] Approve settlement
+    [x] Get all settlements for the account
+    [x] Get single settlement for for the account
+    [ ] Validate get account
     [ ] Validate create settlement
     [ ] Validate cancel settlement
     [ ] Validate approve settlement
@@ -95,13 +110,13 @@ The SusuBox susu service API.
     [ ] Validate the de-activate auto settlement
 
 ###### DailySusu auto settlement
-    [x] Initiate auto settlement feature (after successful credit transaction)
+    [x] Initiate auto settlement feature (after end of a running cycle)
 
-###### DailySusu Lock Account
-    [x] Create lock account
-    [x] Cancel lock account process
-    [x] Approve lock account
-    [x] Implement account lock notification
+###### DailySusu Lock Settlement Account
+    [x] Create lock settlement account
+    [x] Cancel lock settlement account process
+    [x] Approve lock settlement account
+    [x] Implement account settlement lock notification
     [ ] Validate create lock account
     [ ] Validate cancel lock account
     [ ] Validate approve lock account
@@ -125,20 +140,15 @@ The SusuBox susu service API.
     [x] De activate and resume the recurring debit
     [ ] Implement the resume account notification
 
-###### DailySusu failed debit rollover (In consideration)
-    [ ] Initiate and approve failed debit rollover feature
+###### DailySusu failed debit rollover
+    [x] Initiate and approve failed debit rollover feature
+    [x] Implement DailySusu failed debit rollover feature
     [ ] Validate the failed debit rollover action
-    [ ] Implement DailySusu failed debit rollover feature
 
 ###### DailySusu close account (In consideration)
     [ ] Initiate and approve close DailySusu account
     [ ] Validate the close DailySusu account
     [ ] Implement DailySusu close DailySusu account
-
-###### DailySusu Get
-    [x] Get all accounts for customer
-    [x] Get single account for customer
-    [ ] Validate get account
 
 ###### DailySusu statistics
     [x] Build all DailySusu cycle statistics
@@ -147,8 +157,10 @@ The SusuBox susu service API.
     [ ] Cleanup / extend the DailySusu statistics (Cycle, Settlement to be more detailed)
 
 ###### DailySusu Others
-    [ ] Cleanup the DailySusu API resources (Collections / Single)
+    [x] Cleanup the DailySusu API resources (Collections / Single)
+    [x] Transform the Resource and ResourceCollection to use include filters 
     [ ] Apply the default / discounted fees on settlements
+
 
 ## BizSusu
     [x] Create BizSusu model and migration
@@ -236,6 +248,7 @@ The SusuBox susu service API.
     [ ] Get all transactions
     [ ] Get single transaction
 
+
 ## GoalGetterSusu
     [x] Create GoalGetterSusu model and migration
     [x] Configure GoalGetterSusu relations
@@ -317,6 +330,7 @@ The SusuBox susu service API.
     [ ] Get all transactions
     [ ] Get single transaction
 
+
 ## FlexySusu
     [x] Create FlexySusu model and migration
     [x] Configure FlexySusu relations
@@ -388,6 +402,7 @@ The SusuBox susu service API.
     [ ] Get all transactions
     [ ] Get single transaction
 
+
 ## Transactions
 
 ##### Transaction create
@@ -413,8 +428,10 @@ The SusuBox susu service API.
 ##### Transaction reconciliation
     [ ] Implement the transaction reconciliation feature
 
+
 ## PIN Authorization Middleware
     [ ] Implement the PIN Authorization Middleware
+
 
 ## General
     [ ] Rewrite all get request to add include resources on demand

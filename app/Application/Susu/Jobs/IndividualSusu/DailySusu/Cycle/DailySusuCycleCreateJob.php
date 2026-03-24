@@ -27,8 +27,11 @@ final class DailySusuCycleCreateJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    /**
+     * @param string $transactionResourceID
+     */
     public function __construct(
-        private readonly string $resourceID,
+        private readonly string $transactionResourceID,
     ) {
         // ...
     }
@@ -43,7 +46,7 @@ final class DailySusuCycleCreateJob implements ShouldQueue
     ): void {
         // Execute the TransactionByResourceIdService and return the resource
         $transaction = $transactionByResourceIdService->execute(
-            resourceID: $this->resourceID,
+            resourceID: $this->transactionResourceID,
         );
 
         // Resolve and handle the DailySusuCycleCreateService
@@ -67,7 +70,7 @@ final class DailySusuCycleCreateJob implements ShouldQueue
         DailySusuCycleCreateService $dailySusuCycleCreateService
     ): void {
         // Get the DailySusu
-        $dailySusu = $transaction->account->accountable->susu();
+        $dailySusu = $transaction->account->dailySusu;
 
         // Build the DailySusuCycleResponseDTO
         $responseDTO = DailySusuCycleResponseDTO::fromDomain(

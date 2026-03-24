@@ -7,7 +7,7 @@ namespace App\Application\Susu\Jobs\IndividualSusu\DailySusu\Cycle;
 use App\Application\Susu\DTOs\IndividualSusu\DailySusu\Cycle\DailySusuCycleCompletedResponseDTO;
 use App\Domain\Account\Services\AccountCycle\AccountCycleByResourceIdService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Services\SusuBox\Http\Requests\Notification\NotificationRequestHandler;
+use App\Services\SusuBox\Http\SusuBoxServiceDispatcher;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -39,7 +39,7 @@ final class DailySusuCycleCompletedJob implements ShouldQueue
      */
     public function handle(
         AccountCycleByResourceIdService $accountCycleByResourceIdService,
-        NotificationRequestHandler $dispatcher
+        SusuBoxServiceDispatcher $susuBoxServiceDispatcher
     ): void {
         // Execute the AccountCycleByResourceIdService and return the resource
         $accountCycle = $accountCycleByResourceIdService->execute(
@@ -51,11 +51,11 @@ final class DailySusuCycleCompletedJob implements ShouldQueue
             accountCycle: $accountCycle,
         );
 
-        // Dispatch the AccountCycleCompletedNotificationRequestHandler to SusuBox services
-        $dispatcher->sendToSusuBoxService(
+        // Dispatch the SusuBoxServiceDispatcher to SusuBox services
+        $susuBoxServiceDispatcher->send(
             service: config('susubox.notification.name'),
             endpoint: 'account/susu/cycle-completed',
-            data: $responseDTO->toArray(),
+            payload: $responseDTO->toArray(),
         );
     }
 }

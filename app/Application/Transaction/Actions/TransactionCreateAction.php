@@ -6,9 +6,8 @@ namespace App\Application\Transaction\Actions;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Application\Transaction\DTOs\TransactionCreateRequestDTO;
-use App\Application\Transaction\Jobs\TransactionCreateJob;
+use App\Application\Transaction\Jobs\TransactionJob;
 use App\Domain\PaymentInstruction\Models\PaymentInstruction;
-use Brick\Money\Exception\UnknownCurrencyException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,22 +17,21 @@ final class TransactionCreateAction
      * @param PaymentInstruction $paymentInstruction
      * @param array $request
      * @return JsonResponse
-     * @throws UnknownCurrencyException
      */
     public function execute(
         PaymentInstruction $paymentInstruction,
         array $request,
     ): JsonResponse {
         // Build the TransactionCreateRequestDTO and return the DTO
-        $requestDTO = TransactionCreateRequestDTO::fromArray(
+        $requestDTO = TransactionCreateRequestDTO::fromPayload(
             payload: $request,
-            isInitialDeposit: $paymentInstruction->account->isFirstTransaction()
+            paymentInstruction: $paymentInstruction,
         );
 
         // Dispatch the TransactionCreateJob
-        TransactionCreateJob::dispatch(
-            $paymentInstruction->resource_id,
-            $requestDTO
+        TransactionJob::dispatch(
+            paymentInstructionResourceId: $paymentInstruction->resource_id,
+            requestDTO: $requestDTO
         );
 
         // Build and return the JsonResponse

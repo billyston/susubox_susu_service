@@ -4,33 +4,33 @@ declare(strict_types=1);
 
 namespace App\Application\Susu\Actions\IndividualSusu\DailySusu\DirectDeposit;
 
+use App\Application\PaymentInstruction\DTOs\DirectDeposit\DirectDepositApprovalResponseDTO;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Transaction\DTOs\DirectDepositApprovalResponseDTO;
 use App\Domain\PaymentInstruction\Models\PaymentInstruction;
-use App\Domain\PaymentInstruction\Services\PaymentInstructionApprovalStatusUpdateService;
+use App\Domain\PaymentInstruction\Services\PaymentInstruction\PaymentInstructionApprovalStatusUpdateService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
 use App\Interface\Resources\V1\PaymentInstruction\DirectDepositResource;
-use App\Services\SusuBox\Http\Requests\Payment\PaymentRequestHandler;
+use App\Services\SusuBox\Http\SusuBoxServiceDispatcher;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class DailySusuDirectDepositApprovalAction
 {
     private PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService;
-    private PaymentRequestHandler $dispatcher;
+    private SusuBoxServiceDispatcher $susuBoxServiceDispatcher;
 
     /**
      * @param PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService
-     * @param PaymentRequestHandler $dispatcher
+     * @param SusuBoxServiceDispatcher $susuBoxServiceDispatcher
      */
     public function __construct(
         PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService,
-        PaymentRequestHandler $dispatcher
+        SusuBoxServiceDispatcher $susuBoxServiceDispatcher
     ) {
         $this->paymentInstructionApprovalStatusUpdateService = $paymentInstructionApprovalStatusUpdateService;
-        $this->dispatcher = $dispatcher;
+        $this->susuBoxServiceDispatcher = $susuBoxServiceDispatcher;
     }
 
     /**
@@ -43,12 +43,6 @@ final class DailySusuDirectDepositApprovalAction
         DailySusu $dailySusu,
         PaymentInstruction $paymentInstruction,
     ): JsonResponse {
-        // Execute the PaymentInstructionApprovalStatusUpdateService and return the resource
-        $paymentInstruction = $this->paymentInstructionApprovalStatusUpdateService->execute(
-            paymentInstruction: $paymentInstruction,
-            status: Statuses::APPROVED->value,
-        );
-
         // Build the DirectDepositApprovalResponseDTO
         $responseDTO = DirectDepositApprovalResponseDTO::fromDomain(
             paymentInstruction: $paymentInstruction,
@@ -56,11 +50,17 @@ final class DailySusuDirectDepositApprovalAction
             product: $dailySusu,
         );
 
-        // Dispatch to SusuBox Service (Payment Service)
-        $this->dispatcher->sendToSusuBoxService(
+        // Dispatch to SusuBoxService (Payment Service)
+        $this->susuBoxServiceDispatcher->send(
             service: config('susubox.payment.name'),
             endpoint: 'direct-debits',
-            data: $responseDTO->toArray(),
+            payload: $responseDTO->toArray(),
+        );
+
+        // Execute the PaymentInstructionApprovalStatusUpdateService and return the resource
+        $paymentInstruction = $this->paymentInstructionApprovalStatusUpdateService->execute(
+            paymentInstruction: $paymentInstruction,
+            status: Statuses::APPROVED->value,
         );
 
         // Build and return the JsonResponse

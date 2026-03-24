@@ -5,24 +5,32 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\IndividualSusu\DailySusu\Account;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
+use App\Application\Shared\Helpers\Helpers;
+use App\Application\Shared\Helpers\Relationships;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Shared\Exceptions\SusuSchemeNotFoundException;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
 use App\Domain\Shared\Services\SusuSchemeService;
 use App\Domain\Susu\Services\IndividualSusu\DailySusu\Account\DailySusuIndexService;
-use App\Interface\Resources\V1\Susu\IndividualSusu\DailySusu\DailySusuCollectionResource;
+use App\Interface\Resources\V1\Susu\IndividualSusu\DailySusu\DailySusuResource;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class DailySusuIndexAction
 {
+    use Relationships;
+
     private DailySusuIndexService $dailySusuIndexService;
     private SusuSchemeService $susuSchemeService;
 
     /**
      * @param DailySusuIndexService $dailySusuIndexService
      * @param SusuSchemeService $susuSchemeService
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function __construct(
         DailySusuIndexService $dailySusuIndexService,
@@ -30,6 +38,7 @@ final class DailySusuIndexAction
     ) {
         $this->dailySusuIndexService = $dailySusuIndexService;
         $this->susuSchemeService = $susuSchemeService;
+        $this->relationships = Helpers::includeResources();
     }
 
     /**
@@ -53,12 +62,17 @@ final class DailySusuIndexAction
             susuScheme: $susuScheme
         );
 
+        // (Guard) Load related resources if exist
+        if ($this->loadRelationships()) {
+            $dailySusus->load($this->relationships);
+        }
+
         // Build and return the JsonResponse
         return ApiResponseBuilder::success(
             code: Response::HTTP_OK,
             message: 'Request successful.',
-            data: DailySusuCollectionResource::collection(
-                resource: $dailySusus
+            data: DailySusuResource::collection(
+                resource: $dailySusus,
             ),
         );
     }

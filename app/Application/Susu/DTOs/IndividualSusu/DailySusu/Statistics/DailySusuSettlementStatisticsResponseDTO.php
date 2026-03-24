@@ -55,7 +55,6 @@ final readonly class DailySusuSettlementStatisticsResponseDTO
                     'success_rate' => $performance['success_rate'],
                     'average_settlement_amount' => $performance['average_settlement_amount']->getAmount()->__toString(),
                 ],
-
                 'included' => [
                     'period' => [
                         'type' => 'Period',
@@ -80,7 +79,6 @@ final readonly class DailySusuSettlementStatisticsResponseDTO
                         'type' => 'Recommendations',
                         'attributes' => $this->statistics->getRecommendations(),
                     ],
-
                     'last_completed_settlement' => $stats['last_completed']
                         ? [
                             'type' => 'LastCompletedSettlement',

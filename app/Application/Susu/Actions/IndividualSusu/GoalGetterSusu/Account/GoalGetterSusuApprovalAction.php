@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace App\Application\Susu\Actions\IndividualSusu\GoalGetterSusu\Account;
 
+use App\Application\PaymentInstruction\DTOs\RecurringDeposit\RecurringDepositCreatedResponseDTO;
+use App\Application\PaymentInstruction\ValueObject\RecurringDeposit\RecurringDepositValueObject;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Transaction\DTOs\RecurringDeposit\RecurringDepositApprovalResponseDTO;
-use App\Application\Transaction\ValueObject\RecurringDepositValueObject;
 use App\Domain\Customer\Models\Customer;
-use App\Domain\PaymentInstruction\Services\PaymentInstructionApprovalStatusUpdateService;
-use App\Domain\PaymentInstruction\Services\PaymentInstructionCreateService;
+use App\Domain\PaymentInstruction\Services\PaymentInstruction\PaymentInstructionApprovalStatusUpdateService;
+use App\Domain\PaymentInstruction\Services\PaymentInstruction\PaymentInstructionCreateService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\GoalGetterSusu;
 use App\Domain\Transaction\Enums\TransactionCategoryCode;
 use App\Domain\Transaction\Services\TransactionCategoryByCodeService;
 use App\Interface\Resources\V1\Susu\IndividualSusu\GoalGetterSusu\GoalGetterSusuResource;
-use App\Services\SusuBox\Http\Requests\Payment\PaymentRequestHandler;
+use App\Services\SusuBox\Http\Requests\Payment\PaymentServiceRequestDispatcher;
 use Brick\Money\Exception\MoneyMismatchException;
 use Brick\Money\Exception\UnknownCurrencyException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,19 +27,19 @@ final class GoalGetterSusuApprovalAction
     private PaymentInstructionCreateService $paymentInstructionCreateService;
     private PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService;
     private TransactionCategoryByCodeService $transactionCategoryByCodeGetService;
-    private PaymentRequestHandler $dispatcher;
+    private PaymentServiceRequestDispatcher $dispatcher;
 
     /**
      * @param PaymentInstructionCreateService $paymentInstructionCreateService
      * @param PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService
      * @param TransactionCategoryByCodeService $transactionCategoryByCodeGetService
-     * @param PaymentRequestHandler $dispatcher
+     * @param PaymentServiceRequestDispatcher $dispatcher
      */
     public function __construct(
         PaymentInstructionCreateService $paymentInstructionCreateService,
         PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService,
         TransactionCategoryByCodeService $transactionCategoryByCodeGetService,
-        PaymentRequestHandler $dispatcher
+        PaymentServiceRequestDispatcher $dispatcher
     ) {
         $this->paymentInstructionCreateService = $paymentInstructionCreateService;
         $this->paymentInstructionApprovalStatusUpdateService = $paymentInstructionApprovalStatusUpdateService;
@@ -83,8 +83,8 @@ final class GoalGetterSusuApprovalAction
             data: $debitValues->toArray()
         );
 
-        // Build the RecurringDepositApprovalResponseDTO
-        $responseDTO = RecurringDepositApprovalResponseDTO::fromDomain(
+        // Build the RecurringDepositCreatedResponseDTO
+        $responseDTO = RecurringDepositCreatedResponseDTO::fromDomain(
             paymentInstruction: $paymentInstruction,
         );
 

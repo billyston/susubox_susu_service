@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace App\Domain\Susu\Services\IndividualSusu\DailySusu\Account;
 
 use App\Domain\Customer\Models\Customer;
+use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
 use App\Domain\Shared\Models\SusuScheme;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -29,34 +28,17 @@ final class DailySusuIndexService
         SusuScheme $susuScheme,
     ): Collection {
         try {
-            return DB::transaction(function () use (
-                $customer,
-                $susuScheme
-            ) {
-                // Ensure this is specifically a Daily Susu scheme
-                if ($susuScheme->code !== config(key: 'susubox.susu_schemes.daily_susu_code')) {
-                    throw new UnauthorisedAccessException(
-                        message: 'The provided scheme is not a Daily Susu scheme.'
-                    );
-                }
-
-                // Fetch all daily susu accounts for the customer
-                return DailySusu::query()
-                    ->whereHas('individual', function ($query) use ($customer, $susuScheme) {
-                        $query
-                            ->where('customer_id', $customer->id)
-                            ->where('susu_scheme_id', $susuScheme->id);
-                    })
-                    ->get();
-            });
-        } catch (
-            UnauthorisedAccessException $unauthorisedAccessException
-        ) {
-            throw $unauthorisedAccessException;
-        } catch (
-            QueryException $queryException
-        ) {
-            throw $queryException;
+            // Fetch all daily susu accounts for the customer
+            return DailySusu::query()
+                ->whereHas(relation: 'account.accountCustomers', callback: function ($query) use ($customer) {
+                    $query->where('customer_id', $customer->id);
+                })
+                ->whereHas(relation: 'account', callback: function ($query) use ($susuScheme) {
+                    $query->where('susu_scheme_id', $susuScheme->id)
+                        ->where('status', '!=', Statuses::CLOSED->value);
+                })
+                ->orderByDesc('created_at')
+                ->get();
         } catch (
             Throwable $throwable
         ) {

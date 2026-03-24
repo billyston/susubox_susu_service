@@ -8,9 +8,10 @@ use App\Application\Transaction\DTOs\TransactionCreateRequestDTO;
 use App\Application\Transaction\Events\TransactionDebitCreatedEvent;
 use App\Domain\Account\Models\AccountBalance;
 use App\Domain\PaymentInstruction\Models\PaymentInstruction;
-use App\Domain\PaymentInstruction\Services\PaymentInstructionInternalReferenceUpdateService;
+use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Transaction\Models\Transaction;
+use Brick\Money\Exception\MoneyMismatchException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -18,14 +19,14 @@ use Throwable;
 final class TransactionDebitCreateService
 {
     private TransactionCreateService $transactionCreateService;
-    private PaymentInstructionInternalReferenceUpdateService $paymentInstructionInternalReferenceUpdateService;
 
+    /**
+     * @param TransactionCreateService $transactionCreateService
+     */
     public function __construct(
         TransactionCreateService $transactionCreateService,
-        PaymentInstructionInternalReferenceUpdateService $paymentInstructionInternalReferenceUpdateService
     ) {
         $this->transactionCreateService = $transactionCreateService;
-        $this->paymentInstructionInternalReferenceUpdateService = $paymentInstructionInternalReferenceUpdateService;
     }
 
     /**
@@ -61,27 +62,22 @@ final class TransactionDebitCreateService
                     requestDTO: $requestDTO
                 );
 
-                // Set internal_reference on PaymentInstruction (if missing)
-                $this->paymentInstructionInternalReferenceUpdateService->execute(
-                    $paymentInstruction,
-                    $requestDTO->internalReference
-                );
+                // Fire the TransactionDebitCreatedEvent
+                DB::afterCommit(function () use ($transaction) {
+                    event(new TransactionDebitCreatedEvent(
+                        transactionResourceId: $transaction->resource_id
+                    ));
+                });
 
-                // Return the Transaction if new transaction status is not (success)
-                if ($transaction->status !== $requestDTO->status) {
+                // (Guard) Return the Transaction if new transaction status is not (success)
+                if ($transaction->status !== Statuses::SUCCESS->value) {
                     return $transaction;
                 }
 
                 // Find the AccountBalance and lock it for balance update
                 $this->accountBalanceUpdate(
-                    $paymentInstruction,
                     $transaction
                 );
-
-                // Emit the TransactionDebitCreatedEvent
-                event(new TransactionDebitCreatedEvent(
-                    transactionResourceId: $transaction->resource_id
-                ));
 
                 // Return the Transaction resource
                 return $transaction->refresh();
@@ -108,23 +104,22 @@ final class TransactionDebitCreateService
     }
 
     /**
-     * @param PaymentInstruction $paymentInstruction
      * @param Transaction $transaction
      * @return void
+     * @throws MoneyMismatchException
      */
     private function accountBalanceUpdate(
-        PaymentInstruction $paymentInstruction,
         Transaction $transaction
     ): void {
         // Get the AccountBalance
         $balance = AccountBalance::query()
-            ->where('account_id', $paymentInstruction->account_id)
+            ->where('account_id', $transaction->account_id)
             ->lockForUpdate()
             ->firstOrFail();
 
         // Set the new balance data
-        $balance->ledger_balance = $balance->ledger_balance->minus($paymentInstruction->amount);
-        $balance->available_balance = $balance->available_balance->minus($paymentInstruction->amount);
+        $balance->ledger_balance = $balance->ledger_balance->minus($transaction->amount);
+        $balance->available_balance = $balance->available_balance->minus($transaction->amount);
         $balance->last_transaction_id = $transaction->id;
         $balance->last_reconciled_at = now();
 

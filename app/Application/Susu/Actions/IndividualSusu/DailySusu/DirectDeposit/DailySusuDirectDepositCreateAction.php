@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Application\Susu\Actions\IndividualSusu\DailySusu\DirectDeposit;
 
+use App\Application\PaymentInstruction\ValueObject\DirectDeposit\DirectDepositValueObject;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Transaction\ValueObject\DirectDepositVO;
 use App\Domain\Customer\Models\Customer;
-use App\Domain\PaymentInstruction\Services\PaymentInstructionCreateService;
+use App\Domain\PaymentInstruction\Services\PaymentInstruction\PaymentInstructionCreateService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
 use App\Domain\Transaction\Enums\TransactionCategoryCode;
+use App\Domain\Transaction\Enums\TransactionType;
 use App\Domain\Transaction\Services\TransactionCategoryByCodeService;
 use App\Interface\Resources\V1\PaymentInstruction\DirectDepositResource;
 use Brick\Money\Exception\MoneyMismatchException;
@@ -49,10 +50,15 @@ final class DailySusuDirectDepositCreateAction
         DailySusu $dailySusu,
         array $request
     ): JsonResponse {
+        // Extract the main resources
+        $account = $dailySusu->account;
+        $accountCustomer = $account->accountCustomer;
+        $recurringDeposit = $account->recurringDeposit;
+
         // Build the DirectDepositCreateRequestDTO
-        $requestDTO = DirectDepositVO::create(
+        $requestDTO = DirectDepositValueObject::create(
             payload: $request,
-            susuAmount: $dailySusu->susu_amount
+            recurringAmount: $recurringDeposit->recurring_amount
         );
 
         // Execute the TransactionCreateDebitService and return the resource
@@ -62,11 +68,16 @@ final class DailySusuDirectDepositCreateAction
 
         // Execute the PaymentInstructionCreateService and return the payment instruction resource
         $paymentInstruction = $this->paymentInstructionCreateService->execute(
+            account: $account,
             transactionCategory: $transactionCategory,
-            account: $dailySusu->account,
-            wallet: $dailySusu->wallet,
-            customer: $customer,
-            data: $requestDTO->toArray()
+            accountCustomer: $accountCustomer,
+            transactionType: TransactionType::CREDIT,
+            wallet: $accountCustomer->wallet,
+            amount: $requestDTO->amount,
+            charge: $requestDTO->charge,
+            total: $requestDTO->total,
+            acceptedTerms: $requestDTO->toArray()['accepted_terms'],
+            metadata: $requestDTO->toArray()['metadata']
         );
 
         // Build and return the JsonResponse

@@ -21,6 +21,7 @@ final class AccountBalanceGuardService
         Money $availableBalance,
         Money $debitAmount
     ): void {
+        // Guard the AvailableBalance and throw the InsufficientBalanceException
         if (! $availableBalance->isGreaterThanOrEqualTo($debitAmount)) {
             throw new InsufficientBalanceException();
         }

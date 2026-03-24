@@ -10,7 +10,6 @@ use App\Domain\Account\Models\AccountCycle;
 use App\Domain\Account\Models\AccountCycleEntry;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Susu\Models\IndividualSusu\DailySusu;
 use Brick\Money\Money;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -29,84 +28,101 @@ final class DailySusuCycleCreateService
             return DB::transaction(function () use (
                 $responseDTO
             ) {
-                // Define the key variables
+                // Extract the main resources
+                $dailySusu = $responseDTO->dailySusu;
+                $account = $dailySusu->account;
+                $accountCycleDefinition = $account->accountCycleDefinition;
+                $paymentInstruction = $responseDTO->transaction->paymentInstruction;
+
+                // Define key variables
                 $remainingFrequencies = $responseDTO->frequency;
                 $lastCycle = null;
 
+                // Calculate amount per frequency
+                $amountPerFrequency = $responseDTO->contributionAmount->dividedBy($responseDTO->frequency);
+
                 // Loop through the $remainingFrequencies and create the AccountCycle
                 while ($remainingFrequencies > 0) {
-                    /** Resolve or create active cycle */
+                    // Resolve or create active cycle
                     $accountCycle = AccountCycle::query()
-                        ->where('account_id', $responseDTO->dailySusu->account->id)
-                        ->where('cycleable_type', DailySusu::class)
-                        ->where('cycleable_id', $responseDTO->dailySusu->id)
+                        ->where('account_id', $account->id)
+                        ->where('account_cycle_definition_id', $accountCycleDefinition->id)
                         ->where('status', Statuses::ACTIVE->value)
                         ->lockForUpdate()
                         ->latest('cycle_number')
                         ->first();
 
+                    // (Guard) Create new AccountCycle If there is none found
                     if (! $accountCycle) {
                         $cycleNumber = AccountCycle::query()
-                            ->where('account_id', $responseDTO->dailySusu->account->id)
-                            ->where('cycleable_type', DailySusu::class)
-                            ->where('cycleable_id', $responseDTO->dailySusu->id)
+                            ->where('account_id', $account->id)
+                            ->where('account_cycle_definition_id', $accountCycleDefinition->id)
                             ->max('cycle_number') ?? 0;
 
+                        // Create new AccountCycle
                         $accountCycle = AccountCycle::create([
-                            'account_id' => $responseDTO->dailySusu->account->id,
-                            'cycleable_type' => DailySusu::class,
-                            'cycleable_id' => $responseDTO->dailySusu->id,
+                            'account_id' => $account->id,
+                            'account_cycle_definition_id' => $accountCycleDefinition->id,
                             'cycle_number' => $cycleNumber + 1,
-                            'expected_frequencies' => $responseDTO->dailySusu->cycleDefinition->expected_frequencies,
+                            'expected_frequencies' => $accountCycleDefinition->expected_frequencies,
                             'completed_frequencies' => 0,
-                            'expected_amount' => $responseDTO->dailySusu->cycleDefinition->expected_cycle_amount,
+                            'expected_amount' => $accountCycleDefinition->expected_cycle_amount,
                             'contributed_amount' => Money::of(0, 'GHS'),
                             'started_at' => now(),
                             'status' => Statuses::ACTIVE->value,
                         ]);
                     }
 
-                    /** How much can this cycle still take */
+                    // Determine how much capacity remains in this cycle
                     $remainingCapacity = $accountCycle->expected_frequencies - $accountCycle->completed_frequencies;
+
+                    // Determine how many frequencies can be applied
                     $appliedFrequencies = min($remainingFrequencies, $remainingCapacity);
 
-                    /** Create cycle entry (split-aware) */
+                    // Determine the corresponding amount
+                    $appliedAmount = $amountPerFrequency->multipliedBy($appliedFrequencies);
+
+                    // Create the AccountCycleEntry
                     AccountCycleEntry::create([
+                        'account_customer_id' => $paymentInstruction->accountCustomer->customer->id,
                         'account_cycle_id' => $accountCycle->id,
+                        'payment_instruction_id' => $paymentInstruction->id,
                         'transaction_id' => $responseDTO->transaction->id,
-                        'payment_instruction_id' => $responseDTO->transaction->payment_instruction_id,
                         'frequencies' => $appliedFrequencies,
-                        'amount' => $responseDTO->contributionAmount,
+                        'amount' => $appliedAmount,
                         'entry_type' => $responseDTO->entryType,
                         'posted_at' => now(),
                         'status' => $responseDTO->transaction->status,
                     ]);
 
-                    /** Update counters */
+                    // Update the AccountCycle counters */
                     $accountCycle->update([
                         'completed_frequencies' => $accountCycle->completed_frequencies + $appliedFrequencies,
-                        'contributed_amount' => $accountCycle->contributed_amount->plus($responseDTO->contributionAmount),
+                        'contributed_amount' => $accountCycle->contributed_amount->plus($appliedAmount),
                     ]);
 
-                    /** Complete cycle if filled */
+                    // Check if the cycle is now complete
                     if ($accountCycle->completed_frequencies >= $accountCycle->expected_frequencies) {
-                        // Update the AccountCycle status (completed)
+                        // Mark cycle as completed
                         $accountCycle->update([
                             'status' => Statuses::COMPLETED->value,
                             'completed_at' => now(),
                         ]);
 
-                        // Trigger the AccountCycleCompletedEvent
+                        // Trigger completion event
                         event(new AccountCycleCompletedEvent(
                             accountCycleResourceId: $accountCycle->resource_id,
                         ));
                     }
 
+                    // Reduce remaining frequencies
                     $remainingFrequencies -= $appliedFrequencies;
+
+                    // Track last cycle touched
                     $lastCycle = $accountCycle;
                 }
 
-                // Return the AccountCycle
+                // Return the final cycle
                 return $lastCycle->refresh();
             });
         } catch (

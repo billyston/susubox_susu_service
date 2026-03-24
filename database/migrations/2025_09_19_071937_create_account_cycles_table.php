@@ -24,11 +24,11 @@ return new class extends Migration
                 $table->uuid(column: 'resource_id')->unique()->index();
 
                 // Table related fields
-                $table->foreignId(column: 'account_id')->unique()->constrained(table: 'accounts')->cascadeOnDelete();
+                $table->foreignId(column: 'account_id')->constrained(table: 'accounts')->cascadeOnDelete();
                 $table->foreignId(column: 'account_cycle_definition_id')->constrained(table: 'account_cycle_definitions')->restrictOnDelete();
 
                 // Table main attributes
-                $table->unsignedInteger(column: 'cycle_number')->unique();
+                $table->unsignedInteger(column: 'cycle_number');
                 $table->unsignedInteger(column: 'expected_frequencies');
                 $table->unsignedInteger(column: 'completed_frequencies')->default(value: 0);
                 $table->bigInteger(column: 'expected_amount');

@@ -4,37 +4,37 @@ declare(strict_types=1);
 
 namespace App\Application\Susu\Actions\IndividualSusu\DailySusu\Account;
 
+use App\Application\PaymentInstruction\DTOs\RecurringDeposit\RecurringDepositReactivationResponseDTO;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Transaction\DTOs\RecurringDeposit\RecurringDepositApprovalResponseDTO;
-use App\Domain\PaymentInstruction\Services\PaymentInstructionApprovalStatusUpdateService;
-use App\Domain\PaymentInstruction\Services\PaymentInstructionRecurringDepositGetService;
+use App\Domain\PaymentInstruction\Services\PaymentInstruction\PaymentInstructionApprovalStatusUpdateService;
+use App\Domain\PaymentInstruction\Services\RecurringDeposit\RecurringDepositGetService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
 use App\Interface\Resources\V1\Susu\IndividualSusu\DailySusu\DailySusuResource;
-use App\Services\SusuBox\Http\Requests\Payment\PaymentRequestHandler;
+use App\Services\SusuBox\Http\SusuBoxServiceDispatcher;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 final class DailySusuReactivationAction
 {
-    private PaymentInstructionRecurringDepositGetService $paymentInstructionRecurringDepositGetService;
+    private RecurringDepositGetService $recurringDepositGetService;
     private PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService;
-    private PaymentRequestHandler $dispatcher;
+    private SusuBoxServiceDispatcher $susuBoxServiceDispatcher;
 
     /**
-     * @param PaymentInstructionRecurringDepositGetService $paymentInstructionRecurringDepositGetService
+     * @param RecurringDepositGetService $paymentInstructionRecurringDepositGetService
      * @param PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService
-     * @param PaymentRequestHandler $dispatcher
+     * @param SusuBoxServiceDispatcher $susuBoxServiceDispatcher
      */
     public function __construct(
-        PaymentInstructionRecurringDepositGetService $paymentInstructionRecurringDepositGetService,
+        RecurringDepositGetService $paymentInstructionRecurringDepositGetService,
         PaymentInstructionApprovalStatusUpdateService $paymentInstructionApprovalStatusUpdateService,
-        PaymentRequestHandler $dispatcher,
+        SusuBoxServiceDispatcher $susuBoxServiceDispatcher
     ) {
-        $this->paymentInstructionRecurringDepositGetService = $paymentInstructionRecurringDepositGetService;
+        $this->recurringDepositGetService = $paymentInstructionRecurringDepositGetService;
         $this->paymentInstructionApprovalStatusUpdateService = $paymentInstructionApprovalStatusUpdateService;
-        $this->dispatcher = $dispatcher;
+        $this->susuBoxServiceDispatcher = $susuBoxServiceDispatcher;
     }
 
     /**
@@ -45,27 +45,32 @@ final class DailySusuReactivationAction
     public function execute(
         DailySusu $dailySusu,
     ): JsonResponse {
-        // Execute the PaymentInstructionRecurringDepositGetService
-        $paymentInstruction = $this->paymentInstructionRecurringDepositGetService->execute(
-            account: $dailySusu->individual->account,
+        // Extract the key resource
+        $account = $dailySusu->account;
+        $accountCustomer = $account->accountCustomer;
+
+        // Execute the RecurringDepositGetService
+        $recurringDeposit = $this->recurringDepositGetService->execute(
+            account: $dailySusu->account,
+            accountCustomer: $accountCustomer,
             status: Statuses::FAILED->value,
         );
 
-        // Build the RecurringDepositApprovalResponseDTO
-        $responseDTO = RecurringDepositApprovalResponseDTO::fromDomain(
-            paymentInstruction: $paymentInstruction,
+        // Build the RecurringDepositReactivationResponseDTO
+        $responseDTO = RecurringDepositReactivationResponseDTO::fromDomain(
+            recurringDeposit: $recurringDeposit,
         );
 
         // Dispatch to SusuBox Service (Payment Service)
-        $this->dispatcher->sendToSusuBoxService(
+        $this->susuBoxServiceDispatcher->send(
             service: config('susubox.payment.name'),
-            endpoint: 'recurring-debits/reactivation',
-            data: $responseDTO->toArray(),
+            endpoint: 'recurring-debits/'.$recurringDeposit->resource_id.'/reactivation',
+            payload: $responseDTO->toArray(),
         );
 
         // Execute the PaymentInstructionApprovalStatusUpdateService
         $this->paymentInstructionApprovalStatusUpdateService->execute(
-            paymentInstruction: $paymentInstruction,
+            paymentInstruction: $recurringDeposit->paymentInstruction,
             status: Statuses::APPROVED->value,
         );
 
@@ -75,7 +80,7 @@ final class DailySusuReactivationAction
             message: 'Request successful.',
             description: 'Your daily susu account has been approved.',
             data: new DailySusuResource(
-                resource: $dailySusu->refresh()
+                resource: $dailySusu
             ),
         );
     }

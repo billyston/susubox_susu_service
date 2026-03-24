@@ -29,14 +29,12 @@ return new class extends Migration
                 $table->foreignId(column: 'account_id')->constrained(table: 'accounts')->cascadeOnDelete();
 
                 // Table main attributes
-                $table->date(column: 'start_date')->default(value: Carbon::today());
-                $table->date(column: 'end_date')->default(value: Helpers::getEndCollectionDate());
                 $table->boolean(column: 'is_collateralized')->default(value: false);
-                $table->boolean(column: 'auto_payout')->default(value: false);
                 $table->enum(column: 'payout_status', allowed: [
                     Statuses::ACTIVE->value,
                     Statuses::LOCKED->value,
                 ])->default(value: Statuses::ACTIVE->value);
+                $table->boolean(column: 'auto_payout')->default(value: false);
                 $table->json(column: 'metadata')->nullable();
 
                 // Timestamps (created_at / updated_at) fields

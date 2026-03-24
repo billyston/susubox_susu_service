@@ -11,7 +11,6 @@ use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
 use App\Interface\Controllers\Shared\Controller;
 use App\Interface\Requests\V1\Susu\IndividualSusu\DailySusu\Settlement\DailySusuSettlementApprovalRequest;
-use Brick\Money\Exception\UnknownCurrencyException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class DailySusuSettlementApprovalController extends Controller
@@ -24,7 +23,6 @@ final class DailySusuSettlementApprovalController extends Controller
      * @param DailySusuSettlementApprovalAction $dailySusuSettlementApprovalAction
      * @return JsonResponse
      * @throws SystemFailureException
-     * @throws UnknownCurrencyException
      */
     public function __invoke(
         Customer $customer,
@@ -36,7 +34,7 @@ final class DailySusuSettlementApprovalController extends Controller
         // Execute the DailySusuSettlementApprovalAction and return the JsonResponse
         return $dailySusuSettlementApprovalAction->execute(
             dailySusu: $dailySusu,
-            accountSettlement: $accountSettlement,
+            settlement: $accountSettlement,
         );
     }
 }

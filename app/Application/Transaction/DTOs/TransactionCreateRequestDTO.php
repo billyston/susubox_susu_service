@@ -4,21 +4,23 @@ declare(strict_types=1);
 
 namespace App\Application\Transaction\DTOs;
 
-use Brick\Money\Exception\UnknownCurrencyException;
+use App\Domain\PaymentInstruction\Models\PaymentInstruction;
+use App\Domain\Transaction\Enums\TransactionCategoryCode;
 use Brick\Money\Money;
 use Illuminate\Support\Str;
 
 final readonly class TransactionCreateRequestDTO
 {
     /**
+     * @param array $payload
      * @param string $resourceID
      * @param string $code
      * @param string $status
-     * @param string $internalReference
      * @param string $reference
      * @param bool $isInitialDeposit
-     * @param Money $charges
      * @param Money $amount
+     * @param Money $charges
+     * @param Money $total
      * @param string $mobileNumber
      * @param string $date
      * @param string $description
@@ -27,14 +29,15 @@ final readonly class TransactionCreateRequestDTO
      * @param string $serviceCategory
      */
     public function __construct(
+        public array $payload,
         public string $resourceID,
         public string $code,
         public string $status,
-        public string $internalReference,
         public string $reference,
         public bool $isInitialDeposit,
-        public Money $charges,
         public Money $amount,
+        public Money $charges,
+        public Money $total,
         public string $mobileNumber,
         public string $date,
         public string $description,
@@ -47,37 +50,51 @@ final readonly class TransactionCreateRequestDTO
 
     /**
      * @param array $payload
-     * @param bool $isInitialDeposit
-     * @return self
-     * @throws UnknownCurrencyException
+     * @param PaymentInstruction $paymentInstruction
+     * @return TransactionCreateRequestDTO
      */
-    public static function fromArray(
+    public static function fromPayload(
         array $payload,
-        bool $isInitialDeposit,
+        PaymentInstruction $paymentInstruction,
     ): self {
-        // Extract resource bodies
         $data = $payload['data'];
-        $relationships = $data['relationships'];
+        $included = $data['included'];
 
-        // Extract make resources
         $transaction = $data['attributes'];
-        $service = $relationships['service']['attributes'];
+        $service = $included['service']['attributes'];
 
-        // Compute monetary values
-        $amount = Money::of($transaction['amount'] ?? 0, 'GHS');
-        $charges = Money::of($transaction['charges'] ?? 0, 'GHS');
+        // Extract the main resources
+        $account = $paymentInstruction->account;
 
-        // Total should be calculated here
+        // Evaluate conditions once
+        $isFirstSuccessfulTransaction = $account->isFirstSuccessfulTransaction();
+        $recurringDeposit = $paymentInstruction->recurringDeposit;
+
+        $isRecurringDeposit = $service['service_code'] === TransactionCategoryCode::RECURRING_DEBIT_CODE->value;
+        $hasRecurringDepositResource = $recurringDeposit !== null;
+        $isInitialDeposit = $isRecurringDeposit && $isFirstSuccessfulTransaction && $hasRecurringDepositResource;
+
+        // Trust PaymentInstruction financial values
+        $amount = $paymentInstruction->amount;
+        $charges = $paymentInstruction->charge;
+        $total = $paymentInstruction->total;
+
+        // Override only when rules require
+        if ($isInitialDeposit) {
+            $amount = $recurringDeposit->initial_amount;
+            $total = $recurringDeposit->initial_amount;
+        }
 
         return new self(
+            payload: $payload,
             resourceID: Str::uuid()->toString(),
             code: $transaction['code'],
             status: $transaction['status'],
-            internalReference: $transaction['internal_reference'],
             reference: $transaction['transaction_reference'],
             isInitialDeposit: $isInitialDeposit,
-            charges: $charges,
             amount: $amount,
+            charges: $charges,
+            total: $total,
             mobileNumber: $transaction['mobile_number'],
             date: $transaction['date'],
             description: $transaction['description'],
@@ -88,12 +105,13 @@ final readonly class TransactionCreateRequestDTO
     }
 
     /**
-     * @return bool[]
+     * @return array
      */
     public function toArray(
     ): array {
         return [
             'is_initial_deposit' => $this->isInitialDeposit,
+            'payload' => $this->payload['data'],
         ];
     }
 }

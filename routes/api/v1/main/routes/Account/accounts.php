@@ -13,18 +13,18 @@ Route::group([
 ], function (): void {
     // Account index request route
     Route::get(
-        uri: 'individuals/accounts/',
+        uri: 'accounts/',
         action: AccountIndexController::class,
     )->name(
-        name: 'individuals.accounts.index'
+        name: 'accounts.index'
     );
 
     // Account show request route
     Route::get(
-        uri: 'individuals/accounts/{account}',
+        uri: 'accounts/{account}',
         action: AccountShowController::class,
     )->name(
-        name: 'individuals.accounts.account.show'
+        name: 'accounts.account.show'
     )->whereUuid(
         parameters: [
             'account',

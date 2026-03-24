@@ -35,9 +35,12 @@ final class AccountCycleResource extends JsonResource
             ],
 
             // Included resource
-//            'included' => [
-//                'account_cycle_entries' => AccountCycleEntryResource::collection($this->resource->entries),
-//            ],
+            'included' => $this->when(
+                $this->resource->relationLoaded('accountCycleEntries'),
+                [
+                    'account_cycles' => AccountCycleEntryResource::collection($this->whenLoaded('accountCycleEntries')),
+                ]
+            ),
         ];
     }
 }

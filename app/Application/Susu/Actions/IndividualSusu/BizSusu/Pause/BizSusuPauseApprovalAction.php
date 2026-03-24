@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\IndividualSusu\BizSusu\Pause;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Domain\Account\Services\AccountPause\AccountPauseStatusUpdateService;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\PaymentInstruction\Models\RecurringDepositPause;
+use App\Domain\PaymentInstruction\Services\RecurringDeposit\RecurringDepositPauseStatusUpdateService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\BizSusu;
@@ -17,10 +17,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class BizSusuPauseApprovalAction
 {
-    private AccountPauseStatusUpdateService $AccountPauseStatusUpdateService;
+    private RecurringDepositPauseStatusUpdateService $AccountPauseStatusUpdateService;
 
     public function __construct(
-        AccountPauseStatusUpdateService $AccountPauseStatusUpdateService,
+        RecurringDepositPauseStatusUpdateService $AccountPauseStatusUpdateService,
     ) {
         $this->AccountPauseStatusUpdateService = $AccountPauseStatusUpdateService;
     }
@@ -37,9 +37,9 @@ final class BizSusuPauseApprovalAction
         BizSusu $bizSusu,
         RecurringDepositPause $accountPause,
     ): JsonResponse {
-        // Execute the AccountPauseStatusUpdateService
+        // Execute the RecurringDepositPauseStatusUpdateService
         $this->AccountPauseStatusUpdateService->execute(
-            accountPause: $accountPause,
+            recurringDepositPause: $accountPause,
             status: Statuses::APPROVED->value
         );
 

@@ -5,18 +5,34 @@ declare(strict_types=1);
 namespace App\Domain\Susu\Services\IndividualSusu\DailySusu\Cycle;
 
 use App\Domain\Account\Models\Account;
-use App\Domain\Account\Models\AccountCycle;
+use App\Domain\Account\Services\AccountCycle\AccountCycleSelectAllCompletedService;
+use App\Domain\Account\Services\AccountCycle\AccountCycleSelectAllWithRunningService;
+use App\Domain\Account\Services\AccountCycle\AccountCycleSelectCompletedService;
 use App\Domain\Shared\Enums\SettlementScopes;
-use App\Domain\Shared\Enums\Statuses;
+use App\Domain\Shared\Exceptions\SystemFailureException;
+use Exception;
 use Illuminate\Database\Eloquent\Collection;
 
-final class DailySusuCycleSelectionService
+final readonly class DailySusuCycleSelectionService
 {
+    /**
+     * @param AccountCycleSelectCompletedService $accountCycleSelectedCompletedService
+     * @param AccountCycleSelectAllCompletedService $accountCycleSelectedAllCompletedService
+     * @param AccountCycleSelectAllWithRunningService $accountCycleSelectAllWithRunningService
+     */
+    public function __construct(
+        private AccountCycleSelectCompletedService $accountCycleSelectedCompletedService,
+        private AccountCycleSelectAllCompletedService $accountCycleSelectedAllCompletedService,
+        private AccountCycleSelectAllWithRunningService $accountCycleSelectAllWithRunningService,
+    ) {
+    }
+
     /**
      * @param Account $account
      * @param SettlementScopes $scope
      * @param array|null $cycleResourceIDs
      * @return Collection
+     * @throws Exception
      */
     public function execute(
         Account $account,
@@ -24,71 +40,18 @@ final class DailySusuCycleSelectionService
         ?array $cycleResourceIDs = null,
     ): Collection {
         return match ($scope) {
-            SettlementScopes::SELECTED_COMPLETED => $this->selectSelectedCompletedCycles(
+            SettlementScopes::SELECTED_COMPLETED => $this->accountCycleSelectedCompletedService->execute(
                 account: $account,
                 cycleResourceIDs: $cycleResourceIDs
             ),
-            SettlementScopes::ALL_COMPLETED => $this->selectAllCompletedCycles(
+            SettlementScopes::ALL_COMPLETED => $this->accountCycleSelectedAllCompletedService->execute(
                 account: $account,
             ),
-            SettlementScopes::ALL_INCLUDING_RUNNING => $this->selectAllIncludingRunningCycle(
+            SettlementScopes::ALL_INCLUDING_RUNNING => $this->accountCycleSelectAllWithRunningService->execute(
                 account: $account,
             ),
+
+            default => throw new SystemFailureException(message: 'Invalid account settlement scope.'),
         };
-    }
-
-    /**
-     * @param Account $account
-     * @param array|null $cycleResourceIDs
-     * @return Collection
-     */
-    private function selectSelectedCompletedCycles(
-        Account $account,
-        ?array $cycleResourceIDs,
-    ): Collection {
-        return AccountCycle::query()
-            ->where('account_id', $account->id)
-            ->where('status', Statuses::COMPLETED->value)
-            ->whereIn('resource_id', $cycleResourceIDs ?? [])
-            ->orderBy('completed_at')
-            ->get();
-    }
-
-    /**
-     * @param Account $account
-     * @return Collection
-     */
-    private function selectAllCompletedCycles(
-        Account $account,
-    ): Collection {
-        return AccountCycle::query()
-            ->where('account_id', $account->id)
-            ->where('status', Statuses::COMPLETED->value)
-            ->orderBy('completed_at')
-            ->get();
-    }
-
-    /**
-     * @param Account $account
-     * @return Collection
-     */
-    private function selectAllIncludingRunningCycle(
-        Account $account,
-    ): Collection {
-        // Get all AllCompletedCycles
-        $completedCycles = $this->selectAllCompletedCycles(
-            account: $account
-        );
-
-        // Get a current running cycle
-        $runningCycle = AccountCycle::query()
-            ->where('account_id', $account->id)
-            ->where('status', Statuses::ACTIVE->value)
-            ->orderByDesc('started_at')
-            ->first();
-
-        return $runningCycle
-            ? $completedCycles->push($runningCycle)
-            : $completedCycles;
     }
 }

@@ -25,7 +25,7 @@ return new class extends Migration
 
                 // Table related / Foreign key fields
                 $table->foreignId(column: 'account_id')->unique()->constrained()->cascadeOnDelete();
-                $table->foreignId(column: 'customer_id')->unique()->constrained()->cascadeOnDelete();
+                $table->foreignId(column: 'customer_id')->constrained()->cascadeOnDelete();
                 $table->foreignId(column: 'wallet_id')->constrained()->restrictOnDelete();
 
                 // Table main attributes

@@ -6,8 +6,6 @@ namespace App\Interface\Controllers\V1\Susu\IndividualSusu\DailySusu\FailedDebit
 
 use App\Application\Susu\Actions\IndividualSusu\DailySusu\FailedDebitRollover\DailySusuFailedDebitRolloverAction;
 use App\Domain\Customer\Models\Customer;
-use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
 use App\Interface\Controllers\Shared\Controller;
 use App\Interface\Requests\V1\Susu\IndividualSusu\DailySusu\FailedDebitRollover\DailySusuFailedDebitRolloverRequest;
@@ -21,8 +19,6 @@ final class DailySusuFailedDebitRolloverController extends Controller
      * @param DailySusuFailedDebitRolloverRequest $dailySusuFailedDebitRolloverRequest
      * @param DailySusuFailedDebitRolloverAction $dailySusuFailedDebitRolloverAction
      * @return JsonResponse
-     * @throws SystemFailureException
-     * @throws UnauthorisedAccessException
      */
     public function __invoke(
         Customer $customer,

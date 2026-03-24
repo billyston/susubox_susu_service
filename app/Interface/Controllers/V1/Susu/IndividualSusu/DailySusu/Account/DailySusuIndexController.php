@@ -10,12 +10,14 @@ use App\Domain\Shared\Exceptions\SusuSchemeNotFoundException;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Shared\Exceptions\UnauthorisedAccessException;
 use App\Interface\Controllers\Shared\Controller;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class DailySusuIndexController extends Controller
 {
     /**
      * @param Customer $customer
+     * @param Request $request
      * @param DailySusuIndexAction $dailySusuIndexAction
      * @return JsonResponse
      * @throws SusuSchemeNotFoundException
@@ -24,6 +26,7 @@ final class DailySusuIndexController extends Controller
      */
     public function __invoke(
         Customer $customer,
+        Request $request,
         DailySusuIndexAction $dailySusuIndexAction
     ): JsonResponse {
         // Execute the DailySusuIndexAction and return the JsonResponse

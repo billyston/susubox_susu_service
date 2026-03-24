@@ -34,11 +34,11 @@ return new class extends Migration
                 $table->enum(column: 'status', allowed: [
                     Statuses::PENDING->value,
                     Statuses::APPROVED->value,
-                    Statuses::ACTIVE->value,
                     Statuses::CANCELLED->value,
+                    Statuses::ACTIVE->value,
                     Statuses::FAILED->value,
                     Statuses::SUSPENDED->value,
-                    Statuses::COMPLETED->value,
+                    Statuses::EXPIRED->value,
                 ])->default(value: Statuses::PENDING->value);
 
                 // Timestamps (created_at / updated_at) fields

@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Application\Susu\Actions\IndividualSusu\FlexySusu\Withdrawal;
 
 use App\Application\Account\Services\AccountBalanceGuardService;
+use App\Application\PaymentInstruction\ValueObject\Withdrawal\WithdrawalValueObject;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
-use App\Application\Transaction\ValueObject\WithdrawalValueObject;
 use App\Domain\Customer\Models\Customer;
-use App\Domain\PaymentInstruction\Services\PaymentInstructionCreateService;
+use App\Domain\PaymentInstruction\Services\PaymentInstruction\PaymentInstructionCreateService;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\FlexySusu;
 use App\Domain\Transaction\Enums\TransactionCategoryCode;

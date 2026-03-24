@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Account\Actions\Transaction;
 
-use App\Application\Account\DTOs\AccountTransaction\AccountTransactionStatisticsResponseDTO;
 use App\Application\Shared\Helpers\ApiResponseBuilder;
+use App\Application\Transaction\DTOs\TransactionStatisticsResponseDTO;
 use App\Application\Transaction\Services\Statistics\AccountTransactionStatsService;
 use App\Domain\Account\Models\Account;
 use Brick\Money\Exception\MoneyMismatchException;
@@ -43,8 +43,8 @@ final class AccountTransactionStatisticsAction
             to: isset($request['to_date']) ? Carbon::parse($request['to_date']) : null,
         );
 
-        // Build the AccountTransactionStatisticsResponseDTO
-        $responseDTO = AccountTransactionStatisticsResponseDTO::fromDomain(
+        // Build the TransactionStatisticsResponseDTO
+        $responseDTO = TransactionStatisticsResponseDTO::fromDomain(
             statistics: $statistics,
             request: $request,
         );

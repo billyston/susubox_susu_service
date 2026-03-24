@@ -5,9 +5,19 @@ declare(strict_types=1);
 namespace App\Domain\Susu\Models\IndividualSusu;
 
 use App\Domain\Account\Models\Account;
-use App\Domain\Shared\Models\HasUuid;
+use App\Domain\Account\Models\AccountCustomer;
+use App\Domain\Account\Models\AccountCycleDefinition;
+use App\Domain\Customer\Models\Customer;
+use App\Domain\Customer\Models\Wallet;
+use App\Domain\PaymentInstruction\Models\PaymentInstruction;
+use App\Domain\PaymentInstruction\Models\RecurringDeposit;
+use App\Domain\Shared\Concerns\HasUuid;
+use App\Domain\Transaction\Models\Transaction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Support\Carbon;
 
 /**
@@ -36,17 +46,20 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property string $resource_id
  * @property int $account_id
- * @property Carbon $start_date
- * @property Carbon $end_date
  * @property bool $is_collateralized
- * @property bool $auto_payout
  * @property string|null $payout_status
+ * @property bool $auto_payout
  * @property array|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
  * Relationships:
  * @property-read Account $account
+ * @property-read AccountCustomer $accountCustomer
+ * @property-read Wallet $linkedWallet
+ * @property-read Customer $customer
+ * @property-read RecurringDeposit $recurringDeposit
+ * @property-read AccountCycleDefinition $accountCycleDefinition
  *
  * Domain Notes:
  * - Designed for individual daily contribution savings schemes.
@@ -61,8 +74,6 @@ final class DailySusu extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'start_date' => 'date',
-        'end_date' => 'date',
         'is_collateralized' => 'boolean',
         'auto_payout' => 'boolean',
         'metadata' => 'array',
@@ -71,11 +82,9 @@ final class DailySusu extends Model
     protected $fillable = [
         'resource_id',
         'account_id',
-        'start_date',
-        'end_date',
         'is_collateralized',
-        'auto_payout',
         'payout_status',
+        'auto_payout',
         'metadata',
     ];
 
@@ -95,6 +104,124 @@ final class DailySusu extends Model
         return $this->belongsTo(
             related: Account::class,
             foreignKey: 'account_id',
+        );
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function accountCustomer(
+    ): HasOne {
+        return $this->hasOne(
+            related: AccountCustomer::class,
+            foreignKey: 'account_id',
+            localKey: 'account_id'
+        );
+    }
+
+    /**
+     * @return Customer|null
+     */
+//    public function customer(
+//    ): ?Customer {
+//        return $this->accountCustomer?->customer;
+//    }
+
+    /**
+     * @return Wallet|null
+     */
+//    public function linkedWallet(
+//    ): ?Wallet {
+//        return $this->accountCustomer?->wallet;
+//    }
+
+    /**
+     * @return HasOneThrough
+     */
+    public function customer(
+    ): HasOneThrough {
+        return $this->hasOneThrough(
+            related: Customer::class,
+            through: AccountCustomer::class,
+            firstKey: 'account_id',
+            secondKey: 'id',
+            localKey: 'account_id',
+            secondLocalKey: 'customer_id'
+        );
+    }
+
+    /**
+     * @return HasOneThrough
+     */
+    public function linkedWallet(
+    ): HasOneThrough {
+        return $this->hasOneThrough(
+            related: Wallet::class,
+            through: AccountCustomer::class,
+            firstKey: 'account_id',
+            secondKey: 'id',
+            localKey: 'account_id',
+            secondLocalKey: 'wallet_id'
+        );
+    }
+
+    /**
+     * @return HasOneThrough
+     */
+    public function accountCycleDefinition(
+    ): HasOneThrough {
+        return $this->hasOneThrough(
+            related: AccountCycleDefinition::class,
+            through: Account::class,
+            firstKey: 'id',
+            secondKey: 'account_id',
+            localKey: 'account_id',
+            secondLocalKey: 'id'
+        );
+    }
+
+    /**
+     * @return HasOneThrough
+     */
+    public function recurringDeposit(
+    ): HasOneThrough {
+        return $this->hasOneThrough(
+            related: RecurringDeposit::class,
+            through: Account::class,
+            firstKey: 'id',
+            secondKey: 'account_id',
+            localKey: 'account_id',
+            secondLocalKey: 'id'
+        );
+    }
+
+    /**
+     * @return HasManyThrough
+     */
+    public function paymentInstructions(
+    ): HasManyThrough {
+        return $this->hasManyThrough(
+            related: PaymentInstruction::class,
+            through: Account::class,
+            firstKey: 'id',
+            secondKey: 'account_id',
+            localKey: 'account_id',
+            secondLocalKey: 'id'
+        );
+    }
+
+    /**
+     * @return HasManyThrough
+     */
+    public function transactions(
+    ): HasManyThrough {
+        return $this->hasManyThrough(
+            related: Transaction::class,
+            through: Account::class,
+            firstKey: 'id',
+            secondKey: 'account_id',
+            localKey: 'account_id',
+            secondLocalKey: 'id'
         );
     }
 }

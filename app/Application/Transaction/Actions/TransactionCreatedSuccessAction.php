@@ -5,19 +5,23 @@ declare(strict_types=1);
 namespace App\Application\Transaction\Actions;
 
 use App\Domain\Account\Services\Account\AccountStatusUpdateService;
-use App\Domain\PaymentInstruction\Services\PaymentInstructionStatusUpdateService;
+use App\Domain\PaymentInstruction\Services\PaymentInstruction\PaymentInstructionStatusUpdateService;
+use App\Domain\PaymentInstruction\Services\RecurringDeposit\RecurringDepositStatusUpdateService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
-use App\Domain\Transaction\Enums\TransactionCategoryCode;
 use App\Domain\Transaction\Models\Transaction;
-use App\Domain\Transaction\Services\RecurringDebitStatusUpdateService;
 use Throwable;
 
 final readonly class TransactionCreatedSuccessAction
 {
+    /**
+     * @param AccountStatusUpdateService $accountStatusUpdateService
+     * @param RecurringDepositStatusUpdateService $recurringDebitStatusUpdateService
+     * @param PaymentInstructionStatusUpdateService $paymentInstructionStatusUpdateService
+     */
     public function __construct(
         private AccountStatusUpdateService $accountStatusUpdateService,
-        private RecurringDebitStatusUpdateService $recurringDebitStatusUpdateService,
+        private RecurringDepositStatusUpdateService $recurringDebitStatusUpdateService,
         private PaymentInstructionStatusUpdateService $paymentInstructionStatusUpdateService,
     ) {
         // ..
@@ -30,85 +34,75 @@ final readonly class TransactionCreatedSuccessAction
     public function execute(
         Transaction $transaction,
     ): void {
-        // Update the Account and Susu (If transaction isInitialDeposit)
-        match ($this->isInitialDeposit($transaction)) {
-            true => $this->activateAccountAndSusu($transaction),
-            false => null,
-        };
-
-        // Execute the PaymentInstructionStatus
-        $this->updatePaymentInstructionStatus($transaction);
+        // Handle initial deposit statuses updates
+        $this->accountStatusUpdateHandler(transaction: $transaction);
+        $this->paymentInstructionStatusUpdate(transaction: $transaction);
+        $this->recurringDebitStatusUpdateHandler(transaction: $transaction);
 
         // Other post-transaction actions go here
     }
 
     /**
-     * @param Transaction $transaction
-     * @return bool
-     */
-    private function isInitialDeposit(
-        Transaction $transaction
-    ): bool {
-        return (bool) data_get(
-            target: $transaction->extra_data,
-            key: 'is_initial_deposit',
-            default: false
-        );
-    }
-
-    /**
      * @throws SystemFailureException
      */
-    private function activateAccountAndSusu(
+    private function accountStatusUpdateHandler(
         Transaction $transaction
     ): void {
+        // Extract the necessary data from $transaction
         $account = $transaction->account;
-        $susu = $account->accountable->susu();
 
-        // Update the Account status
-        match ($account->status) {
-            Statuses::ACTIVE->value => null,
-            default => $this->accountStatusUpdateService->execute(
+        // Execute the AccountStatusUpdateService (if 'status' not 'active')
+        if ($account->status === Statuses::PENDING->value) {
+            $this->accountStatusUpdateService->execute(
                 account: $account,
                 status: Statuses::ACTIVE->value
-            ),
-        };
-
-        // Update the Susu (recurring_debit_status)
-        match ($susu->status) {
-            Statuses::ACTIVE->value => null,
-            default => $this->recurringDebitStatusUpdateService->execute(
-                model: $susu,
-                status: Statuses::ACTIVE->value
-            ),
-        };
+            );
+        }
     }
 
     /**
      * @throws SystemFailureException
      */
-    private function updatePaymentInstructionStatus(
+    private function paymentInstructionStatusUpdate(
         Transaction $transaction
     ): void {
         // Get the PaymentInstruction from Transaction
-        $payment = $transaction->payment;
+        $paymentInstruction = $transaction->paymentInstruction;
 
-        // Update PaymentInstruction status
-        $targetStatus = match ($payment->transactionCategory->code) {
-            // Set status to (active) if transaction is recurring_debit
-            TransactionCategoryCode::RECURRING_DEBIT_CODE->value => Statuses::ACTIVE->value,
+        // Execute the PaymentInstructionStatusUpdateService (if 'status' not 'success')
+        if ($paymentInstruction->status !== Statuses::SUCCESS->value) {
+            $this->paymentInstructionStatusUpdateService->execute(
+                paymentInstruction: $paymentInstruction,
+                status: Statuses::SUCCESS->value,
+            );
+        }
+    }
 
-            // Set others to success
-            default => Statuses::SUCCESS->value,
-        };
+    /**
+     * @param Transaction $transaction
+     * @return void
+     * @throws SystemFailureException
+     */
+    private function recurringDebitStatusUpdateHandler(
+        Transaction $transaction
+    ): void {
+        // Get the PaymentInstruction, RecurringDeposit from Transaction
+        $paymentInstruction = $transaction->paymentInstruction;
+        $recurringDeposit = $paymentInstruction->recurringDeposit;
 
-        // Update the PaymentInstruction status
-        match ($payment->status === $targetStatus) {
-            true => null,
-            false => $this->paymentInstructionStatusUpdateService->execute(
-                paymentInstruction: $payment,
-                status: $targetStatus
-            ),
-        };
+        // Safely get metadata
+        $metadata = $transaction->getMetadata();
+        $isInitialDeposit = isset($metadata['is_initial_deposit']) && $metadata['is_initial_deposit'] === true;
+
+        if (
+            $recurringDeposit &&
+            $isInitialDeposit &&
+            $recurringDeposit->status !== Statuses::ACTIVE->value
+        ) {
+            $this->recurringDebitStatusUpdateService->execute(
+                recurringDeposit: $recurringDeposit,
+                status: Statuses::ACTIVE->value
+            );
+        }
     }
 }

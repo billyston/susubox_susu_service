@@ -18,7 +18,7 @@ final class DailySusuSettlementShowController extends Controller
     /**
      * @param Customer $customer
      * @param DailySusu $dailySusu
-     * @param Settlement $accountSettlement
+     * @param Settlement $settlement
      * @param DailySusuSettlementShowAction $dailySusuSettlementShowAction
      * @return JsonResponse
      * @throws SystemFailureException
@@ -27,14 +27,14 @@ final class DailySusuSettlementShowController extends Controller
     public function __invoke(
         Customer $customer,
         DailySusu $dailySusu,
-        Settlement $accountSettlement,
+        Settlement $settlement,
         DailySusuSettlementShowAction $dailySusuSettlementShowAction
     ): JsonResponse {
         // Execute the DailySusuSettlementShowAction and return the JsonResponse
         return $dailySusuSettlementShowAction->execute(
             customer: $customer,
             dailySusu: $dailySusu,
-            accountSettlement: $accountSettlement
+            settlement: $settlement
         );
     }
 }

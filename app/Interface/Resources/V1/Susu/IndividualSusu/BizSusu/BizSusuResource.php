@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Interface\Resources\V1\Susu\IndividualSusu\BizSusu;
 
-use App\Interface\Resources\V1\Account\AccountLockResource;
 use App\Interface\Resources\V1\Account\AccountPauseResource;
+use App\Interface\Resources\V1\Account\AccountPayoutLock\AccountPayoutLockResource;
 use App\Interface\Resources\V1\Shared\SusuSchemeResource;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -61,7 +61,7 @@ final class BizSusuResource extends JsonResource
                     ],
                 ],
                 'susu_scheme' => new SusuSchemeResource($this->resource->individual->susuScheme),
-                'account_lock' => $this->when($this->resource->isLocked(), new AccountLockResource($this->resource->activeAccountLock())),
+                'account_lock' => $this->when($this->resource->isLocked(), new AccountPayoutLockResource($this->resource->activeAccountLock())),
                 'account_pause' => $this->when($this->resource->isPaused(), new AccountPauseResource($this->resource->activeAccountPause())),
             ],
         ];

@@ -6,7 +6,7 @@ namespace App\Application\Susu\Actions\IndividualSusu\FlexySusu\Lock;
 
 use App\Application\Shared\Helpers\ApiResponseBuilder;
 use App\Domain\Account\Models\AccountPayoutLock;
-use App\Domain\Account\Services\AccountLock\AccountLockStatusUpdateService;
+use App\Domain\Account\Services\AccountPayoutLock\AccountPayoutLockStatusUpdateService;
 use App\Domain\Shared\Enums\Statuses;
 use App\Domain\Shared\Exceptions\SystemFailureException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,13 +14,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class FlexySusuLockCancelAction
 {
-    private AccountLockStatusUpdateService $accountLockStatusUpdateService;
+    private AccountPayoutLockStatusUpdateService $accountLockStatusUpdateService;
 
     /**
-     * @param AccountLockStatusUpdateService $accountLockStatusUpdateService
+     * @param AccountPayoutLockStatusUpdateService $accountLockStatusUpdateService
      */
     public function __construct(
-        AccountLockStatusUpdateService $accountLockStatusUpdateService
+        AccountPayoutLockStatusUpdateService $accountLockStatusUpdateService
     ) {
         $this->accountLockStatusUpdateService = $accountLockStatusUpdateService;
     }
@@ -35,7 +35,7 @@ final class FlexySusuLockCancelAction
     ): JsonResponse {
         // Execute the PaymentInstructionCancelService and return the resource
         $this->accountLockStatusUpdateService->execute(
-            accountLock: $accountLock,
+            accountPayoutLock: $accountLock,
             status: Statuses::CANCELLED->value
         );
 

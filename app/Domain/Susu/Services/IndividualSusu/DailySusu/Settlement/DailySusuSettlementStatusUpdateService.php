@@ -8,7 +8,6 @@ use App\Domain\Shared\Exceptions\SystemFailureException;
 use App\Domain\Susu\Models\IndividualSusu\DailySusu;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use InvalidArgumentException;
 use Throwable;
 
 final class DailySusuSettlementStatusUpdateService
@@ -31,16 +30,12 @@ final class DailySusuSettlementStatusUpdateService
                     $status
                 ) {
                     // Execute the update query
-                    $dailySusu->update(['settlement_status' => $status]);
+                    $dailySusu->update(['payout_status' => $status]);
 
                     // Return the account resource
                     return $dailySusu->refresh();
                 }
             );
-        } catch (
-            InvalidArgumentException $invalidArgumentException
-        ) {
-            throw $invalidArgumentException;
         } catch (
             Throwable $throwable
         ) {

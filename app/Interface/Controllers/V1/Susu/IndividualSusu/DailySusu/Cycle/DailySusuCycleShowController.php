@@ -34,7 +34,7 @@ final class DailySusuCycleShowController extends Controller
         return $dailySusuCycleShowAction->execute(
             customer: $customer,
             dailySusu: $dailySusu,
-            accountCycle: $accountCycle
+            accountCycle: $accountCycle,
         );
     }
 }
